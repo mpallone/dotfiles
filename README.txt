@@ -32,3 +32,5 @@ To set up unix env on new computer, do:
    into the new machine's .emacs file.
    If one doesn't exist, just type
    `cp dot_emacs ~/.emacs`
+   
+11. Set up Sublime Text keybinds.
