@@ -1,0 +1,24 @@
+# This file is from Udacity's git tutorial: 
+# 
+# https://classroom.udacity.com/nanodegrees/nd001/parts/0011345405/modules/001134540575460/lessons/2980038599/concepts/33331589510923
+# 
+# 
+
+DIRNAME_OF_THIS_SCRIPT=`dirname $BASH_SOURCE`
+
+# Enable tab completion
+source "${DIRNAME_OF_THIS_SCRIPT}/git-completion.bash"
+
+# colors!
+green="\[\033[0;32m\]"
+#blue="\[\033[0;34m\]"
+purple="\[\033[0;35m\]"
+reset="\[\033[0m\]"
+
+# Change command prompt
+source "${DIRNAME_OF_THIS_SCRIPT}/git-prompt.sh"
+export GIT_PS1_SHOWDIRTYSTATE=1
+# '\u' adds the name of the current user to the prompt
+# '\$(__git_ps1)' adds git-related stuff
+# '\W' adds the name of the current directory
+export PS1="$purple\u@\h$green\$(__git_ps1)$blue \W $ $reset"

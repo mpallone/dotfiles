@@ -1,0 +1,31 @@
+(set-face-attribute 'default nil :family "Menlo" :height 120)
+(set-face-attribute 'font-lock-comment-face nil :foreground "#969896")
+(set-face-attribute 'font-lock-string-face nil :foreground "#B5BD68")
+(set-face-attribute 'font-lock-constant-face nil :foreground "#cc00cc")
+(set-face-attribute 'font-lock-keyword-face nil :foreground "#b294bb")
+(set-face-attribute 'font-lock-builtin-face nil :foreground "#CED1CF")
+(set-face-attribute 'font-lock-type-face nil :foreground "#F0C674")
+(set-face-attribute 'font-lock-function-name-face nil
+                    :foreground "#81A2BE") ;; :weight 'bold)
+(set-face-attribute 'font-lock-variable-name-face nil
+                    :foreground "#ced1cf");; :weight 'bold)
+
+
+(setq default-tab-width 4)
+(setq tab-width 4)
+(setq-default c-basic-offset 4)
+(setq-default indent-tabs-mode nil) ;; use spaces instead of tabs
+
+
+(add-hook 'before-save-hook 'whitespace-cleanup) ;; remove trailing whitespace
+
+;; scroll one line at a time (less "jumpy" than defaults)
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+(setq scroll-step 1) ;; keyboard scroll one line at a time
+
+(setq column-number-mode t) ;; show current column
+
+(setq c-default-style "bsd"
+  c-basic-offset 4)
