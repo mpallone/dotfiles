@@ -35,3 +35,13 @@ export PATH="$HOME/.cargo/bin:$PATH"
 export HISTSIZE=100000
 export HISTFILESIZE=100000
 export HISTTIMEFORMAT="%d/%m/%y %T "
+
+# mpallone@MPALL1ML1 ~ $ sudo lsof -i :3306 | grep mysqld
+# mysqld  122 _mysql   28u  IPv6 0xc4c9ed30b87b1785      0t0  TCP *:mysql (LISTEN)
+#         ^^^
+#         |
+#         Essentially, grab that pid and kill it 
+mac_kill_mysqld() {
+	mysqld_pid=$(sudo lsof -i :3306 | grep mysqld | tr -s ' ' | cut -d ' ' -f 2)
+	sudo kill ${mysqld_pid}
+}
