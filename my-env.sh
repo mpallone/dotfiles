@@ -35,3 +35,8 @@ export PATH="$HOME/.cargo/bin:$PATH"
 export HISTSIZE=100000
 export HISTFILESIZE=100000
 export HISTTIMEFORMAT="%d/%m/%y %T "
+
+
+mcp() {
+    open https://markcpallone.atlassian.net/browse/MCP-$1
+}
