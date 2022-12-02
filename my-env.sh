@@ -1,3 +1,4 @@
+
 #!/bin/bash
 #
 # Set up my environment, for all of my Unix devices.
@@ -45,3 +46,8 @@ mac_kill_mysqld() {
 	mysqld_pid=$(sudo lsof -i :3306 | grep mysqld | tr -s ' ' | cut -d ' ' -f 2)
 	sudo kill ${mysqld_pid}
 }
+
+alias cpgitbranch="git rev-parse --abbrev-ref HEAD | perl -pe 'chomp' | pbcopy"
+
+# Capture packets between docker containers
+alias dockerpcap="docker run --rm --net=host -v $PWD/tcpdump:/tcpdump kaazing/tcpdump"
