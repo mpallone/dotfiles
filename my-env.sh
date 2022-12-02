@@ -15,7 +15,7 @@ PATH=${DIRNAME_OF_THIS_SCRIPT}/../scripts:${PATH}
 
 alias emacs='emacs -nw'
 
-alias cdbudg='cd ~/Dropbox/Documents/budget-project'
+alias cdbudg='cd /Users/mpallone/Dropbox/Documents/money/budget-project'
 alias budg='cdbudg && python budget.py && python reports.py && git commit -a -m "budget.py update"'
 alias rep='cdbudg && python reports.py'
 alias evalbudg='cdbudg && ./evaluate-savings.py && cat savings-tracking.csv && git commit -a -m "evaluate-savings.py update" && echo ""'
@@ -51,3 +51,7 @@ alias cpgitbranch="git rev-parse --abbrev-ref HEAD | perl -pe 'chomp' | pbcopy"
 
 # Capture packets between docker containers
 alias dockerpcap="docker run --rm --net=host -v $PWD/tcpdump:/tcpdump kaazing/tcpdump"
+
+mcp() {
+    open https://markcpallone.atlassian.net/browse/MCP-$1
+}
