@@ -55,3 +55,27 @@ alias dockerpcap="docker run --rm --net=host -v $PWD/tcpdump:/tcpdump kaazing/tc
 mcp() {
     open https://markcpallone.atlassian.net/browse/MCP-$1
 }
+
+# This function opens github in the browser.
+#
+# If the current directory is a git repo, then it will open that repo.
+# Otherwise, it'll look for a fallback URL on the command line. If that
+# fallback URL is present, it will open it. Otherwise, it'll just open
+# github.com 
+open_github() {
+    if git status &>/dev/null; then
+    	# Current directory is a git repo. Open it in browser.
+    	# (Piping to xargs just trims whitespace characters)
+        open `git remote show origin | grep "Fetch URL" | xargs | sed -e 's/Fetch URL://' | xargs`
+    else
+    	# We're not in a git repo
+    	if [ -z "$1" ]; then
+    		# Fallback URL is not on the command line
+    		open "https://github.com"
+	    else
+	    	open $1 
+	    fi
+    fi
+}
+alias gh="open_github"
+alias ghm="open_github https://github.com/mpallone"
