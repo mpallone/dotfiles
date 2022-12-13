@@ -43,8 +43,8 @@ export HISTTIMEFORMAT="%d/%m/%y %T "
 #         |
 #         Essentially, grab that pid and kill it 
 mac_kill_mysqld() {
-	mysqld_pid=$(sudo lsof -i :3306 | grep mysqld | tr -s ' ' | cut -d ' ' -f 2)
-	sudo kill ${mysqld_pid}
+    mysqld_pid=$(sudo lsof -i :3306 | grep mysqld | tr -s ' ' | cut -d ' ' -f 2)
+    sudo kill ${mysqld_pid}
 }
 
 alias cpgitbranch="git rev-parse --abbrev-ref HEAD | perl -pe 'chomp' | pbcopy"
@@ -64,17 +64,17 @@ mcp() {
 # github.com 
 open_github() {
     if git status &>/dev/null; then
-    	# Current directory is a git repo. Open it in browser.
-    	# (Piping to xargs just trims whitespace characters)
+        # Current directory is a git repo. Open it in browser.
+        # (Piping to xargs just trims whitespace characters)
         open `git remote show origin | grep "Fetch URL" | xargs | sed -e 's/Fetch URL://' | xargs`
     else
-    	# We're not in a git repo
-    	if [ -z "$1" ]; then
-    		# Fallback URL is not on the command line
-    		open "https://github.com"
-	    else
-	    	open $1 
-	    fi
+        # We're not in a git repo
+        if [ -z "$1" ]; then
+            # Fallback URL is not on the command line
+            open "https://github.com"
+        else
+            open $1 
+        fi
     fi
 }
 alias gh="open_github"
