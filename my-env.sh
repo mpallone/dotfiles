@@ -66,7 +66,7 @@ open_github() {
     if git status &>/dev/null; then
         # Current directory is a git repo. Open it in browser.
         # (Piping to xargs just trims whitespace characters)
-        open `git remote show origin | grep "Fetch URL" | xargs | sed -e 's/Fetch URL://' | xargs`
+        open "https://"`git remote show origin | grep "Fetch URL" | xargs | sed -e 's/Fetch URL://' | sed -e 's/git@//' | sed -e 's/com:/com\//' | sed -e 's/.git//' | xargs`
     else
         # We're not in a git repo
         if [ -z "$1" ]; then
