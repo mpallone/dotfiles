@@ -79,3 +79,19 @@ open_github() {
 }
 alias gh="open_github"
 alias ghm="open_github https://github.com/mpallone"
+
+
+# Example usage: 
+# 
+#     mpallone@MPALL1ML1 ~ $ lpass ls | grep 'discipline.pds sjc val'
+#     Shared-PenaltyDetermination/discipline.pds sjc val RSO client id & basic auth [id: 3299371871728735068]
+# 
+#     mpallone@MPALL1ML1 ~ $ basic_auth_from_lastpass 3299371871728735068
+# 
+#     <basic auth string is now copied to clipboard> 
+# 
+basic_auth_from_lastpass() {
+    username=$(lpass show $1 --username)
+    password=$(lpass show $1 --password)
+    echo "Basic $(echo -n $username:$password | base64)" | pbcopy
+}
