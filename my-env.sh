@@ -95,3 +95,5 @@ basic_auth_from_lastpass() {
     password=$(lpass show $1 --password)
     echo "Basic $(echo -n $username:$password | base64)" | pbcopy
 }
+
+export LPASS_AGENT_TIMEOUT=57600 # 57600 seconds = 16 hours
