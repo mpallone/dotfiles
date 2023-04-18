@@ -30,6 +30,8 @@ alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
 # Add nand2tetris to path
 export PATH=$PATH:~/Dropbox/documents/nand2tetris/nand2tetris/tools
 
+export PATH=$PATH:/opt/homebrew/bin
+
 # Rust, from https://doc.rust-lang.org/book/ch01-01-installation.html
 export PATH="$HOME/.cargo/bin:$PATH"
 
