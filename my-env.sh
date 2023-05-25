@@ -99,3 +99,14 @@ basic_auth_from_lastpass() {
 }
 
 export LPASS_AGENT_TIMEOUT=57600 # 57600 seconds = 16 hours
+
+# Usage:
+# 
+#     githistory app.yaml
+# 
+#     <prints git history of file> 
+# 
+githistory() {
+    git lg -p -- $1
+}
+alias githist="githistory"
