@@ -25,6 +25,7 @@ alias doc='docs'
 
 alias cdpw='cd ~/Documents/src/repos/personal-website/'
 
+
 alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
 
 # Add nand2tetris to path
@@ -53,6 +54,7 @@ alias currgitbranch="git rev-parse --abbrev-ref HEAD | perl -pe 'chomp'"
 alias currgb="currgitbranch"
 alias cpgitbranch="currgitbranch | pbcopy"
 alias pushcb="git push origin `currgb`"
+alias pcb="pushcb"
 
 # Capture packets between docker containers
 alias dockerpcap="docker run --rm --net=host -v $PWD/tcpdump:/tcpdump kaazing/tcpdump"
