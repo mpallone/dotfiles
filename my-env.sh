@@ -49,7 +49,10 @@ mac_kill_mysqld() {
     sudo kill ${mysqld_pid}
 }
 
-alias cpgitbranch="git rev-parse --abbrev-ref HEAD | perl -pe 'chomp' | pbcopy"
+alias currgitbranch="git rev-parse --abbrev-ref HEAD | perl -pe 'chomp'"
+alias currgb="currgitbranch"
+alias cpgitbranch="currgitbranch | pbcopy"
+alias pushcb="git push origin `currgb`"
 
 # Capture packets between docker containers
 alias dockerpcap="docker run --rm --net=host -v $PWD/tcpdump:/tcpdump kaazing/tcpdump"
@@ -135,3 +138,5 @@ alias jwth="decode_jwt 1"
 
 # Decode JWT Payload
 alias jwtp="decode_jwt 2"
+
+alias mkpass="lpass generate --no-symbols UNIQUEID 24"
