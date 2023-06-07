@@ -103,6 +103,15 @@ basic_auth_from_lastpass() {
     echo "Basic $(echo -n $username:$password | base64)" | pbcopy
 }
 
+# Example usage
+# 
+#     mpallone@MPALL1ML2 (main *) dotfiles $ sha_password mypassword
+#     89e01536ac207279409d4de1e5253e01f4a1769e696db0d6062ca9b8f56767c8
+# 
+sha_password() {
+    echo -n $1 | shasum -a 256 | cut -d " " -f1
+}
+
 export LPASS_AGENT_TIMEOUT=57600 # 57600 seconds = 16 hours
 
 # Usage:
