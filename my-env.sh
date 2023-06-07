@@ -151,3 +151,31 @@ alias jwth="decode_jwt 1"
 alias jwtp="decode_jwt 2"
 
 alias mkpass="lpass generate --no-symbols UNIQUEID 24"
+
+# Given a username, print:
+# 
+# - a brand new password
+# - a hash of that password
+# - a basic auth string
+#
+# Example usage: 
+# 
+#     mpallone@MPALL1ML2 (main *) dotfiles $ new_password username
+#     password:
+#     ygNXwKNzTFSIIVk03olcw4nO
+#     hashedPassword:
+#     eeb4e8375fbe5fa713949c850de4ada6e88bf9a3317159a43e39e4fd429bf79e
+#     basicAuthString:
+#     Basic dXNlcm5hbWU6eWdOWHdLTnpURlNJSVZrMDNvbGN3NG5P
+new_password() {
+    username=$1
+    password=$(lpass generate --no-symbols UNIQUEID 24)
+    hashedPassword=$(echo -n $password | shasum -a 256 | cut -d " " -f1)
+    basicAuthString="Basic $(echo -n $username:$password | base64)"
+    echo "password:"
+    echo $password
+    echo "hashedPassword:"
+    echo $hashedPassword
+    echo "basicAuthString:"
+    echo $basicAuthString
+}
