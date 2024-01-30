@@ -53,8 +53,8 @@ mac_kill_mysqld() {
 alias currgitbranch="git rev-parse --abbrev-ref HEAD | perl -pe 'chomp'"
 alias currgb="currgitbranch"
 alias cpgitbranch="currgitbranch | pbcopy"
+alias pullcb="git pull origin `currgb`"
 alias pushcb="git push origin `currgb`"
-alias pcb="pushcb"
 
 # Capture packets between docker containers
 alias dockerpcap="docker run --rm --net=host -v $PWD/tcpdump:/tcpdump kaazing/tcpdump"
@@ -84,8 +84,8 @@ open_github() {
         fi
     fi
 }
-alias gh="open_github"
-alias ghm="open_github https://github.com/mpallone"
+alias gh="open_github &"
+alias ghm="open_github https://github.com/mpallone &"
 
 
 # Example usage: 
