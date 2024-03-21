@@ -179,3 +179,5 @@ new_password() {
     echo "basicAuthString:"
     echo $basicAuthString
 }
+
+alias myenv="cd ~/src/mpallone/dotfiles"
