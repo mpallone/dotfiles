@@ -103,6 +103,39 @@ basic_auth_from_lastpass() {
     echo "Basic $(echo -n $username:$password | base64)" | pbcopy
 }
 
+# Example usage: 
+# 
+#     mpallone@MLSEAG10227W2 (main *) dotfiles $ keeper search wiUlDWTO6kkuUWDTj4YP7w
+#       #  Record UID              Type    Title                                      Description
+#     ---  ----------------------  ------  -----------------------------------------  -------------
+#       1  wiUlDWTO6kkuUWDTj4YP7w  login   textevaluation.chatmoderator admin aut...  admin
+#     
+#     mpallone@MLSEAG10227W2 (main *) dotfiles $ username_from_keeper wiUlDWTO6kkuUWDTj4YP7w
+#     admin
+username_from_keeper() {
+    keeper get $1 \
+        | grep '(login)' \
+        | awk -F ':' '{print $2}' \
+        | xargs
+}
+
+# Example usage: 
+# 
+#     mpallone@MLSEAG10227W2 (main *) dotfiles $ keeper search wiUlDWTO6kkuUWDTj4YP7w
+#       #  Record UID              Type    Title                                      Description
+#     ---  ----------------------  ------  -----------------------------------------  -------------
+#       1  wiUlDWTO6kkuUWDTj4YP7w  login   textevaluation.chatmoderator admin aut...  admin
+# 
+#     mpallone@MPALL1ML1 ~ $ basic_auth_from_keeper wiUlDWTO6kkuUWDTj4YP7w
+# 
+#     <basic auth string is now copied to clipboard> 
+# 
+basic_auth_from_keeper() {
+    username=$(username_from_keeper $1)
+    password=$(keeper get $1 --format password)
+    echo "Basic $(echo -n $username:$password | base64)" | pbcopy
+}
+
 # Example usage
 # 
 #     mpallone@MPALL1ML2 (main *) dotfiles $ sha_password mypassword
