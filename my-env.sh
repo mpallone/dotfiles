@@ -201,8 +201,13 @@ alias mkpass="lpass generate --no-symbols UNIQUEID 24"
 #     basicAuthString:
 #     Basic dXNlcm5hbWU6eWdOWHdLTnpURlNJSVZrMDNvbGN3NG5P
 new_password() {
+    echo "Ensure 'keeper' is logged in or this might hang"
     username=$1
-    password=$(lpass generate --no-symbols UNIQUEID 24)
+    echo "generating new password..."
+    # password=$(lpass generate --no-symbols UNIQUEID 24)
+    # password should contain 0 symbols so it plays nice with the shell
+    password=$(keeper gen -c 24 --symbols 0 --format json | jq '.[0].password' | tr -d '"')
+    echo "done."
     hashedPassword=$(echo -n $password | shasum -a 256 | cut -d " " -f1)
     basicAuthString="Basic $(echo -n $username:$password | base64)"
     echo "password:"
