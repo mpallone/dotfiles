@@ -1,0 +1,4 @@
+[
+	{ "keys": ["super+k", "super+p"], "command": "set_mark" },
+	{ "keys": ["super+k", "super+a"], "command": "select_to_mark" }
+]

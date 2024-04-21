@@ -39,6 +39,8 @@ To set up unix env on new computer, do:
 
 13. Set up the 'subl' command.
 
-14. Set up intellij idea CLI: https://www.jetbrains.com/help/idea/working-with-the-ide-features-from-command-line.html 
+14. Follow the instructions in the README of the sublime-text directory
 
-15. Load the iterm profile I have saved in iCloud
+15. Set up intellij idea CLI: https://www.jetbrains.com/help/idea/working-with-the-ide-features-from-command-line.html 
+
+16. Load the iterm profile I have saved in iCloud

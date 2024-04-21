@@ -1,4 +1,3 @@
-
 #!/bin/bash
 #
 # Set up my environment, for all of my Unix devices.
@@ -218,4 +217,4 @@ new_password() {
     echo $basicAuthString
 }
 
-alias myenv="cd ~/src/mpallone/dotfiles"
+alias myenv="cd ~/src/mpallone/dotfiles && subl ."
