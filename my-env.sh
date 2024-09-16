@@ -1,4 +1,3 @@
-
 #!/bin/bash
 #
 # Set up my environment, for all of my Unix devices.
@@ -12,6 +11,8 @@ source ${DIRNAME_OF_THIS_SCRIPT}/bash_profile_udacity_git
 
 # Add my scripts to my path
 PATH=${DIRNAME_OF_THIS_SCRIPT}/../scripts:${PATH}
+
+PATH=/usr/local/bin:${PATH}
 
 alias emacs='emacs -nw'
 
@@ -221,4 +222,4 @@ new_password() {
     echo $basicAuthString
 }
 
-alias myenv="cd ~/src/mpallone/dotfiles"
+alias myenv="cd ~/src/mpallone/dotfiles && subl ."
