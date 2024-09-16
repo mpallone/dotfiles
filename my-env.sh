@@ -102,6 +102,7 @@ basic_auth_from_lastpass() {
     password=$(lpass show $1 --password)
     echo "Basic $(echo -n $username:$password | base64)" | pbcopy
 }
+export basic_auth_from_lastpass
 
 # Example usage: 
 # 
@@ -118,6 +119,7 @@ username_from_keeper() {
         | awk -F ':' '{print $2}' \
         | xargs
 }
+export username_from_keeper
 
 # Example usage: 
 # 
@@ -135,6 +137,7 @@ basic_auth_from_keeper() {
     password=$(keeper get $1 --format password)
     echo "Basic $(echo -n $username:$password | base64)" | pbcopy
 }
+export basic_auth_from_keeper
 
 # Example usage
 # 
