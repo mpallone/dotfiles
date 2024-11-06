@@ -120,7 +120,7 @@ username_from_keeper() {
         | awk -F ':' '{print $2}' \
         | xargs
 }
-export username_from_keeper
+export -f username_from_keeper
 
 # Example usage: 
 # 
@@ -138,7 +138,7 @@ basic_auth_from_keeper() {
     password=$(keeper get $1 --format password)
     echo "Basic $(echo -n $username:$password | base64)" | pbcopy
 }
-export basic_auth_from_keeper
+export -f basic_auth_from_keeper
 
 # Example usage
 # 
