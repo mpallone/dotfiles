@@ -21,7 +21,7 @@ alias budg='cdbudg && python budget.py && python reports.py && git commit -a -m 
 alias rep='cdbudg && python reports.py'
 alias evalbudg='cdbudg && ./evaluate-savings.py && cat savings-tracking.csv && git commit -a -m "evaluate-savings.py update" && echo ""'
 
-alias docs='cd ~/Library/Mobile Documents/com~apple~CloudDocs'
+alias docs='cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs'
 alias doc='docs'
 
 alias cdpw='cd ~/Documents/src/repos/personal-website/'
