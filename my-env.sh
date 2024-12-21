@@ -223,3 +223,7 @@ new_password() {
 }
 
 alias myenv="cd ~/src/mpallone/dotfiles && subl ."
+
+# Silence the "default shell is ZSH" stuff that OSX prints
+# when you open a new shell.
+export BASH_SILENCE_DEPRECATION_WARNING=1
