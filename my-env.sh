@@ -12,6 +12,8 @@ source ${DIRNAME_OF_THIS_SCRIPT}/bash_profile_udacity_git
 # Add my scripts to my path
 PATH=${DIRNAME_OF_THIS_SCRIPT}/../scripts:${PATH}
 
+PATH=~/bin:${PATH}
+
 PATH=/usr/local/bin:${PATH}
 
 alias emacs='emacs -nw'
