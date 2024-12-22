@@ -27,7 +27,6 @@ alias doc='docs'
 alias cdpw='cd ~/Documents/src/repos/personal-website/'
 
 
-alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
 
 # Add nand2tetris to path
 export PATH=$PATH:~/Dropbox/documents/nand2tetris/nand2tetris/tools
@@ -227,3 +226,5 @@ alias myenv="cd ~/src/mpallone/dotfiles && subl ."
 # Silence the "default shell is ZSH" stuff that OSX prints
 # when you open a new shell.
 export BASH_SILENCE_DEPRECATION_WARNING=1
+
+alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
