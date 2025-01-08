@@ -223,3 +223,8 @@ new_password() {
 }
 
 alias myenv="cd ~/src/mpallone/dotfiles && subl ."
+
+# Before running 'runredpanda, set RP_BROKEN_URLS to a comma-delimited list of broker URLS, eg: '
+# 
+#     export RP_BROKER_URLS=b-3.mykakfaabcd1234.vx1ude.c6.kafka.us-west-2.amazonaws.com:9094,b-5.mykakfaabcd1234.vx1ude.c6.kafka.us-west-2.amazonaws.com:9094,b-8.mykakfaabcd1234.vx1ude.c6.kafka.us-west-2.amazonaws.com:9094
+alias runredpanda="docker run -p 8090:8080 -e KAFKA_BROKERS=$RP_BROKER_URLS -e KAFKA_TLS_ENABLED=true -e KAFKA_SASL_ENABLED=false docker.redpanda.com/redpandadata/console:latest "
