@@ -21,13 +21,12 @@ alias budg='cdbudg && python budget.py && python reports.py && git commit -a -m 
 alias rep='cdbudg && python reports.py'
 alias evalbudg='cdbudg && ./evaluate-savings.py && cat savings-tracking.csv && git commit -a -m "evaluate-savings.py update" && echo ""'
 
-alias docs='cd ~/Dropbox/Documents'
+alias docs='cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs'
 alias doc='docs'
 
 alias cdpw='cd ~/Documents/src/repos/personal-website/'
 
 
-alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
 
 # Add nand2tetris to path
 export PATH=$PATH:~/Dropbox/documents/nand2tetris/nand2tetris/tools
@@ -223,6 +222,14 @@ new_password() {
 }
 
 alias myenv="cd ~/src/mpallone/dotfiles && subl ."
+
+
+# Silence the "default shell is ZSH" stuff that OSX prints
+# when you open a new shell.
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
+alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
+
 
 # Before running 'runredpanda, set RP_BROKEN_URLS to a comma-delimited list of broker URLS, eg: '
 # 
