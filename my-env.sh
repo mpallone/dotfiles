@@ -188,6 +188,10 @@ alias jwtp="decode_jwt 2"
 
 alias mkpass="lpass generate --no-symbols UNIQUEID 24"
 
+# Dumps all files (recursively) in the current directory, including their filenames.
+# Useful for feeding contents of a directory into chatgpt. 
+alias cate="grep -rH '' ."
+
 # Given a username, print:
 # 
 # - a brand new password
@@ -234,4 +238,4 @@ alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
 # Before running 'runredpanda, set RP_BROKEN_URLS to a comma-delimited list of broker URLS, eg: '
 # 
 #     export RP_BROKER_URLS=b-3.mykakfaabcd1234.vx1ude.c6.kafka.us-west-2.amazonaws.com:9094,b-5.mykakfaabcd1234.vx1ude.c6.kafka.us-west-2.amazonaws.com:9094,b-8.mykakfaabcd1234.vx1ude.c6.kafka.us-west-2.amazonaws.com:9094
-alias runredpanda="docker run -p 8090:8080 -e KAFKA_BROKERS=$RP_BROKER_URLS -e KAFKA_TLS_ENABLED=true -e KAFKA_SASL_ENABLED=false docker.redpanda.com/redpandadata/console:latest "
+alias runredpanda="docker run -p 8090:8080 -e KAFKA_BROKERS=\$RP_BROKER_URLS -e KAFKA_TLS_ENABLED=true -e KAFKA_SASL_ENABLED=false docker.redpanda.com/redpandadata/console:latest"
