@@ -50,11 +50,20 @@ mac_kill_mysqld() {
     sudo kill ${mysqld_pid}
 }
 
-alias currgitbranch="git rev-parse --abbrev-ref HEAD | perl -pe 'chomp'"
+# Original aliases (caused errors in non-git dirs):
+# alias currgitbranch="git rev-parse --abbrev-ref HEAD | perl -pe 'chomp'"
+# alias pullcb="git pull origin `currgb`"
+# alias pushcb="git push origin `currgb`"
+
+# Refactored 2026-01-19: Converted to function to prevent execution at shell startup.
+# This fixes "fatal: not a git repository" errors when opening non-git folders.
+currgitbranch() {
+    git rev-parse --abbrev-ref HEAD | perl -pe 'chomp'
+}
 alias currgb="currgitbranch"
 alias cpgitbranch="currgitbranch | pbcopy"
-alias pullcb="git pull origin `currgb`"
-alias pushcb="git push origin `currgb`"
+alias pullcb='git pull origin $(currgitbranch)'
+alias pushcb='git push origin $(currgitbranch)'
 
 # Capture packets between docker containers
 alias dockerpcap="docker run --rm --net=host -v $PWD/tcpdump:/tcpdump kaazing/tcpdump"
