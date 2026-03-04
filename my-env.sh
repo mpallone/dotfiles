@@ -251,4 +251,4 @@ alias runredpanda="docker run -p 8090:8080 -e KAFKA_BROKERS=\$RP_BROKER_URLS -e 
 
 
 # "Defaulting to Gemini 3 Flash is the recommended path; Flash outperforms 3 Pro in practice (less looping, clearer reasoning). If it dips, swap to 3 Pro. Goal is “no need to choose,” with hardware switching"
-export GEMINI_MODEL="gemini-3-flash-preview
+export GEMINI_MODEL="gemini-3-flash-preview"
