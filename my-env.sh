@@ -248,3 +248,7 @@ alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
 # 
 #     export RP_BROKER_URLS=b-3.mykakfaabcd1234.vx1ude.c6.kafka.us-west-2.amazonaws.com:9094,b-5.mykakfaabcd1234.vx1ude.c6.kafka.us-west-2.amazonaws.com:9094,b-8.mykakfaabcd1234.vx1ude.c6.kafka.us-west-2.amazonaws.com:9094
 alias runredpanda="docker run -p 8090:8080 -e KAFKA_BROKERS=\$RP_BROKER_URLS -e KAFKA_TLS_ENABLED=true -e KAFKA_SASL_ENABLED=false docker.redpanda.com/redpandadata/console:latest"
+
+
+# "Defaulting to Gemini 3 Flash is the recommended path; Flash outperforms 3 Pro in practice (less looping, clearer reasoning). If it dips, swap to 3 Pro. Goal is “no need to choose,” with hardware switching"
+export GEMINI_MODEL="gemini-3-flash-preview
