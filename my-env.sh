@@ -252,3 +252,50 @@ alias runredpanda="docker run -p 8090:8080 -e KAFKA_BROKERS=\$RP_BROKER_URLS -e 
 
 # "Defaulting to Gemini 3 Flash is the recommended path; Flash outperforms 3 Pro in practice (less looping, clearer reasoning). If it dips, swap to 3 Pro. Goal is “no need to choose,” with hardware switching"
 export GEMINI_MODEL="gemini-3-flash-preview"
+
+# geminip: A quiet wrapper for Gemini CLI that outputs only the final answer.
+# It uses headless JSON mode to bypass "I will search..." metadata and server logs,
+# extracting the response with 'jq' and rendering the result with 'glow'.
+# Usage: geminip <your prompt without quotes>
+geminip() {
+  # 1. Check mandatory dependencies
+  if ! command -v gemini &> /dev/null; then
+    echo "Error: 'gemini' CLI is not installed."
+    return 1
+  fi
+  if ! command -v jq &> /dev/null; then
+    echo "Error: 'jq' is required for JSON parsing. Install with 'brew install jq'."
+    return 1
+  fi
+
+  # 2. Check for glow (Optional but recommended for formatting)
+  local use_glow=false
+  if command -v glow &> /dev/null; then
+    use_glow=true
+  fi
+
+  # 3. Join arguments into a prompt string (No quotes needed!)
+  local prompt="$*"
+  if [[ -z "$prompt" ]]; then
+    echo "Usage: geminip <your prompt here>"
+    return 1
+  fi
+
+  # 4. Execute: Headless + JSON + Extract Response + Suppress stderr
+  local response
+  response=$(gemini --output-format json -p "$prompt" 2>/dev/null | jq -r '.response' 2>/dev/null)
+
+  # 5. Handle empty or failed responses
+  if [[ -z "$response" || "$response" == "null" ]]; then
+    echo "Error: Gemini returned an empty response or failed."
+    return 1
+  fi
+
+  # 6. Final Output: Use glow if available and in a terminal
+  if [[ -t 1 ]] && [[ "$use_glow" = true ]]; then
+    echo "$response" | glow
+  else
+    echo "$response"
+  fi
+}
+
