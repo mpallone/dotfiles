@@ -97,23 +97,7 @@ alias gh="open_github &"
 alias ghm="open_github https://github.com/mpallone &"
 
 
-# Example usage: 
-# 
-#     mpallone@MPALL1ML1 ~ $ lpass ls | grep 'discipline.pds sjc val'
-#     Shared-PenaltyDetermination/discipline.pds sjc val RSO client id & basic auth [id: 3299371871728735068]
-# 
-#     mpallone@MPALL1ML1 ~ $ basic_auth_from_lastpass 3299371871728735068
-# 
-#     <basic auth string is now copied to clipboard> 
-# 
-basic_auth_from_lastpass() {
-    username=$(lpass show $1 --username)
-    password=$(lpass show $1 --password)
-    echo "Basic $(echo -n $username:$password | base64)" | pbcopy
-}
-export basic_auth_from_lastpass
-
-# Example usage: 
+# Example usage:
 # 
 #     mpallone@MLSEAG10227W2 (main *) dotfiles $ keeper search wiUlDWTO6kkuUWDTj4YP7w
 #       #  Record UID              Type    Title                                      Description
@@ -157,8 +141,6 @@ sha_password() {
     echo -n $1 | shasum -a 256 | cut -d " " -f1
 }
 
-export LPASS_AGENT_TIMEOUT=57600 # 57600 seconds = 16 hours
-
 # Usage:
 # 
 #     githistory app.yaml
@@ -195,8 +177,6 @@ alias jwth="decode_jwt 1"
 # Decode JWT Payload
 alias jwtp="decode_jwt 2"
 
-alias mkpass="lpass generate --no-symbols UNIQUEID 24"
-
 # Dumps all files (recursively) in the current directory, including their filenames.
 # Useful for feeding contents of a directory into chatgpt. 
 alias cate="grep -rH '' ."
@@ -220,7 +200,6 @@ new_password() {
     echo "Ensure 'keeper' is logged in or this might hang"
     username=$1
     echo "generating new password..."
-    # password=$(lpass generate --no-symbols UNIQUEID 24)
     # password should contain 0 symbols so it plays nice with the shell
     password=$(keeper gen -c 24 --symbols 0 --format json | jq '.[0].password' | tr -d '"')
     echo "done."
