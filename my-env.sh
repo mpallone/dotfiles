@@ -299,3 +299,6 @@ geminip() {
   fi
 }
 
+
+
+export PATH=$PATH:~/.local/bin
