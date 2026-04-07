@@ -49,3 +49,11 @@
 ### Context-switching aid
 - Start interactive responses with a **bold header** summarizing what I asked
 - I context-switch a lot and may not remember the topic when I return
+
+## Coding 
+- Make branches/PRs easy to review by splitting them into logical, separate pieces
+  - DON'T: create one branch with a TON of code in it
+  - DO: create multiple branches so that
+- Include javadoc/Python docstrings for non-trivial methods/functions
+  - DON'T: add documentation that repeats the code
+  - DO: document inputs, outputs, and include examples
