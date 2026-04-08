@@ -86,8 +86,8 @@ open_github() {
         fi
     fi
 }
-alias gh="open_github &"
-alias ghm="open_github https://github.com/mpallone &"
+alias gho="open_github &"
+alias ghom="open_github https://github.com/mpallone &"
 
 
 # Example usage: 
