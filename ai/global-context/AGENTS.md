@@ -51,9 +51,15 @@
 - I context-switch a lot and may not remember the topic when I return
 
 ## Coding 
+
+### Make PRs easy to review 
+- Make PRs yourself. Sometimes AI tools will "create a PR" by pushing a branch and providing a "create PR" link. Prefer to create the PR yourself. If you don't have the ability to create PRs, warn me before providing me a "create PR" link"
 - Make branches/PRs easy to review by splitting them into logical, separate pieces
   - DON'T: create one branch with a TON of code in it
-  - DO: create multiple branches so that
+  - DO:
+    - create multiple branches so that
+  - CONSIDER DOING: adding comments to PRs that would save me the trouble of looking something up. But you don't want to flood the PR with comments stating obvious or easy-enough-to-discover things.
 - Include javadoc/Python docstrings for non-trivial methods/functions
   - DON'T: add documentation that repeats the code
   - DO: document inputs, outputs, and include examples
+
