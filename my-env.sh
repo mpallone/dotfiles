@@ -52,11 +52,20 @@ mac_kill_mysqld() {
     sudo kill ${mysqld_pid}
 }
 
-alias currgitbranch="git rev-parse --abbrev-ref HEAD | perl -pe 'chomp'"
+# Original aliases (caused errors in non-git dirs):
+# alias currgitbranch="git rev-parse --abbrev-ref HEAD | perl -pe 'chomp'"
+# alias pullcb="git pull origin `currgb`"
+# alias pushcb="git push origin `currgb`"
+
+# Refactored 2026-01-19: Converted to function to prevent execution at shell startup.
+# This fixes "fatal: not a git repository" errors when opening non-git folders.
+currgitbranch() {
+    git rev-parse --abbrev-ref HEAD | perl -pe 'chomp'
+}
 alias currgb="currgitbranch"
 alias cpgitbranch="currgitbranch | pbcopy"
-alias pullcb="git pull origin `currgb`"
-alias pushcb="git push origin `currgb`"
+alias pullcb='git pull origin $(currgitbranch)'
+alias pushcb='git push origin $(currgitbranch)'
 
 # Capture packets between docker containers
 alias dockerpcap="docker run --rm --net=host -v $PWD/tcpdump:/tcpdump kaazing/tcpdump"
@@ -190,6 +199,10 @@ alias jwtp="decode_jwt 2"
 
 alias mkpass="lpass generate --no-symbols UNIQUEID 24"
 
+# Dumps all files (recursively) in the current directory, including their filenames.
+# Useful for feeding contents of a directory into chatgpt. 
+alias cate="grep -rH '' ."
+
 # Given a username, print:
 # 
 # - a brand new password
@@ -225,8 +238,69 @@ new_password() {
 
 alias myenv="cd ~/src/mpallone/dotfiles && subl ."
 
+
 # Silence the "default shell is ZSH" stuff that OSX prints
 # when you open a new shell.
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
 alias subl='/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl'
+
+
+# Before running 'runredpanda, set RP_BROKEN_URLS to a comma-delimited list of broker URLS, eg: '
+# 
+#     export RP_BROKER_URLS=b-3.mykakfaabcd1234.vx1ude.c6.kafka.us-west-2.amazonaws.com:9094,b-5.mykakfaabcd1234.vx1ude.c6.kafka.us-west-2.amazonaws.com:9094,b-8.mykakfaabcd1234.vx1ude.c6.kafka.us-west-2.amazonaws.com:9094
+alias runredpanda="docker run -p 8090:8080 -e KAFKA_BROKERS=\$RP_BROKER_URLS -e KAFKA_TLS_ENABLED=true -e KAFKA_SASL_ENABLED=false docker.redpanda.com/redpandadata/console:latest"
+
+
+# "Defaulting to Gemini 3 Flash is the recommended path; Flash outperforms 3 Pro in practice (less looping, clearer reasoning). If it dips, swap to 3 Pro. Goal is “no need to choose,” with hardware switching"
+export GEMINI_MODEL="gemini-3-flash-preview"
+
+# geminip: A quiet wrapper for Gemini CLI that outputs only the final answer.
+# It uses headless JSON mode to bypass "I will search..." metadata and server logs,
+# extracting the response with 'jq' and rendering the result with 'glow'.
+# Usage: geminip <your prompt without quotes>
+geminip() {
+  # 1. Check mandatory dependencies
+  if ! command -v gemini &> /dev/null; then
+    echo "Error: 'gemini' CLI is not installed."
+    return 1
+  fi
+  if ! command -v jq &> /dev/null; then
+    echo "Error: 'jq' is required for JSON parsing. Install with 'brew install jq'."
+    return 1
+  fi
+
+  # 2. Check for glow (Optional but recommended for formatting)
+  local use_glow=false
+  if command -v glow &> /dev/null; then
+    use_glow=true
+  fi
+
+  # 3. Join arguments into a prompt string (No quotes needed!)
+  local prompt="$*"
+  if [[ -z "$prompt" ]]; then
+    echo "Usage: geminip <your prompt here>"
+    return 1
+  fi
+
+  # 4. Execute: Headless + JSON + Extract Response + Suppress stderr
+  local response
+  response=$(gemini --output-format json -p "$prompt" 2>/dev/null | jq -r '.response' 2>/dev/null)
+
+  # 5. Handle empty or failed responses
+  if [[ -z "$response" || "$response" == "null" ]]; then
+    echo "Error: Gemini returned an empty response or failed."
+    return 1
+  fi
+
+  # 6. Final Output: Use glow if available and in a terminal
+  if [[ -t 1 ]] && [[ "$use_glow" = true ]]; then
+    echo "$response" | glow
+  else
+    echo "$response"
+  fi
+}
+
+
+
+export PATH=$PATH:~/.local/bin

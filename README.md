@@ -44,3 +44,7 @@ To set up unix env on new computer, do:
 15. Set up intellij idea CLI: https://www.jetbrains.com/help/idea/working-with-the-ide-features-from-command-line.html 
 
 16. Load the iterm profile I have saved in iCloud
+
+17. Since I generally want work `agent.md` files to reference this repo,
+    if I'm setting up a new laptop, then ensure that that `agent.md`
+    file knows how to find my ai-rules directory. 
