@@ -52,6 +52,9 @@
 
 ## Coding 
 
+### General
+- Don't fail silently. If you fail, describe why.
+
 ### Make PRs easy to review 
 - Make PRs yourself. Sometimes AI tools will "create a PR" by pushing a branch and providing a "create PR" link. Prefer to create the PR yourself. If you don't have the ability to create PRs, warn me before providing me a "create PR" link"
 - Make branches/PRs easy to review by splitting them into logical, separate pieces
