@@ -57,7 +57,8 @@
 - Make branches/PRs easy to review by splitting them into logical, separate pieces
   - DON'T: create one branch with a TON of code in it
   - DO:
-    - create multiple branches so that
+    - include how you'll split work into multiple PRs/branches in plans you create
+    - include PR comments explaining the high level goals of the PR, and anything the reader needs to know to approve it without going "hunting" for details necessary to grok the PR
   - CONSIDER DOING: adding comments to PRs that would save me the trouble of looking something up. But you don't want to flood the PR with comments stating obvious or easy-enough-to-discover things.
 - Include javadoc/Python docstrings for non-trivial methods/functions
   - DON'T: add documentation that repeats the code
