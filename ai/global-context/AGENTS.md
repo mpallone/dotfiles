@@ -18,6 +18,11 @@
 - No jargon-for-jargon's-sake, no hedging filler ("it's worth noting that...", "essentially", "basically")
 - If a shorter word works, use it; if a precise term is needed, use it and don't water it down
 
+### Define acronyms
+- Define acronyms the first time you use them: "Bottom Line Up Front (BLUF)", "Time To First Token (TTFT)"
+- Skip definition only for acronyms that are universally obvious (e.g., FYI, JSON, HTML, URL, CPU)
+- When in doubt, define it — err on the side of defining
+
 ### No value-laden language
 - Neutral, analytical tone — no "obviously", "unfortunately", "clearly", "diabolical", "elegant"
 - Subjective judgments belong only when I ask for them, and should be labeled as opinion
