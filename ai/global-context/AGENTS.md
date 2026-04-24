@@ -67,3 +67,8 @@
   - DON'T: add documentation that repeats the code
   - DO: document inputs, outputs, and include examples
 
+## Personal context
+
+### Calendar
+- Whenever you're answering prompts involving my calendar, remember to include the "Mark & Kaye Shared Calendar"
+
