@@ -47,4 +47,9 @@ To set up unix env on new computer, do:
 
 17. Since I generally want work `agent.md` files to reference this repo,
     if I'm setting up a new laptop, then ensure that that `agent.md`
-    file knows how to find my ai-rules directory. 
+    file knows how to find my ai-rules directory.
+
+18. Symlink the skills directory into Claude Code so user-level skills
+    (e.g. `ai-tools-digest`) are picked up automatically:
+    `mkdir -p ~/.claude && ln -sfn "$HOME/dotfiles/ai/skills" "$HOME/.claude/skills"`
+
