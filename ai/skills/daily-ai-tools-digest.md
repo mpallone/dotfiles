@@ -29,6 +29,7 @@ Primary (vendor blogs, official changelogs):
 - Windsurf / Codeium changelog
 - OpenAI blog and changelog
 - Google DeepMind blog
+- Hugging Face
 
 Practitioner commentary:
 - Simon Willison (simonwillison.net)
