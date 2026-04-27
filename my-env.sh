@@ -236,7 +236,7 @@ new_password() {
     echo $basicAuthString
 }
 
-alias myenv="cd ~/src/mpallone/dotfiles && subl ."
+alias myenv="cd ~/src/mpallone/dotfiles && pwd"
 
 
 # Silence the "default shell is ZSH" stuff that OSX prints
