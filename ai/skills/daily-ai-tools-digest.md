@@ -118,7 +118,7 @@ Examples of BAD headlines (rewrite these):
 - "Insights from large-scale evaluation"
 
 - **Source:** [publication / author]
-- **Link:** [primary URL]
+- **Link:** the primary source URL, rendered per the HTML rules below (in HTML output, this MUST be an `<a href="URL">descriptive label</a>` — never the bare URL, never the literal text `[primary URL]` or any square-bracketed placeholder).
 - **TL;DR:** Plain-English finding in 1 sentence. What is true now that
   the reader didn't know yesterday? No methodology, no statistics, no
   jargon. If the source uses academic terms, translate them.
@@ -164,6 +164,12 @@ Invalid (skip):
 - **Skipped:** "N funding posts, M leaderboard updates, K hype takes."
 - **Coverage gaps:** sources that errored, were blocked by robots.txt, or
   were paywalled.
+- **Inaccessible links:** URLs you tried to follow but couldn't (fetch
+  failed, 403, paywalled, blocked, timed out). For each: the URL
+  (clickable), the failure mode in 2-3 words, and one clause on what you
+  were trying to learn or verify from it. Example: "example.com/post —
+  403 — wanted to confirm the claimed n=500 eval size." Omit the bullet
+  if empty.
 
 ## Style rules
 
@@ -214,7 +220,7 @@ HTML rules:
 - Inline minimal styling only where Gmail strips defaults: e.g., set a
   `style="margin: 0 0 0.5em 0"` on `<p>` if spacing collapses. Do NOT include
   `<style>` blocks or external CSS — Gmail strips them.
-- Make links clickable (`<a href="...">label</a>`), don't just paste raw URLs.
+- Every URL in the output MUST be a clickable `<a href="URL">label</a>`. This applies to the Link field of every item, every URL under Candidate sources, every URL in Inaccessible links, and every URL anywhere else. Never emit a bare URL, never emit `[URL]` or `[primary URL]` or any other square-bracketed markdown-style placeholder — that template syntax belongs to this prompt, not the rendered HTML. The label should be the article/page title or the domain, not the URL itself.
 - Escape `<`, `>`, `&` inside any quoted text or code samples.
 
 The draft should be readable as-is — I may read it directly from drafts
