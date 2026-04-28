@@ -200,8 +200,26 @@ Invalid (skip):
 
 ## Delivery
 Create a Gmail draft addressed to mark.c.pallone@gmail.com via the Gmail
-connector. Subject line as specified above. Body as markdown.
+connector. Subject line as specified above. Body as HTML so it renders in
+Gmail without me looking at raw markdown syntax.
+
+HTML rules:
+- Set the message MIME type to text/html (Gmail connector parameter, usually
+  `contentType: "text/html"` or equivalent — check the connector's schema).
+- Render headings as `<h2>`/`<h3>`, lists as `<ul><li>`, links as `<a href>`,
+  code/version strings as `<code>`, and use `<strong>` for the bold field
+  labels (Source, Link, TL;DR, etc.).
+- Wrap each item's fields in a `<ul>` so they render as a proper bulleted
+  list, not a wall of `<br>` tags.
+- Inline minimal styling only where Gmail strips defaults: e.g., set a
+  `style="margin: 0 0 0.5em 0"` on `<p>` if spacing collapses. Do NOT include
+  `<style>` blocks or external CSS — Gmail strips them.
+- Make links clickable (`<a href="...">label</a>`), don't just paste raw URLs.
+- Escape `<`, `>`, `&` inside any quoted text or code samples.
+
 The draft should be readable as-is — I may read it directly from drafts
 without sending.
-If draft creation fails, save the digest to ~/digests/YYYY-MM-DD.md and
-report the error in the next run's coverage gaps.
+
+If draft creation fails, save the digest to ~/digests/YYYY-MM-DD.md as
+markdown (markdown is the right format for the local file) and report the
+error in the next run's coverage gaps.
