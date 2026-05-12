@@ -32,19 +32,23 @@ To set up unix env on new computer, do:
    into the new machine's .emacs file.
    If one doesn't exist, just type
    `cp dot_emacs ~/.emacs`
-   
-11. Set up Sublime Text keybinds.
 
-12. Set up git diff highlighting: https://stackoverflow.com/questions/5326008/highlight-changed-lines-and-changed-bytes-in-each-changed-line/15149253#15149253  / https://stackoverflow.com/a/55891251 
+11. Symlink `dot_vimrc` to `~/.vimrc`.
+    From the dotfiles repo root:
+    `ln -s "$(pwd)/dot_vimrc" ~/.vimrc`
 
-13. Set up the 'subl' command.
+12. Set up Sublime Text keybinds.
 
-14. Follow the instructions in the README of the sublime-text directory
+13. Set up git diff highlighting: https://stackoverflow.com/questions/5326008/highlight-changed-lines-and-changed-bytes-in-each-changed-line/15149253#15149253  / https://stackoverflow.com/a/55891251 
 
-15. Set up intellij idea CLI: https://www.jetbrains.com/help/idea/working-with-the-ide-features-from-command-line.html 
+14. Set up the 'subl' command.
 
-16. Load the iterm profile I have saved in iCloud
+15. Follow the instructions in the README of the sublime-text directory
 
-17. Since I generally want work `agent.md` files to reference this repo,
+16. Set up intellij idea CLI: https://www.jetbrains.com/help/idea/working-with-the-ide-features-from-command-line.html 
+
+17. Load the iterm profile I have saved in iCloud
+
+18. Since I generally want work `agent.md` files to reference this repo,
     if I'm setting up a new laptop, then ensure that that `agent.md`
     file knows how to find my ai-rules directory. 
