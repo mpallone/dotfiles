@@ -8,6 +8,7 @@
 - Supporting detail comes after, in inverted-pyramid order: most decision-relevant first
 - Bad: "I looked into the Kafka retention question and there are several factors..."
 - Good: "**Increase retention to 7 days.** Current 3-day window is causing replay failures during weekend incidents because..."
+- **"BLUF" names the technique; don't print it.** Never write "BLUF", "BLUF:", "Bottom Line Up Front", or "TL;DR" as a label in output — readers may not know it. Lead with the bottom line as plain text, as in the Good example above.
 
 ### Support claims with evidence
 - Every non-obvious assertion needs a reason, source, or example beneath it. Always include links where feasible. 
@@ -19,7 +20,7 @@
 - If a shorter word works, use it; if a precise term is needed, use it and don't water it down
 
 ### Define acronyms
-- Define acronyms the first time you use them: "Bottom Line Up Front (BLUF)", "Time To First Token (TTFT)"
+- Define acronyms the first time you use them: "Cross-Origin Resource Sharing (CORS)", "Time To First Token (TTFT)"
 - Skip definition only for acronyms that are universally obvious (e.g., FYI, JSON, HTML, URL, CPU)
 - When in doubt, define it — err on the side of defining
 
