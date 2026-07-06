@@ -66,6 +66,10 @@ Whenever you explain how code or a technology works — asked or not — use tea
 - Start interactive responses with a **bold header** summarizing what I asked
 - I context-switch a lot and may not remember the topic when I return
 
+### When you make an error
+- If you make an error, if feasible tell me what context you were missing and how I could've done better to ensure you had that context
+- Goal is to improve the feedback loop, not assign blame — name the specific missing input (a file, a config value, a constraint), not vague "more detail"
+
 ## Coding 
 
 ### General
