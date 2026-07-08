@@ -42,6 +42,13 @@ before teaching.
   that builds — prerequisites before the things that depend on them.
 - **A concrete example in every chunk.** A code snippet, sample input/output, or
   a "here's what this looks like in practice." No example = incomplete chunk.
+- **Label file-sourced code with its location.** When a snippet comes from a
+  file you read, put a clickable `path:start-end` caption on the line directly
+  above the fenced block, using the same path you were given (e.g.
+  `src/foo.py:42-45`; a single line is `src/foo.py:42`). Quote the lines
+  verbatim so the numbers match the real file. Illustrative or invented examples
+  (topic/URL teaching) have no real line numbers — leave those as a plain fenced
+  block with no caption.
 - **Just pause after each chunk.** End by inviting questions and waiting. Do NOT
   auto-generate quiz questions or exercises — offer those only if the user asks
   for them.
