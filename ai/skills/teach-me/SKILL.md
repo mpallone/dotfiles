@@ -2,10 +2,11 @@
 name: teach-me
 description: |
   Teach a topic, article, file, or URL section by section for a non-expert
-  audience — assume zero domain knowledge, deliver ~4000-character chunks, and
-  STOP after each chunk to take questions. Never front-load the whole
-  explanation. Use when the user says "/teach-me <thing>", "walk me through
-  this", "explain this section by section", or "teach me how X works".
+  audience — assume zero domain knowledge except concepts the user marks as
+  already known up front, deliver ~4000-character chunks, and STOP after each
+  chunk to take questions. Never front-load the whole explanation. Use when
+  the user says "/teach-me <thing>", "walk me through this", "explain this
+  section by section", or "teach me how X works".
 ---
 
 # teach-me
@@ -33,7 +34,11 @@ before teaching.
 - **Audience: assume zero domain knowledge.** Universals are safe (JSON, HTTP,
   git). Everything specialized (Spark, Kafka, Delta, Databricks, a custom
   framework, an unfamiliar algorithm) gets explained on first use — the
-  *concept*, not just the acronym. When in doubt, explain it.
+  *concept*, not just the acronym. When in doubt, explain it. The one
+  exception: concepts the user marked as already known at the concept
+  checkpoint (see **Start**) — use those freely without explanation, exactly
+  as you would a universal. Anything specialized that comes up mid-lesson and
+  wasn't in the checkpoint list still gets explained on first use.
 - **Chunk it: ~4000 characters per turn, then STOP.** This is the core behavior.
   Deliver one section, then pause and wait for the user. Do NOT front-load
   everything into one long response.
@@ -69,8 +74,33 @@ before teaching.
 2. Give a one-paragraph roadmap: name the sections you'll cover and the order.
    The number of sections is the total `M` — reuse it as the denominator in
    every chunk header.
-3. Teach section 1 (~4000 characters) with a concrete example, headed
+3. **Concept checkpoint — in the same message as the roadmap.** While building
+   the roadmap, collect every specialized concept the lesson would explain
+   (the same set the audience bullet defines — Spark, Kafka, Delta, custom
+   frameworks, unfamiliar algorithms; not universals like JSON/HTTP/git).
+   Present them as a numbered list:
+
+   > This learning session will assume no knowledge about these concepts:
+   >
+   > 1. protobuf
+   > 2. buf schema registry
+   > 3. Databricks Delta file format
+   >
+   > List the concepts you ALREADY KNOW that should NOT be explained (e.g.
+   > `1,2` or `1 2`), or say "none" to have everything explained.
+4. **STOP and wait for the reply** — do not teach chunk 1 in the same message.
+   Interpret the reply:
+   - Numbers in any separator format (`1,2`, `1 2`, `1 and 3`) or concept
+     names → mark those concepts as known.
+   - "none", "explain everything", or a reply that just says to continue →
+     explain all concepts.
+   - "all" → treat every listed concept as known.
+5. Re-check the roadmap against the known concepts: if a section existed
+   solely to explain now-known concepts, drop it and restate the shorter
+   roadmap with the updated total `M` in the chunk-1 message. Otherwise keep
+   the roadmap as announced.
+6. Teach section 1 (~4000 characters) with a concrete example, headed
    `chunk 1/M`.
-4. Stop and invite questions. Continue to the next section only when the user
+7. Stop and invite questions. Continue to the next section only when the user
    is ready, incrementing `N` in the `chunk N/M` header for each subsequent
    chunk.
