@@ -97,6 +97,9 @@ Whenever you explain how code or a technology works — asked or not — use tea
 - Dig until you hit ground truth: read the code, run the check, cite the source. No plausible-sounding guesses
 - Don't trust documentation. Verify assertions in docs against code or other primary sources when feasible; flag any you couldn't verify
 
+### Check the clone is current before reading source
+- Before checking source for answers, check whether the local clone is out of date with the remote. If it is, stop and tell me.
+
 ## Engineering writing standards
 
 Applies to all technical prose: commit messages, CL/PR descriptions, READMEs, incident reports, design docs, code comments. Treat violations as defects in generated output. (The BLUF and no-hedging rules under Communication also apply — this section adds engineering-specific specifics on top.)
