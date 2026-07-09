@@ -37,6 +37,14 @@ before teaching.
 - **Chunk it: ~4000 characters per turn, then STOP.** This is the core behavior.
   Deliver one section, then pause and wait for the user. Do NOT front-load
   everything into one long response.
+- **Head each chunk with its progress counter.** Start every chunk with a bold
+  `chunk N/M` label — the current section over the total from the roadmap — so
+  the learner can see how far along they are. Add the section title for context,
+  e.g. `**chunk 5/7 — Consumer group rebalancing**`.
+- **Name what a chunk taught when you reference it.** Don't rely on the learner
+  remembering "chunk 3" by its number. Pair the number with its topic, e.g. "in
+  chunk 3, where we covered consumer-group rebalancing, …" — never a bare "as we
+  saw in chunk 3".
 - **Section by section.** Follow the material's own structure (file regions,
   article headings, or the natural steps of a concept). Teach them in an order
   that builds — prerequisites before the things that depend on them.
@@ -59,6 +67,10 @@ before teaching.
 
 1. Resolve the input (file / URL / topic) per the **Input** section.
 2. Give a one-paragraph roadmap: name the sections you'll cover and the order.
-3. Teach section 1 (~4000 characters) with a concrete example.
+   The number of sections is the total `M` — reuse it as the denominator in
+   every chunk header.
+3. Teach section 1 (~4000 characters) with a concrete example, headed
+   `chunk 1/M`.
 4. Stop and invite questions. Continue to the next section only when the user
-   is ready.
+   is ready, incrementing `N` in the `chunk N/M` header for each subsequent
+   chunk.
