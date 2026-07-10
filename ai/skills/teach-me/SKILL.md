@@ -32,13 +32,23 @@ before teaching.
 ## How to teach
 
 - **Audience: assume zero domain knowledge.** Universals are safe (JSON, HTTP,
-  git). Everything specialized (Spark, Kafka, Delta, Databricks, a custom
-  framework, an unfamiliar algorithm) gets explained on first use — the
-  *concept*, not just the acronym. When in doubt, explain it. The one
-  exception: concepts the user marked as already known at the concept
-  checkpoint (see **Start**) — use those freely without explanation, exactly
-  as you would a universal. Anything specialized that comes up mid-lesson and
-  wasn't in the checkpoint list still gets explained on first use.
+  git) — this includes their everyday **notation**: how to read a git diff (the
+  `diff --git`/`index`/`---`/`+++` headers, the `@@ … @@` hunk header,
+  `+`/`-`/context line markers) and the structural syntax of common config and
+  markup formats (YAML and JSON indentation and nesting). Everything specialized
+  (Spark, Kafka, Delta, Databricks, a custom framework, an unfamiliar algorithm)
+  gets explained on first use — the *concept*, not just the acronym. When in
+  doubt, explain it. The one exception: concepts the user marked as already
+  known at the concept checkpoint (see **Start**) — use those freely without
+  explanation, exactly as you would a universal. Anything specialized that comes
+  up mid-lesson and wasn't in the checkpoint list still gets explained on first
+  use.
+- **Teach the concept, not the notation.** Explain what a change or snippet
+  *means and does*, not the mechanics of the format carrying it. Showing a diff:
+  explain the substantive edit, not how diff syntax works. Showing YAML/JSON:
+  explain the config's meaning, not how indentation encodes nesting. The one
+  exception: when reading the notation itself is the requested topic (e.g.
+  `/teach-me "how to read a git diff"`), teach the notation — that's the lesson.
 - **Chunk it: ~4000 characters per turn, then STOP.** This is the core behavior.
   Deliver one section, then pause and wait for the user. Do NOT front-load
   everything into one long response.
@@ -77,7 +87,8 @@ before teaching.
 3. **Concept checkpoint — in the same message as the roadmap.** While building
    the roadmap, collect every specialized concept the lesson would explain
    (the same set the audience bullet defines — Spark, Kafka, Delta, custom
-   frameworks, unfamiliar algorithms; not universals like JSON/HTTP/git).
+   frameworks, unfamiliar algorithms; not universals like JSON/HTTP/git or
+   everyday notation like diff syntax and YAML/JSON indentation).
    Present them as a numbered list:
 
    > This learning session will assume no knowledge about these concepts:
