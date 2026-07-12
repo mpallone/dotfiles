@@ -11,11 +11,12 @@
 # zips always exist and are always valid; the human just downloads + uploads.
 # (One app upload also auto-loads the skill into cloud Claude Code sessions.)
 #
-# Only APP_PORTABLE skills are packaged. mmm-deploy and update-repos are
-# local-machine tools (they need the mmm CLI / your local git repos) and would
-# not function in the claude.ai sandbox, so they are intentionally excluded.
-# The loose ai/skills/daily-ai-tools-digest.md is not a skill directory and is
-# ignored by everything.
+# Every skill directory under ai/skills/ (any <name>/ containing a SKILL.md) is
+# packaged — there is no allowlist, so a newly added skill ships automatically.
+# The loose ai/skills/daily-ai-tools-digest.md is a file, not a skill directory,
+# so it is ignored. Note: mmm-deploy and update-repos are local-machine tools
+# (they need the mmm CLI / your local git repos) and won't function in the
+# claude.ai sandbox, but they are still zipped along with everything else.
 #
 # Validation mirrors the claude.ai custom-skill rules:
 #   name:        lowercase letters/numbers/hyphens, <= 64 chars, not containing
@@ -40,10 +41,6 @@ AI_DIR="$(dirname "$SCRIPT_DIR")"                            # ai
 REPO_ROOT="$(dirname "$AI_DIR")"                             # repo root
 SKILLS_DIR="$AI_DIR/skills"
 DIST_DIR="${DIST_DIR:-$REPO_ROOT/dist}"
-
-# Skills that make sense on the claude.ai app / cloud Code (space-separated).
-# Override with the APP_PORTABLE env var to re-scope or to test validation.
-APP_PORTABLE="${APP_PORTABLE:-teach-me jira-sprint-cleanup}"
 
 ok()   { echo "[package-skills] [ok]   $*"; }
 warn() { echo "[package-skills] [warn] $*" >&2; }
@@ -133,19 +130,12 @@ package_one() {
   fi
 }
 
-# --- Package every portable skill -------------------------------------------
-for skill in $APP_PORTABLE; do
-  package_one "$skill"
-done
-
-# --- Report skills present but intentionally not packaged -------------------
+# --- Package every skill directory under ai/skills/ -------------------------
 for entry in "$SKILLS_DIR"/*/; do
   [ -d "$entry" ] || continue
   base="$(basename "$entry")"
-  case " $APP_PORTABLE " in
-    *" $base "*) : ;;                                   # already packaged
-    *) warn "$base: present but not app-portable (skipped)." ;;
-  esac
+  [ -f "$entry/SKILL.md" ] || { warn "$base: no SKILL.md, skipping."; continue; }
+  package_one "$base"
 done
 
 echo "[package-skills] done ($failures failure(s))"

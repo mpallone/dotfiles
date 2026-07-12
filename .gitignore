@@ -1,1 +1,4 @@
 .DS_Store
+
+# Build output from ai/scripts/package_skills.sh (skill ZIPs; CI rebuilds these).
+dist/
