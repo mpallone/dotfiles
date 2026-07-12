@@ -49,9 +49,11 @@ searchJiraIssuesUsingJql
   fields: ["summary", "labels", "status", "parent"]
 ```
 
-Group results by existing bucket label. Items with no bucket label are the
-"unsorted" pile. Present a compact snapshot: yesterday's buckets (from labels)
-plus the unsorted count.
+Group results by existing bucket label — this grouping is only for the
+snapshot, not a filter on who gets interviewed. Present a compact snapshot:
+yesterday's buckets (from labels) plus the total count of open, non-separator
+items. The entire open, non-separator set is the triage queue (see Interview),
+whether or not an item already carries a bucket label.
 
 **Duplicate check**: if two or more open non-separator issues share effectively
 the same summary (typical cause: automation re-created a recurring chore that
@@ -62,8 +64,9 @@ plan with whatever survives cleanup.
 
 ### 2. Interview
 
-Triage every unsorted item; also offer to revisit yesterday's `daily-target`
-leftovers. Rules:
+Triage **every** open (not-done), non-separator item, whether or not it already
+carries a bucket label — nothing is carried over untouched; yesterday's labeled
+items get re-triaged fresh each run. Rules:
 
 - Batches of **at most 3 items** per round, using tappable single-select
   options. Tap options cap at 4, so each question offers: **Daily target /
@@ -73,7 +76,11 @@ leftovers. Rules:
 - **"Mark as done" is an action, not a label**: on selection, immediately
   transition the issue to Done (`transitionJiraIssue`, id `31`) and write no
   bucket label.
-- Embed a suggested bucket in each question, using the heuristic:
+- Embed a suggested bucket in each question, always computed from the heuristic
+  below — independent of any bucket label the item already carries. A stored
+  label never pre-selects the answer; it is only context. You may note an item's
+  current bucket briefly ("currently: aspirational") for context, but the
+  *suggestion* is the heuristic result:
   - **Low-effort must-dos rise to the top** → suggest `daily-target`
     (examples: litter box, trash to curb, cat feeder).
   - **High-effort items and exercise-like items** → suggest `aspirational`.
@@ -87,7 +94,9 @@ leftovers. Rules:
     "(… automation)" tag and ownership changed permanently, remind Mark once
     to edit the generating rule in Jira **Project settings → Automation**.
   - A different bucket name → use it.
-  - "skip" → leave unlabeled, mention it in the final brief.
+  - "skip" → leave the item's current label untouched (an unlabeled item stays
+    unlabeled; an already-labeled item keeps its existing bucket) and mention it
+    in the final brief. Skipping never erases a bucket.
 
 ### 3. Write labels (batched, after the interview)
 
@@ -124,6 +133,7 @@ End with the day's plan, formatted for a phone screen:
   artifact of the day's exact ordering, offer to write it as a comment on the
   `week planning ritual` ticket (or the topmost daily-target item) — don't do
   this unprompted.
-- Don't re-interview items already carrying a bucket label unless Mark asks or
-  their situation obviously changed (e.g., a "(Sunday automation)" item on a
-  new day).
+- Every not-done, non-separator item is re-triaged on every run: a stored
+  bucket label neither suppresses the prompt nor pre-selects the answer (the
+  suggestion is recomputed from the effort heuristic each time). Separators and
+  automation banner rows remain excluded from triage per the rules above.
