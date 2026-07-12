@@ -5,7 +5,7 @@ description: |
   audience — assume zero domain knowledge except concepts the user marks as
   already known up front, deliver ~4000-character chunks, and STOP after each
   chunk to take questions. Never front-load the whole explanation. Use when
-  the user says "/teach-me <thing>", "walk me through this", "explain this
+  the user says "/teach-me [thing]", "walk me through this", "explain this
   section by section", or "teach me how X works".
 ---
 

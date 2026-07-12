@@ -1,0 +1,46 @@
+# package-skills.yml — auto-build claude.ai-app-ready skill ZIPs.
+#
+# WHY: the claude.ai app has no API for uploading custom skills; the only way
+# in is a manual ZIP upload under Settings. This workflow automates everything
+# up to that final drag-and-drop: on every push to main that touches a skill,
+# it validates each app-portable skill's SKILL.md and rebuilds its ZIP, then
+# publishes the ZIPs to a rolling "skills-latest" GitHub Release. So the current,
+# valid zips always have a stable download URL — you just grab them and upload.
+# (Uploading a skill to the app also auto-loads it into cloud Claude Code.)
+#
+# The heavy lifting lives in ai/scripts/package_skills.sh (which also defines
+# which skills are app-portable). See ai/README.md for the full architecture.
+
+name: Package skills for claude.ai
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "ai/skills/**"
+      - "ai/scripts/package_skills.sh"
+      - ".github/workflows/package-skills.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Build + validate skill ZIPs
+        run: bash ai/scripts/package_skills.sh
+
+      - name: Publish ZIPs to the rolling "skills-latest" release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view skills-latest >/dev/null 2>&1 || \
+            gh release create skills-latest \
+              --title "Latest skill ZIPs (auto-built)" \
+              --notes "App-ready skill ZIPs, rebuilt on every push. Download and upload under claude.ai Settings > Skills. See ai/README.md."
+          gh release upload skills-latest dist/*.zip --clobber

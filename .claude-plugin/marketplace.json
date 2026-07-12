@@ -1,0 +1,17 @@
+{
+  "name": "mpallone-dotfiles",
+  "owner": {
+    "name": "mpallone",
+    "email": "mark.c.pallone@gmail.com"
+  },
+  "metadata": {
+    "description": "Mark's personal Claude Code marketplace, sourced from the dotfiles repo."
+  },
+  "plugins": [
+    {
+      "name": "mpallone-skills",
+      "source": "./ai",
+      "description": "Mark's personal Claude skills: teach-me, update-repos, mmm-deploy, jira-sprint-cleanup."
+    }
+  ]
+}
