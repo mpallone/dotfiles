@@ -20,6 +20,7 @@ on:
       - "ai/skills/**"
       - "ai/scripts/package_skills.sh"
       - ".github/workflows/package-skills.yml"
+      - ".github/skills-release-notes.md"
   workflow_dispatch: {}
 
 permissions:
@@ -39,8 +40,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view skills-latest >/dev/null 2>&1 || \
-            gh release create skills-latest \
-              --title "Latest skill ZIPs (auto-built)" \
-              --notes "App-ready skill ZIPs, rebuilt on every push. Download and upload under claude.ai Settings > Skills. See ai/README.md."
+          title="Latest skill ZIPs — download, upload, done"
+          notes=".github/skills-release-notes.md"
+          # Always (re)apply the repo's canonical title + notes so the release page
+          # stays in sync with .github/skills-release-notes.md (source of truth).
+          if gh release view skills-latest >/dev/null 2>&1; then
+            gh release edit skills-latest --title "$title" --notes-file "$notes"
+          else
+            gh release create skills-latest --title "$title" --notes-file "$notes"
+          fi
           gh release upload skills-latest dist/*.zip --clobber
