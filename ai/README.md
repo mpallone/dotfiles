@@ -47,8 +47,9 @@ and cloud Code.
 
 ## Automation: the app ZIPs
 
-`ai/scripts/package_skills.sh` builds a validated ZIP for each **app-portable** skill
-(`teach-me`, `jira-sprint-cleanup`) and drops them in `dist/`. The
+`ai/scripts/package_skills.sh` builds a validated ZIP for **every** skill under
+`ai/skills/` (any `<name>/` with a `SKILL.md`) and drops them in `dist/`. There's no
+allowlist — add a skill and it ships automatically. The
 `.github/workflows/package-skills.yml` Action runs it on every push that touches a skill
 and publishes the ZIPs to a rolling **`skills-latest`** GitHub Release. To refresh the
 app after changing a skill: grab the current ZIP from that release and re-upload it under
@@ -56,8 +57,9 @@ app after changing a skill: grab the current ZIP from that release and re-upload
 
 Validation mirrors the app's rules: `name` lowercase-hyphenated ≤64 chars with no
 reserved words (`claude`/`anthropic`), `description` non-empty ≤1024 chars with no XML
-tags. `mmm-deploy` and `update-repos` are **excluded** — they're local-machine tools that
-can't run in the app/cloud sandbox (they'd load but fail if invoked).
+tags. `mmm-deploy` and `update-repos` are packaged too, but they're local-machine tools
+that can't run in the app/cloud sandbox (they'd load but fail if invoked) — upload them
+only if you actually want them visible there.
 
 ## Cloud Claude Code setup script
 
@@ -96,8 +98,9 @@ Consequences accepted:
 - **A skill may show up from both sources** in a cloud session (app-provided **and** the
   `~/.claude/skills/` copy). Expected and tolerated.
 - The script's edge over the zip path: it also brings **AGENTS.md** (global context, which
-  the zip/bridge does not) and ships **all** skills — including `morning-plan` and the
-  local-only `mmm-deploy` / `update-repos` — not just the app-portable subset.
+  the zip/bridge does not). Both paths now ship **all** skills — including the local-only
+  `mmm-deploy` / `update-repos` — so their skill sets match; only AGENTS.md is unique to
+  the script.
 
 ## Known limitations / follow-ups
 

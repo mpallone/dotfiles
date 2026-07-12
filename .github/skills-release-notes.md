@@ -1,7 +1,7 @@
 ## 📦 What this is
 
 Auto-built, upload-ready skill ZIPs for the **claude.ai app**. Rebuilt on every
-push to `main`. Currently includes: `teach-me`, `jira-sprint-cleanup`.
+push to `main`. Every skill in the repo gets a zip here automatically.
 
 ---
 
@@ -14,7 +14,8 @@ push to `main`. Currently includes: `teach-me`, `jira-sprint-cleanup`.
    sessions (claude.ai/code) — no separate step.
 
 - 🔁 **When a skill changes:** a fresh zip lands here automatically — just re-upload it.
-- 🔌 `jira-sprint-cleanup` needs your **Atlassian connector** enabled in the chat.
+- 🔌 `jira-sprint-cleanup` and `morning-plan` need your **Atlassian connector** enabled in the chat.
+- 🖥️ `mmm-deploy` and `update-repos` are local-machine tools — they'll upload fine but only work in local Claude Code, not the app/cloud sandbox.
 
 ---
 

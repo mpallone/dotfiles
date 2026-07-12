@@ -3,13 +3,13 @@
 # WHY: the claude.ai app has no API for uploading custom skills; the only way
 # in is a manual ZIP upload under Settings. This workflow automates everything
 # up to that final drag-and-drop: on every push to main that touches a skill,
-# it validates each app-portable skill's SKILL.md and rebuilds its ZIP, then
+# it validates each skill's SKILL.md and rebuilds its ZIP, then
 # publishes the ZIPs to a rolling "skills-latest" GitHub Release. So the current,
 # valid zips always have a stable download URL — you just grab them and upload.
 # (Uploading a skill to the app also auto-loads it into cloud Claude Code.)
 #
-# The heavy lifting lives in ai/scripts/package_skills.sh (which also defines
-# which skills are app-portable). See ai/README.md for the full architecture.
+# The heavy lifting lives in ai/scripts/package_skills.sh, which packages every
+# skill directory under ai/skills/. See ai/README.md for the full architecture.
 
 name: Package skills for claude.ai
 
