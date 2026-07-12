@@ -59,9 +59,7 @@ The `ai/` tree is the single source of truth for my Claude context and skills, a
 it's distributed to every Claude surface from there:
 
 - **Local Claude Code** — `mmm` (marks-markdown-manager) deploys context + skills.
-- **Claude Code (local & cloud)** — this repo is also a plugin marketplace
-  (`mpallone-dotfiles`); add it with `/plugin marketplace add mpallone/dotfiles`.
-- **claude.ai app (regular chats)** — the app has no upload API, so a GitHub Action
+- **claude.ai app + Cloud Claude Code** — the app has no upload API, so a GitHub Action
   auto-builds ready-to-upload skill ZIPs (published to the `skills-latest` release);
   you drop them into Settings → Skills. That one upload also feeds cloud Code.
 

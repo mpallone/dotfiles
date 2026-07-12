@@ -20,19 +20,15 @@ ai/
 │   ├── mmm-deploy/              # local-machine tool (needs the mmm CLI)
 │   ├── update-repos/            # local-machine tool (operates on local git repos)
 │   └── daily-ai-tools-digest.md # loose note, NOT a skill (no <name>/SKILL.md dir)
-├── scripts/package_skills.sh    # builds claude.ai-app-ready skill ZIPs
-└── .claude-plugin/plugin.json   # makes ai/ a Claude Code plugin ("mpallone-skills")
+└── scripts/package_skills.sh    # builds claude.ai-app-ready skill ZIPs
 ```
-
-The repo root also holds `.claude-plugin/marketplace.json`, which turns this repo into
-a Claude Code plugin **marketplace** named `mpallone-dotfiles`.
 
 ## How each surface gets its skills
 
 | Surface | Mechanism | Manual step? |
 | :-- | :-- | :-- |
-| **Local Claude Code** (laptop) | `mmm deploy` (marks-markdown-manager) distributes context + skills to each tool's dir; or install this marketplace | none (run `mmm`) |
-| **Cloud Claude Code** (claude.ai/code) | declare this marketplace + plugin in a work repo's `.claude/settings.json` (auto-installs at session start), and/or the app-upload bridge below | none |
+| **Local Claude Code** (laptop) | `mmm deploy` (marks-markdown-manager) distributes context + skills to each tool's dir | none (run `mmm`) |
+| **Cloud Claude Code** (claude.ai/code) | inherits your **enabled app skills** via the app-upload bridge (below) | none |
 | **claude.ai app** (regular chats) | manual ZIP upload under Settings; the ZIPs are auto-built for you (see below) | one upload per changed skill |
 
 ### Why the app is the odd one out
@@ -60,26 +56,6 @@ Validation mirrors the app's rules: `name` lowercase-hyphenated ≤64 chars with
 reserved words (`claude`/`anthropic`), `description` non-empty ≤1024 chars with no XML
 tags. `mmm-deploy` and `update-repos` are **excluded** — they're local-machine tools that
 can't run in the app/cloud sandbox (they'd load but fail if invoked).
-
-## Installing the marketplace (Claude Code)
-
-```
-# once, on your laptop:
-/plugin marketplace add mpallone/dotfiles
-/plugin install mpallone-skills@mpallone-dotfiles
-```
-
-For cloud Code, add to a work repo's `.claude/settings.json` so sessions auto-install it
-(requires the Trusted network policy so github.com is reachable):
-
-```json
-{
-  "extraKnownMarketplaces": {
-    "mpallone-dotfiles": { "source": { "source": "github", "repo": "mpallone/dotfiles" } }
-  },
-  "enabledPlugins": { "mpallone-skills@mpallone-dotfiles": true }
-}
-```
 
 ## Known limitations / follow-ups
 
