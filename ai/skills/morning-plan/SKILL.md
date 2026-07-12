@@ -28,15 +28,22 @@ its tools are unavailable, say so and stop.
 - Bucket labels (exact strings): `daily-target`, `prioritize`, `aspirational`,
   `not-daily-goals`
 - Workflow transitions (global, verified): `11` = To Do, `31` = Done
-- Separator-looking tickets (summaries with `===` or similar) come in two kinds
-  — differentiate by parent epic, not by summary pattern:
-  - **Legacy visual separators**: children of epic `MCP-2213` ("separators").
-    Permanent. Exclude from triage; never label, close, or modify them.
-  - **Automation banner rows**: separator-style summaries NOT parented to
-    `MCP-2213` (created by Jira Automation). Also excluded from bucket triage,
-    but they are disposable clutter: list them in the final brief and close
-    them only if Mark says to — bulk cleanup belongs to his "clean up my jira
-    sprint" flow, not this one.
+- Separator / banner rows — structural rows that must NEVER be triaged.
+  Identify by parent epic, never by summary pattern:
+  - **Permanent structure — never surfaced.** Any child of epic `MCP-2213`
+    ("separators"). Exclude from triage and **never prompt, list, mention,
+    label, close, or modify** — no matter how banner-like the summary looks
+    (`^ Sunday (day)`, `===== ^ right after planning =====`,
+    `v ==== v new v ==== v`, etc.). Parentage is the only signal; summary text
+    is never a reason to surface one. (These are the same rows the
+    jira-sprint-cleanup skill calls its 6 permanent dividers — all now parented
+    to `MCP-2213`.)
+  - **Disposable automation banners**: separator-style summaries NOT parented to
+    `MCP-2213` (e.g. `DAILY AUTOMATION START/END` rows Jira Automation
+    regenerates). Also excluded from bucket triage; they are disposable clutter:
+    list them once in the final brief and close them only if Mark says to — bulk
+    cleanup belongs to his "clean up my jira sprint" flow, not this one. Never a
+    tap-prompt.
 
 ## Workflow
 
@@ -66,7 +73,10 @@ plan with whatever survives cleanup.
 
 Triage **every** open (not-done), non-separator item, whether or not it already
 carries a bucket label — nothing is carried over untouched; yesterday's labeled
-items get re-triaged fresh each run. Rules:
+items get re-triaged fresh each run. Re-triage is automatic and unconditional:
+**never ask Mark whether he wants to revisit or re-triage his not-done items —
+he always does.** Go straight into the item-by-item questions; never gate the
+interview behind a "want to revisit yesterday's items?" yes/no prompt. Rules:
 
 - Batches of **at most 3 items** per round, using tappable single-select
   options. Tap options cap at 4, so each question offers: **Daily target /
@@ -117,6 +127,9 @@ End with the day's plan, formatted for a phone screen:
 - **Daily target** — ordered quick-wins-first (lowest effort at top).
 - **Aspirational**, then **Not daily goals** — one line each.
 - Anything closed or skipped during the session.
+- Any disposable automation banners present (separator-style rows **not** under
+  `MCP-2213`) — listed once as clutter, closed only if Mark asks. Permanent
+  structure (children of `MCP-2213`) never appears here.
 - If `daily-target` exceeds ~5 items, say so once, plainly: "the less
   ambitious, the more achievable" — and name the best demotion candidates.
   Don't nag beyond that.
@@ -125,15 +138,17 @@ End with the day's plan, formatted for a phone screen:
 
 - Reads before writes; all label writes happen in step 3, transitions may
   happen mid-interview when Mark reports something done.
-- Never touch issues outside the open sprint; never modify legacy separators
-  (children of `MCP-2213`); close automation banner rows only on explicit
-  request; never edit Automation rules yourself (Mark does that in the Jira
-  UI).
+- Never touch issues outside the open sprint; never surface, prompt on, or
+  modify permanent structure (any child of `MCP-2213`); close disposable
+  automation banners only on explicit request; never edit Automation rules
+  yourself (Mark does that in the Jira UI).
 - Fine-grained order *within* a bucket is session-only. If Mark wants an
   artifact of the day's exact ordering, offer to write it as a comment on the
   `week planning ritual` ticket (or the topmost daily-target item) — don't do
   this unprompted.
-- Every not-done, non-separator item is re-triaged on every run: a stored
+- Every not-done, non-separator item is re-triaged on every run —
+  automatically, never gated behind a "want to revisit?" question. A stored
   bucket label neither suppresses the prompt nor pre-selects the answer (the
-  suggestion is recomputed from the effort heuristic each time). Separators and
-  automation banner rows remain excluded from triage per the rules above.
+  suggestion is recomputed from the effort heuristic each time). Permanent
+  structure (children of `MCP-2213`) and disposable automation banners remain
+  excluded from triage per the rules above.
