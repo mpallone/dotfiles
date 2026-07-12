@@ -1,0 +1,10 @@
+{
+  "name": "mpallone-skills",
+  "version": "0.1.0",
+  "description": "Mark's personal Claude skills. Skills are auto-discovered from ./skills; global-context/ is not a plugin component and is ignored by the plugin loader.",
+  "author": {
+    "name": "mpallone",
+    "email": "mark.c.pallone@gmail.com"
+  },
+  "homepage": "https://github.com/mpallone/dotfiles"
+}

@@ -53,31 +53,16 @@ To set up unix env on new computer, do:
     if I'm setting up a new laptop, then ensure that that `agent.md`
     file knows how to find my ai-rules directory. 
 
-19. **Claude Code on the web (claude.ai/code):** a web session clones only the
-    project repo, so `~/.claude` from my laptop is absent. To sync this repo's
-    `ai/` tree into `~/.claude` on every session, paste this bootstrap into the
-    environment's "Setup script" field:
+## AI config & skills distribution
 
-    ```bash
-    #!/bin/bash
-    git clone --depth 1 https://github.com/mpallone/dotfiles.git /tmp/dotfiles || true
-    [ -f /tmp/dotfiles/ai/cloud-setup.sh ] && bash /tmp/dotfiles/ai/cloud-setup.sh || true
-    ```
+The `ai/` tree is the single source of truth for my Claude context and skills, and
+it's distributed to every Claude surface from there:
 
-    It clones this (public) repo and runs `ai/cloud-setup.sh`, which copies
-    `ai/global-context/AGENTS.md` -> `~/.claude/CLAUDE.md` and everything under
-    `ai/skills/` -> `~/.claude/skills/`. Keeping the script in the repo means
-    future edits are just a `git push`.
+- **Local Claude Code** — `mmm` (marks-markdown-manager) deploys context + skills.
+- **Claude Code (local & cloud)** — this repo is also a plugin marketplace
+  (`mpallone-dotfiles`); add it with `/plugin marketplace add mpallone/dotfiles`.
+- **claude.ai app (regular chats)** — the app has no upload API, so a GitHub Action
+  auto-builds ready-to-upload skill ZIPs (published to the `skills-latest` release);
+  you drop them into Settings → Skills. That one upload also feeds cloud Code.
 
-    - Prerequisite: the environment's network policy must allow `github.com`
-      (the "Trusted" policy). Under the "None" network policy the clone fails.
-      `git` is pre-installed.
-    - Refresh caveat: setup scripts run on the FIRST session, then the filesystem
-      is snapshotted and the script is SKIPPED on later sessions — so `~/.claude`
-      is frozen until the cache rebuilds (editing the setup script or allowed
-      hosts, or ~7-day expiry). To force a refresh after pushing dotfiles changes,
-      re-save the setup script in the environment UI.
-    - Known limitation: `ai/skills/daily-ai-tools-digest.md` is copied but is NOT
-      an invocable skill — Claude Code only discovers `<name>/SKILL.md`
-      directories, so a bare `.md` under `skills/` is ignored. Wrapping it as a
-      proper skill directory is a separate follow-up.
+The intent, the "why", and the exact steps live in [`ai/README.md`](ai/README.md).
