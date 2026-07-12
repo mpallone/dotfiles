@@ -52,3 +52,32 @@ To set up unix env on new computer, do:
 18. Since I generally want work `agent.md` files to reference this repo,
     if I'm setting up a new laptop, then ensure that that `agent.md`
     file knows how to find my ai-rules directory. 
+
+19. **Claude Code on the web (claude.ai/code):** a web session clones only the
+    project repo, so `~/.claude` from my laptop is absent. To sync this repo's
+    `ai/` tree into `~/.claude` on every session, paste this bootstrap into the
+    environment's "Setup script" field:
+
+    ```bash
+    #!/bin/bash
+    git clone --depth 1 https://github.com/mpallone/dotfiles.git /tmp/dotfiles || true
+    [ -f /tmp/dotfiles/ai/cloud-setup.sh ] && bash /tmp/dotfiles/ai/cloud-setup.sh || true
+    ```
+
+    It clones this (public) repo and runs `ai/cloud-setup.sh`, which copies
+    `ai/global-context/AGENTS.md` -> `~/.claude/CLAUDE.md` and everything under
+    `ai/skills/` -> `~/.claude/skills/`. Keeping the script in the repo means
+    future edits are just a `git push`.
+
+    - Prerequisite: the environment's network policy must allow `github.com`
+      (the "Trusted" policy). Under the "None" network policy the clone fails.
+      `git` is pre-installed.
+    - Refresh caveat: setup scripts run on the FIRST session, then the filesystem
+      is snapshotted and the script is SKIPPED on later sessions — so `~/.claude`
+      is frozen until the cache rebuilds (editing the setup script or allowed
+      hosts, or ~7-day expiry). To force a refresh after pushing dotfiles changes,
+      re-save the setup script in the environment UI.
+    - Known limitation: `ai/skills/daily-ai-tools-digest.md` is copied but is NOT
+      an invocable skill — Claude Code only discovers `<name>/SKILL.md`
+      directories, so a bare `.md` under `skills/` is ignored. Wrapping it as a
+      proper skill directory is a separate follow-up.
