@@ -32,8 +32,9 @@ Whenever you change it, update it manually in **both** places:
 
 - **Claude app:** paste it into **Settings → Profile → your personal preferences /
   custom instructions.**
-- **Cloud Claude Code:** no auto-sync exists — paste the relevant guidance into the
-  work repo's `CLAUDE.md` (or wherever that repo reads its context).
+- **Cloud Claude Code:** if you've wired up the `ai/cloud-setup.sh` bootstrap in the
+  environment's Setup script, AGENTS.md is pulled in automatically (re-save the setup
+  script to refresh). Otherwise, paste the guidance into the work repo's `CLAUDE.md`.
 
 _(Local Claude Code gets AGENTS.md via `mmm`, so that one's already covered.)_
 

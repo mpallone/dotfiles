@@ -62,5 +62,8 @@ it's distributed to every Claude surface from there:
 - **claude.ai app + Cloud Claude Code** — the app has no upload API, so a GitHub Action
   auto-builds ready-to-upload skill ZIPs (published to the `skills-latest` release);
   you drop them into Settings → Skills. That one upload also feeds cloud Code.
+- **Cloud Claude Code (alternative)** — `ai/cloud-setup.sh`, run from the environment's
+  Setup script, pulls skills **and** AGENTS.md straight from this repo. Redundant with the
+  zip path above (they can drift) — kept on purpose.
 
 The intent, the "why", and the exact steps live in [`ai/README.md`](ai/README.md).
