@@ -83,9 +83,10 @@ interview behind a "want to revisit yesterday's items?" yes/no prompt. Rules:
   Aspirational / Not daily goals / Mark as done**. `prioritize` stays a valid
   bucket via typed reply (it saw zero use in the first session — promote it
   back into the tap set if Mark starts using it).
-- **"Mark as done" is an action, not a label**: on selection, immediately
-  transition the issue to Done (`transitionJiraIssue`, id `31`) and write no
-  bucket label.
+- **"Mark as done" is an action, not a label**: on selection, first pull the
+  issue's current state (`getJiraIssue`) to confirm it isn't already Done or
+  otherwise changed (see **Verify state before writing**), then transition it
+  to Done (`transitionJiraIssue`, id `31`) and write no bucket label.
 - Embed a suggested bucket in each question, always computed from the heuristic
   below — independent of any bucket label the item already carries. A stored
   label never pre-selects the answer; it is only context. You may note an item's
@@ -110,8 +111,11 @@ interview behind a "want to revisit yesterday's items?" yes/no prompt. Rules:
 
 ### 3. Write labels (batched, after the interview)
 
-For each triaged open issue, set its bucket via `editJiraIssue` with
-`fields: {"labels": [...]}`.
+For each triaged open issue, first re-fetch its current state with
+`getJiraIssue` (see **Verify state before writing**), then set its bucket via
+`editJiraIssue` with `fields: {"labels": [...]}`. The fresh read is also what
+lets you honor the non-bucket-label exception below — you can only preserve a
+label that appeared since step 1 if you just read it.
 
 **Labels are owned by this system** — Mark does not use Jira labels for
 anything else. Set `labels` to exactly the one bucket label (the write replaces
@@ -138,6 +142,14 @@ End with the day's plan, formatted for a phone screen:
 
 - Reads before writes; all label writes happen in step 3, transitions may
   happen mid-interview when Mark reports something done.
+- **Verify state before writing**: the step-1 snapshot goes stale as the
+  interview runs — Jira Automation can re-create or close issues, and Mark may
+  edit in the Jira UI in parallel. Before *any* state change to an issue (a Done
+  transition in step 2 or a label write in step 3), pull that one issue's
+  current state with `getJiraIssue` and confirm the planned action still holds
+  against it. If the fresh state contradicts the decision (already Done, status
+  moved, an unexpected label present), surface the discrepancy and re-confirm
+  with Mark before writing — never act on the stale snapshot.
 - Never touch issues outside the open sprint; never surface, prompt on, or
   modify permanent structure (any child of `MCP-2213`); close disposable
   automation banners only on explicit request; never edit Automation rules

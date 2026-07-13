@@ -105,10 +105,18 @@ you found. If no Done transition is available on that issue, **stop and report**
 
 ### 5. Transition the targets to Done
 
-For every key in the classifier's `CLOSE_ALL` list, call `transitionJiraIssue`
-with `cloudId`, `issueIdOrKey`, and `transition: {id: "<verified id>"}`.
-**Transition to Done -- never delete.** Leave Borderline items, real tasks,
-single-occurrence chores, and the 6 dividers alone.
+The plan can be stale: an arbitrary approval wait sits between the step-1 fetch
+and this mutation, and in that window Jira automation regenerates/closes rows
+and Mark may have closed some by hand. So for every key in the classifier's
+`CLOSE_ALL` list, **pull the issue's current state with `getJiraIssue`
+immediately before mutating it** and confirm the decision still holds against
+up-to-date state -- it must still be non-Done and still match what the plan
+classified (summary unchanged). Only then call `transitionJiraIssue` with
+`cloudId`, `issueIdOrKey`, and `transition: {id: "<verified id>"}`. If the fresh
+read contradicts the plan (already Done, or the summary changed so it is no
+longer clutter), **skip it and report** -- never transition against the stale
+plan. **Transition to Done -- never delete.** Leave Borderline items, real
+tasks, single-occurrence chores, and the 6 dividers alone.
 
 ### 6. Report
 
@@ -128,5 +136,9 @@ Borderline for me to handle). Then note the two things this does **not** fix:
 - Transition to Done, **never delete**.
 - **Plan first, mutate only after "go".** No exceptions.
 - **Surface ambiguity, never guess.** Borderline items are flagged, not closed.
+- **Verify state before writing.** The plan is built before an arbitrary
+  approval wait; re-read each target with `getJiraIssue` immediately before
+  closing it and skip anything whose current state no longer matches the plan
+  (already Done, summary changed). Never mutate against the stale snapshot.
 - Never touch the backlog, real tasks, or the 6 dividers.
 - A partial fetch is a wrong plan -- paginate to the last page before classifying.
