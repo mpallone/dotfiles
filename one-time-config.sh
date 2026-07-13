@@ -13,3 +13,10 @@ else
   echo "Error: Homebrew not found; cannot install cloc. Install brew first: https://brew.sh" >&2
 fi
 
+# GUI apps
+if command -v brew &> /dev/null; then
+  brew install --cask mos
+else
+  echo "Error: Homebrew not found; cannot install mos. Install brew first: https://brew.sh" >&2
+fi
+
