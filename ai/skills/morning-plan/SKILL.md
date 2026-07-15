@@ -64,10 +64,15 @@ whether or not an item already carries a bucket label.
 
 **Duplicate check**: if two or more open non-separator issues share effectively
 the same summary (typical cause: automation re-created a recurring chore that
-was never closed), do not triage them here. Tell Mark what was found, then
-invoke the **jira-sprint-cleanup** skill — read its SKILL.md and follow its
-workflow (it plans first and waits for his explicit "go"). Resume the morning
-plan with whatever survives cleanup.
+was never closed), do not triage them here — and do not ask whether to clean
+them up. **Automatically invoke the jira-sprint-cleanup skill** (via the Skill
+tool where available; otherwise read its SKILL.md and follow its workflow). Just
+tell Mark duplicates were found, then hand off. "Automatically invoke" means
+auto-*start* cleanup, never auto-*close*: jira-sprint-cleanup keeps its
+non-negotiable gate — it prints a full plan and waits for Mark's explicit "go"
+before transitioning anything — and morning-plan must not bypass that gate.
+Capture which issues cleanup closed so they can be reported in the final brief
+(step 4). Resume the morning plan with whatever survives cleanup.
 
 ### 2. Interview
 
@@ -78,11 +83,14 @@ items get re-triaged fresh each run. Re-triage is automatic and unconditional:
 he always does.** Go straight into the item-by-item questions; never gate the
 interview behind a "want to revisit yesterday's items?" yes/no prompt. Rules:
 
-- Batches of **at most 3 items** per round, using tappable single-select
-  options. Tap options cap at 4, so each question offers: **Daily target /
-  Aspirational / Not daily goals / Mark as done**. `prioritize` stays a valid
-  bucket via typed reply (it saw zero use in the first session — promote it
-  back into the tap set if Mark starts using it).
+- Batches of **at most 6 items** per round, using tappable single-select
+  options. Two different caps apply: each *question* offers at most 4 options —
+  **Daily target / Aspirational / Not daily goals / Mark as done** — and each
+  tappable prompt (`AskUserQuestion`) holds at most 4 *questions*. So a round of
+  6 cannot be a single prompt: deliver it as two consecutive tap-prompts (e.g.
+  3+3), then pause for the next round of 6. `prioritize` stays a valid bucket
+  via typed reply (it saw zero use in the first session — promote it back into
+  the tap set if Mark starts using it).
 - **"Mark as done" is an action, not a label**: on selection, first pull the
   issue's current state (`getJiraIssue`) to confirm it isn't already Done or
   otherwise changed (see **Verify state before writing**), then transition it
@@ -126,11 +134,19 @@ error, and continue with the rest — no silent failures.
 
 ### 4. Final brief
 
-End with the day's plan, formatted for a phone screen:
+Formatted for a phone screen, in this order:
+
+- **Closed this session** — print this summary *first*, before the day's plan.
+  Cover everything closed this run, from both sources: duplicates and banners
+  closed by the auto-invoked jira-sprint-cleanup (step 1), and items Mark marked
+  done during the interview. One line each (key + summary). If nothing was
+  closed, say so in a single line or omit the section — don't manufacture one.
+
+Then the day's plan:
 
 - **Daily target** — ordered quick-wins-first (lowest effort at top).
 - **Aspirational**, then **Not daily goals** — one line each.
-- Anything closed or skipped during the session.
+- Anything skipped during the session.
 - Any disposable automation banners present (separator-style rows **not** under
   `MCP-2213`) — listed once as clutter, closed only if Mark asks. Permanent
   structure (children of `MCP-2213`) never appears here.
