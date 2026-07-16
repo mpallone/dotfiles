@@ -83,14 +83,16 @@ items get re-triaged fresh each run. Re-triage is automatic and unconditional:
 he always does.** Go straight into the item-by-item questions; never gate the
 interview behind a "want to revisit yesterday's items?" yes/no prompt. Rules:
 
-- Batches of **at most 6 items** per round, using tappable single-select
-  options. Two different caps apply: each *question* offers at most 4 options —
-  **Daily target / Aspirational / Not daily goals / Mark as done** — and each
-  tappable prompt (`AskUserQuestion`) holds at most 4 *questions*. So a round of
-  6 cannot be a single prompt: deliver it as two consecutive tap-prompts (e.g.
-  3+3), then pause for the next round of 6. `prioritize` stays a valid bucket
-  via typed reply (it saw zero use in the first session — promote it back into
-  the tap set if Mark starts using it).
+- **Six items per round — always aim for the full 6, never stop at 3.** The
+  `AskUserQuestion` tool caps at 4 *questions* per prompt, so 6 items cannot fit
+  in one card. Deliver each round as **two back-to-back tap-prompts — 4 then 2**
+  (fall back to 3+3 only if needed). Fire the second prompt *immediately* after
+  the first is answered: **do not pause, summarize, or wait between the two
+  halves — the two prompts are one round of 6.** Only after all 6 are answered
+  do you move on to the next round of 6. Each *question* offers at most 4
+  options — **Daily target / Aspirational / Not daily goals / Mark as done**.
+  `prioritize` stays a valid bucket via typed reply (it saw zero use in the
+  first session — promote it back into the tap set if Mark starts using it).
 - **"Mark as done" is an action, not a label**: on selection, first pull the
   issue's current state (`getJiraIssue`) to confirm it isn't already Done or
   otherwise changed (see **Verify state before writing**), then transition it
