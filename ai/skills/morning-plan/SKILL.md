@@ -106,7 +106,11 @@ interview behind a "want to revisit yesterday's items?" yes/no prompt. Rules:
   - Time-pinned items (due today, "(Sunday automation)" on a Sunday) lean
     `daily-target`; blocked or deferred-dependency items lean
     `not-daily-goals`.
-  - Mark overrides freely — his answer always wins over the heuristic.
+  - **Mark's answer is final — never second-guess his categorization.** His
+    choice always wins over the heuristic. Never pause the interview to ask
+    whether a bucket is "right" or whether he did something correctly — record
+    the answer and move to the next item. If a choice looks wrong, hold it for
+    the flags line at the top of the final brief (step 4): flag, never block.
 - Handle free-text answers, not just taps:
   - "done" / "I did it" / "wife owns it now" → same as tapping "Mark as done".
     Whenever an issue is closed this way and its summary carries an
@@ -136,7 +140,13 @@ error, and continue with the rest — no silent failures.
 
 Formatted for a phone screen, in this order:
 
-- **Closed this session** — print this summary *first*, before the day's plan.
+- **Flags (optional — only if something looks off)** — the very first lines of
+  the brief, above everything else. One or two lines noting anything that looks
+  miscategorized or wrong from the interview. This is a heads-up, not a gate: it
+  never appears mid-interview and never pauses anything. Omit the line entirely
+  if nothing looks off — never manufacture a flag.
+- **Closed this session** — print this summary right after any flags line and
+  before the day's plan.
   Cover everything closed this run, from both sources: duplicates and banners
   closed by the auto-invoked jira-sprint-cleanup (step 1), and items Mark marked
   done during the interview. One line each (key + summary). If nothing was
@@ -166,6 +176,13 @@ Then the day's plan:
   against it. If the fresh state contradicts the decision (already Done, status
   moved, an unexpected label present), surface the discrepancy and re-confirm
   with Mark before writing — never act on the stale snapshot.
+- **Never second-guess Mark's categorization, and never pause to ask if he did
+  something right.** His bucket choices are final; record them and keep going.
+  Anything that looks wrong goes on the optional flags line at the top of the
+  final brief (step 4) — flag it there, never block on it. This governs his
+  judgment only; it does not relax **Verify state before writing**, whose pause
+  is triggered by a genuine state race (an issue Jira changed underneath the
+  snapshot), not by second-guessing his choice.
 - Never touch issues outside the open sprint; never surface, prompt on, or
   modify permanent structure (any child of `MCP-2213`); close disposable
   automation banners only on explicit request; never edit Automation rules
