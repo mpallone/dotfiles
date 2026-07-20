@@ -14,7 +14,8 @@ push to `main`. Every skill in the repo gets a zip here automatically.
    sessions (claude.ai/code) — no separate step.
 
 - 🔁 **When a skill changes:** a fresh zip lands here automatically — just re-upload it.
-- 🔌 `jira-sprint-cleanup` and `morning-plan` need your **Atlassian connector** enabled in the chat.
+- 🔌 `morning-plan` needs your **Atlassian connector** enabled in the chat.
+- 🗑️ `jira-sprint-cleanup` was merged into `morning-plan` (its cleanup workflow is now that skill's "Sprint cleanup mode") — if you uploaded the old zip, delete the skill in claude.ai → **Settings → Skills**.
 - 🖥️ `mmm-deploy` and `update-repos` are local-machine tools — they'll upload fine but only work in local Claude Code, not the app/cloud sandbox.
 
 ---

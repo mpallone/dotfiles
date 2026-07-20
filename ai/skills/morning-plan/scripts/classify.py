@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Classify active-sprint Jira issues into a cleanup plan.
 
-Pure, deterministic classifier for the `jira-sprint-cleanup` skill. It never
-touches Jira -- the skill fetches the sprint over the Atlassian Rovo MCP, writes
-the issues to a JSON file, and this script decides which to close and which to
-keep. Keeping the rules here means they are applied identically every run instead
-of being re-derived by hand across 200+ tickets.
+Pure, deterministic classifier for the morning-plan skill's sprint-cleanup
+mode. It never touches Jira -- the skill fetches the sprint over the Atlassian
+Rovo MCP, writes the issues to a JSON file, and this script decides which to
+close and which to keep. Keeping the rules here means they are applied
+identically every run instead of being re-derived by hand across 200+ tickets.
 
 Input: a JSON file holding a list of issues, each an object with:
     key           "MCP-1234"                      (required)
@@ -14,6 +14,9 @@ Input: a JSON file holding a list of issues, each an object with:
     statusCategory "new" | "indeterminate" | "done"  (optional; when present,
                                                     "done" items are dropped -- we
                                                     only act on To-Do items)
+    parent        parent issue key, e.g. "MCP-2213"  (optional; children of the
+                                                    separators epic are permanent
+                                                    dividers, never touched)
     created       ISO-8601 timestamp              (optional; display only)
 
 Every non-Done issue lands in exactly one bucket:
@@ -21,7 +24,7 @@ Every non-Done issue lands in exactly one bucket:
     chore     -- "(... automation)" recurring chores -> keep newest per group,
                  close the older duplicates
     real      -- everything else -> never auto-closed
-    divider   -- one of the 6 permanent manual dividers -> never touched
+    divider   -- child of the permanent separators epic -> never touched
     borderline-- tripped the separator rule but reads like prose -> flagged for a
                  human decision, never auto-closed
 
@@ -50,12 +53,11 @@ BASE_JQL = "project = MCP AND sprint in openSprints()"
 # Verify against getTransitionsForJiraIssue on the first target before using it.
 DONE_TRANSITION_ID = "31"
 
-# The 6 permanent manual dividers kept as board structure. They look exactly like
-# automation separator rows, so key is the ONLY thing distinguishing them -- never
-# close these, whatever their summary matches.
-PERMANENT_DIVIDERS = {
-    "MCP-1193", "MCP-1550", "MCP-5493", "MCP-6580", "MCP-7207", "MCP-8954",
-}
+# Permanent dividers kept as board structure are children of this epic
+# ("separators"). They look exactly like automation separator rows, so parentage
+# is the ONLY signal distinguishing them -- never close a child of this epic,
+# whatever its summary matches.
+DIVIDER_EPIC = "MCP-2213"
 
 # --- Classification rules. ---
 # Automation posts explicit START/END text markers around its daily run.
@@ -140,7 +142,7 @@ def classify(issues: list[dict]) -> dict:
             done_count += 1
             continue
 
-        if key in PERMANENT_DIVIDERS:
+        if (issue.get("parent") or "") == DIVIDER_EPIC:
             dividers.append((key, summary))
         elif BANNER_PHRASE.search(summary):
             banners.append((key, summary))
