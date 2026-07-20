@@ -50,3 +50,9 @@ jobs:
             gh release create skills-latest --title "$title" --notes-file "$notes"
           fi
           gh release upload skills-latest dist/*.zip --clobber
+          # Prune assets whose skill no longer exists in the repo -- upload
+          # --clobber only overwrites, it never removes, so a deleted skill's
+          # zip would otherwise sit in the release forever.
+          for asset in $(gh release view skills-latest --json assets -q '.assets[].name'); do
+            [ -f "dist/$asset" ] || gh release delete-asset skills-latest "$asset" --yes
+          done
