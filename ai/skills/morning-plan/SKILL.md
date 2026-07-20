@@ -97,30 +97,23 @@ items get re-triaged fresh each run. Re-triage is automatic and unconditional:
 he always does.** Go straight into the item-by-item questions; never gate the
 interview behind a "want to revisit yesterday's items?" yes/no prompt. Rules:
 
-- Batches of **at most 6 items** per round, using tappable single-select
-  options. Two different caps apply: each *question* offers at most 4 options —
-  **Daily target / Aspirational / Not daily goals / Mark as done** — and each
-  tappable prompt (`AskUserQuestion`) holds at most 4 *questions*. So a round of
-  6 cannot be a single prompt: deliver it as two consecutive tap-prompts (e.g.
-  3+3), then pause for the next round of 6. `prioritize` stays a valid bucket
-  via typed reply (it saw zero use in the first session — promote it back into
-  the tap set if Mark starts using it).
+- Deliver the triage as tappable single-select prompts, each filled to **the
+  maximum number of questions the AskUserQuestion prompt allows** (currently
+  4) — never split a batch into smaller prompts than that cap forces. Each
+  *question* offers at most 4 options — **Daily target / Aspirational / Not
+  daily goals / Mark as done**. Pause for Mark's answers after each prompt,
+  then continue with the next full prompt until the queue is done.
+  `prioritize` stays a valid bucket via typed reply (it saw zero use in the
+  first session — promote it back into the tap set if Mark starts using it).
 - **"Mark as done" is an action, not a label**: on selection, first pull the
   issue's current state (`getJiraIssue`) to confirm it isn't already Done or
   otherwise changed (see **Verify state before writing**), then transition it
   to Done (`transitionJiraIssue`, id `31`) and write no bucket label.
-- Embed a suggested bucket in each question, always computed from the heuristic
-  below — independent of any bucket label the item already carries. A stored
-  label never pre-selects the answer; it is only context. You may note an item's
-  current bucket briefly ("currently: aspirational") for context, but the
-  *suggestion* is the heuristic result:
-  - **Low-effort must-dos rise to the top** → suggest `daily-target`
-    (examples: litter box, trash to curb, cat feeder).
-  - **High-effort items and exercise-like items** → suggest `aspirational`.
-  - Time-pinned items (due today, "(Sunday automation)" on a Sunday) lean
-    `daily-target`; blocked or deferred-dependency items lean
-    `not-daily-goals`.
-  - Mark overrides freely — his answer always wins over the heuristic.
+- **Never recommend or suggest a bucket in the questions** — no embedded
+  suggestions, no "recommended" markers; Mark finds them clutter. His answer
+  is the only input. A stored label never pre-selects the answer either; you
+  may note an item's current bucket briefly ("currently: aspirational") as
+  factual context, nothing more.
 - Handle free-text answers, not just taps:
   - "done" / "I did it" / "wife owns it now" → same as tapping "Mark as done".
     Whenever an issue is closed this way and its summary carries an
@@ -190,8 +183,8 @@ Then the day's plan:
   this unprompted.
 - Every not-done, non-separator item is re-triaged on every run —
   automatically, never gated behind a "want to revisit?" question. A stored
-  bucket label neither suppresses the prompt nor pre-selects the answer (the
-  suggestion is recomputed from the effort heuristic each time). Permanent
+  bucket label neither suppresses the prompt nor pre-selects the answer — and
+  the questions never embed a suggested bucket. Permanent
   structure (children of `MCP-2213`) and disposable automation banners remain
   excluded from triage per the rules above.
 
