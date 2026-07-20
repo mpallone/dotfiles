@@ -16,8 +16,7 @@ ai/
 ├── global-context/AGENTS.md     # global instructions (a.k.a. CLAUDE.md content)
 ├── skills/                      # one <name>/SKILL.md per skill
 │   ├── teach-me/
-│   ├── jira-sprint-cleanup/
-│   ├── morning-plan/
+│   ├── morning-plan/           # daily planning ritual + sprint cleanup mode
 │   ├── mmm-deploy/              # local-machine tool (needs the mmm CLI)
 │   ├── update-repos/            # local-machine tool (operates on local git repos)
 │   └── daily-ai-tools-digest.md # loose note, NOT a skill (no <name>/SKILL.md dir)
@@ -107,5 +106,5 @@ Consequences accepted:
 - **Global context (`global-context/AGENTS.md`)**: distributed by `mmm` locally, pulled
   into cloud Code by `cloud-setup.sh` (above), and pasted by hand into claude.ai custom
   instructions for app chats (no upload API for that surface).
-- **`jira-sprint-cleanup`** needs the Atlassian connector enabled in whatever chat runs it.
+- **`morning-plan`** (planning ritual + sprint cleanup mode) needs the Atlassian connector enabled in whatever chat runs it.
 - **`daily-ai-tools-digest.md`** is a loose note, not a skill; nothing packages or ships it.
