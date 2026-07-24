@@ -3,10 +3,11 @@ name: teach-me
 description: |
   Teach a topic, article, file, or URL section by section for a non-expert
   audience — assume zero domain knowledge except concepts the user marks as
-  already known up front, deliver ~4000-character chunks, and STOP after each
-  chunk to take questions. Never front-load the whole explanation. Use when
-  the user says "/teach-me [thing]", "walk me through this", "explain this
-  section by section", or "teach me how X works".
+  already known up front, deliver ~4000-character chunks, end each chunk with
+  an evidence trail the learner can check, and STOP after each chunk to take
+  questions. Never front-load the whole explanation. Use when the user says
+  "/teach-me [thing]", "walk me through this", "explain this section by
+  section", or "teach me how X works".
 ---
 
 # teach-me
@@ -14,7 +15,9 @@ description: |
 Teach the given material to someone with no background in it: a junior engineer
 fresh out of college, or a busy engineering manager who hasn't written code in
 years. Go one section at a time, in digestible ~4000-character chunks, and pause
-after each so the learner can ask questions before you continue.
+after each so the learner can ask questions before you continue. Every chunk
+ends with an evidence trail so the learner can verify the claims without taking
+your word for them.
 
 ## Input
 
@@ -72,11 +75,77 @@ before teaching.
   verbatim so the numbers match the real file. Illustrative or invented examples
   (topic/URL teaching) have no real line numbers — leave those as a plain fenced
   block with no caption.
+- **End every chunk with an evidence trail.** Cite where each non-obvious claim
+  in the chunk can be checked. See **Evidence trail** below — this is required,
+  not optional.
 - **Just pause after each chunk.** End by inviting questions and waiting. Do NOT
   auto-generate quiz questions or exercises — offer those only if the user asks
   for them.
 - **Plain, neutral language.** Say exactly what you mean in the fewest plain
   words. No walls of text; no value-laden filler.
+
+## Evidence trail
+
+Close every chunk with an **Evidence** block listing where each non-obvious
+claim can be independently checked. Two reasons this is mandatory:
+
+1. **The learner can verify.** They confirm what you taught without trusting
+   you, and they get the primary sources for going deeper.
+2. **It forces you to find the truth.** Committing to a citation means going and
+   reading the source rather than producing a plausible-sounding answer.
+   Hallucination survives prose; it does not survive a line number.
+
+### Format
+
+A short bulleted list under a bold `**Evidence**` heading. Each entry: the claim
+(abbreviated), then the source. Keep it tight — 2–6 entries per chunk, not one
+per sentence.
+
+> **Evidence**
+>
+> - Consumer offsets are committed to an internal topic, not ZooKeeper —
+>   [Kafka docs, "Offset Tracking"](https://kafka.apache.org/documentation/#impl_offsettracking)
+> - Default `max.poll.interval.ms` is 300000 — `verified: kafka-clients 3.7.0
+>   ConsumerConfig.java:412`
+> - Our consumers override it to 600000 — `services/ingest/consumer.yaml:23`
+> - Rebalance is "stop-the-world" for the group — *inference from the protocol
+>   description above; not stated in these words by the docs*
+
+### What counts as a source
+
+Ordered by strength — prefer the strongest available:
+
+- **Code you read this session** — `path:start-end`, same clickable form as the
+  snippet captions. Strongest: it is the running system.
+- **Commands the learner can re-run** — give the exact command, e.g.
+  `git log --oneline -5 -- src/foo.py` or `kafka-configs.sh --describe …`. Say
+  what output to expect.
+- **Primary docs / specs / source repos** — link directly to the section, not
+  the doc root. Vendor docs describe intended behavior, which can differ from
+  deployed behavior; when both exist, cite the code too.
+- **Your own reasoning** — allowed, but label it: *inference*, *analogy*, or
+  *simplification*. Never dress inference as sourced fact.
+
+### Rules
+
+- **Verify before citing.** Do not cite a file, line range, URL, or config value
+  you have not actually read this session. If you believe a source exists but
+  have not opened it, either open it or say so: "likely documented in the Kafka
+  protocol guide — not verified."
+- **Mark what you could not verify.** An honest "unverified" entry is worth more
+  than a confident wrong one. Include it in the block rather than dropping the
+  claim silently.
+- **Distinguish exists-in-code from active-in-prod.** A code path can be behind
+  a disabled flag. Cite the config that proves it is on, or state that you did
+  not confirm the prod setting.
+- **Line numbers must match the real file.** Same requirement as snippet
+  captions — quote verbatim from what you read.
+- **Skip the obvious.** No citations for universals (what JSON is) or for claims
+  already carried by a labeled snippet in the chunk body.
+- **Topic-mode teaching still cites.** When teaching from your own knowledge
+  with no file to read, cite docs, specs, or standards — and label the parts
+  that are your synthesis. If a topic is niche or fast-moving, web-search and
+  cite what you find rather than relying on memory.
 
 ## Start
 
@@ -111,7 +180,7 @@ before teaching.
    roadmap with the updated total `M` in the chunk-1 message. Otherwise keep
    the roadmap as announced.
 6. Teach section 1 (~4000 characters) with a concrete example, headed
-   `chunk 1/M`.
+   `chunk 1/M`, and close it with the **Evidence** block.
 7. Stop and invite questions. Continue to the next section only when the user
    is ready, incrementing `N` in the `chunk N/M` header for each subsequent
-   chunk.
+   chunk. Every chunk gets its own Evidence block.
