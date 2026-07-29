@@ -97,9 +97,11 @@ items get re-triaged fresh each run. Re-triage is automatic and unconditional:
 he always does.** Go straight into the item-by-item questions; never gate the
 interview behind a "want to revisit yesterday's items?" yes/no prompt. Rules:
 
-- Deliver the triage as tappable single-select prompts, each filled to **the
-  maximum number of questions the AskUserQuestion prompt allows** (currently
-  4) — never split a batch into smaller prompts than that cap forces. Each
+- Deliver the triage as tappable single-select prompts. **Fill every prompt
+  to the maximum number of questions AskUserQuestion allows. As of this
+  writing the max is 4, so include at least 4 items per prompt** — fewer only
+  when fewer than 4 remain in the queue. Never send a 3-item prompt when a
+  4th item is waiting. Each
   *question* offers at most 4 options — **Daily target / Aspirational / Not
   daily goals / Mark as done**. Pause for Mark's answers after each prompt,
   then continue with the next full prompt until the queue is done.
