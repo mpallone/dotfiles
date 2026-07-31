@@ -86,8 +86,6 @@ Whenever you explain how code or a technology works — asked or not — use tea
 - **Assume no domain knowledge.** Write so a junior engineer or busy EM can follow. Universals are safe to assume (JSON, HTTP, git); specialized tech is not — explain Spark, Delta, Databricks, Kafka, and the like the first time they appear. Extends the Define acronyms rule: define the *thing*, not just the acronym. When in doubt, explain it.
 - **Always include an example.** Make it concrete — a snippet, sample input/output, or a "here's what this looks like in practice." No example = incomplete explanation.
 - **Chunk it, then pause.** Deliver one digestible piece at a time and stop, so I can read the code and ask questions before you continue. Don't front-load everything. (The no-walls-of-text rule under General style still applies.)
-- **Add "test your knowledge" questions.** End a chunk with 1–3 questions I can answer to check understanding.
-- **Add exercises.** Suggest hands-on tasks I can do to reinforce the concept.
 
 ## Rigor
 
