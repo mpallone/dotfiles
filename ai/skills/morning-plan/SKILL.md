@@ -107,43 +107,55 @@ interview behind a "want to revisit yesterday's items?" yes/no prompt. Rules:
   then continue with the next full prompt until the queue is done.
   `prioritize` stays a valid bucket via typed reply (it saw zero use in the
   first session — promote it back into the tap set if Mark starts using it).
-- **"Mark as done" is an action, not a label**: on selection, first pull the
-  issue's current state (`getJiraIssue`) to confirm it isn't already Done or
-  otherwise changed (see **Verify state before writing**), then transition it
-  to Done (`transitionJiraIssue`, id `31`) and write no bucket label.
+- **The interview is write-free.** Between prompts the only tool call is the
+  next `AskUserQuestion` — never pause the interview to read or write Jira.
+  Every answer (bucket or done) is just recorded; all Jira calls wait for
+  step 3.
+- **"Mark as done" is a recorded decision, not an immediate action**: note the
+  issue as pending-done and move straight to the next prompt. The actual Done
+  transition happens in step 3 with the other writes; no bucket label is
+  written for these items.
 - **Never recommend or suggest a bucket in the questions** — no embedded
   suggestions, no "recommended" markers; Mark finds them clutter. His answer
   is the only input. A stored label never pre-selects the answer either; you
   may note an item's current bucket briefly ("currently: aspirational") as
   factual context, nothing more.
 - Handle free-text answers, not just taps:
-  - "done" / "I did it" / "wife owns it now" → same as tapping "Mark as done".
-    Whenever an issue is closed this way and its summary carries an
-    "(… automation)" tag and ownership changed permanently, remind Mark once
-    to edit the generating rule in Jira **Project settings → Automation**.
+  - "done" / "I did it" / "wife owns it now" → same as tapping "Mark as done"
+    (recorded now, closed in step 3). Whenever an issue closed this way
+    carries an "(… automation)" tag in its summary and ownership changed
+    permanently, remind Mark once — in the final brief — to edit the
+    generating rule in Jira **Project settings → Automation**.
   - A different bucket name → use it.
   - "skip" → leave the item's current label untouched (an unlabeled item stays
     unlabeled; an already-labeled item keeps its existing bucket) and mention it
     in the final brief. Skipping never erases a bucket.
 
-### 3. Write labels (batched, after the interview)
+### 3. Take actions (after the whole interview)
 
-For each triaged open issue, first re-fetch its current state with
-`getJiraIssue` (see **Verify state before writing**), then set its bucket via
-`editJiraIssue` with `fields: {"labels": [...]}`. The fresh read is also what
-lets you honor the non-bucket-label exception below — you can only preserve a
-label that appeared since step 1 if you just read it.
+Every Jira write happens here, once the triage queue is empty. Two passes:
+
+1. **Close the pending-done items.** For each issue marked done in the
+   interview, re-fetch its current state with `getJiraIssue` (see **Verify
+   state before writing**), then transition it to Done (`transitionJiraIssue`,
+   id `31`). No bucket label is written for these.
+2. **Write bucket labels.** For each remaining triaged issue, re-fetch its
+   current state with `getJiraIssue`, then set its bucket via `editJiraIssue`
+   with `fields: {"labels": [...]}`. The fresh read is also what lets you
+   honor the non-bucket-label exception below — you can only preserve a label
+   that appeared since step 1 if you just read it.
 
 **Labels are owned by this system** — Mark does not use Jira labels for
 anything else. Set `labels` to exactly the one bucket label (the write replaces
 the whole array, which is the desired behavior). Rare exception: if an
 unexpected non-bucket label ever appears on an issue, keep it in the array and
-mention it in the brief. If an edit fails, report the specific issue key and
-error, and continue with the rest — no silent failures.
+mention it in the brief. If a transition or edit fails, report the specific
+issue key and error, and continue with the rest — no silent failures.
 
 ### 4. Final brief
 
-Formatted for a phone screen, in this order:
+Print only after every step-3 action has completed — actions first, then the
+report. Formatted for a phone screen, in this order:
 
 - **Closed this session** — print this summary *first*, before the day's plan.
   Cover everything closed this run, from both sources: duplicates and banners
@@ -165,12 +177,13 @@ Then the day's plan:
 
 ## Planning guardrails
 
-- Reads before writes; all label writes happen in step 3, transitions may
-  happen mid-interview when Mark reports something done.
+- Reads before writes; **all** writes — label edits and Done transitions —
+  happen in step 3, after the interview finishes. Never pause the interview
+  to call Jira; done-answers are recorded and closed in step 3.
 - **Verify state before writing**: the step-1 snapshot goes stale as the
   interview runs — Jira Automation can re-create or close issues, and Mark may
   edit in the Jira UI in parallel. Before *any* state change to an issue (a Done
-  transition in step 2 or a label write in step 3), pull that one issue's
+  transition or a label write, both in step 3), pull that one issue's
   current state with `getJiraIssue` and confirm the planned action still holds
   against it. If the fresh state contradicts the decision (already Done, status
   moved, an unexpected label present), surface the discrepancy and re-confirm
