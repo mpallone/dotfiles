@@ -21,8 +21,16 @@ ai/
 │   ├── update-repos/            # local-machine tool (operates on local git repos)
 │   └── daily-ai-tools-digest.md # loose note, NOT a skill (no <name>/SKILL.md dir)
 ├── cloud-setup.sh               # Cloud Code setup script: copies AGENTS.md + skills into ~/.claude
+├── statusline.py                # Claude Code CLI status line; NOT a skill (see below)
 └── scripts/package_skills.sh    # builds claude.ai-app-ready skill ZIPs
 ```
+
+**Why `statusline.py` sits here and not in `skills/`:** everything under
+`skills/` is auto-published — `package_skills.sh` zips every `<name>/SKILL.md`
+directory with no allowlist, and `cloud-setup.sh` copies the whole tree into
+cloud sessions. The status line is a local macOS terminal feature that would be
+dead weight (or confusing) on those surfaces, so it deliberately lives one level
+up as a sibling of `skills/`, where neither script globs it.
 
 ## How each surface gets its skills
 
@@ -108,3 +116,12 @@ Consequences accepted:
   instructions for app chats (no upload API for that surface).
 - **`morning-plan`** (planning ritual + sprint cleanup mode) needs the Atlassian connector enabled in whatever chat runs it.
 - **`daily-ai-tools-digest.md`** is a loose note, not a skill; nothing packages or ships it.
+- **`statusline.py`** covers exactly one surface: the **Claude Code CLI on macOS**.
+  It is not distributed by `mmm` (which handles only context, skills, and
+  subagents) and does not apply to the claude.ai app or cloud sessions. It is
+  installed by `one-time-config.sh` at the repo root, which symlinks it to
+  `~/.claude/statusline.py` and sets `statusLine` in `~/.claude/settings.json`.
+  Because it is a **symlink**, edits here are live with no redeploy — but the
+  clone must stay at a stable path. Note `~/.claude/settings.json` is separately
+  snapshotted to the Riot dotfiles repo by the `backup-claude-settings` skill;
+  that backup captures the *setting* but not this *script*.
