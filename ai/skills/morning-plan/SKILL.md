@@ -7,8 +7,9 @@ description: >
   tasks into effort buckets (stored as Jira labels), closes anything he reports
   done, and ends with a short ordered plan for the day. Sprint cleanup mode
   closes automation banner rows and older duplicates of recurring chores — it
-  always prints a full plan and waits for an explicit "go", transitions to Done
-  (never deletes), and never touches the backlog or the permanent divider rows.
+  runs unattended with no approval prompt: it prints the plan, closes the
+  targets immediately, then reports what changed. It transitions to Done (never
+  deletes), and never touches the backlog or the permanent divider rows.
   Use whenever Mark says "morning plan", "plan my day", "run my daily planning",
   "triage my sprint/jira", "what should I do today", or otherwise wants to
   review, sort, or prioritize his personal Jira tasks — and for cleanup alone,
@@ -80,13 +81,11 @@ whether or not an item already carries a bucket label.
 **Duplicate check**: if two or more open non-separator issues share effectively
 the same summary (typical cause: automation re-created a recurring chore that
 was never closed), do not triage them here — and do not ask whether to clean
-them up. **Automatically run Sprint cleanup mode** (below). Just tell Mark
-duplicates were found, then switch into it. "Automatically run" means
-auto-*start* cleanup, never auto-*close*: cleanup mode keeps its
-non-negotiable gate — it prints a full plan and waits for Mark's explicit "go"
-before transitioning anything — and the planning flow must not bypass that
-gate. Capture which issues cleanup closed so they can be reported in the final
-brief (step 4). Resume the morning plan with whatever survives cleanup.
+them up. **Automatically run Sprint cleanup mode** (below) start to finish —
+it needs no approval. Just tell Mark duplicates were found, then switch into
+it, close what it targets, and come back. Capture which issues cleanup closed
+so they can be reported in the final brief (step 4). Resume the morning plan
+with whatever survives cleanup.
 
 ### 2. Interview
 
@@ -210,15 +209,27 @@ recurring chores, leaving real work and board structure untouched. The
 classifier lives in `scripts/classify.py`; the cleanup constants below live
 there too, so they are not re-derived each run.
 
-### The gate (non-negotiable)
+### No approval prompt — run it end to end
 
-**Print the full plan and STOP. Do not transition a single issue until Mark
-replies "go".** The plan lists every affected ticket (key + summary + exact
-action), grouped into Banner clutter, Recurring chores, Borderline, and a
-keep-list last. `scripts/classify.py` prints exactly this format — show its
-plan output, then wait. "go" (or an explicit equivalent) is the only signal to
-mutate. Anything short of that — silence, a question, "looks good?" from Mark
-as a question — is not approval.
+**Never ask Mark to confirm the cleanup.** Fetch, classify, close, report — in
+one pass, no "reply go", no "shall I proceed?", no `AskUserQuestion`. Print the
+plan for the record (it lists every affected ticket: key + summary + exact
+action, grouped into Banner clutter, Recurring chores, Borderline, keep-list
+last — `scripts/classify.py` prints exactly this format), then immediately
+close the targets and report the result.
+
+What makes running unattended safe is the classifier plus the write rules, not
+a human check:
+
+- Only two categories are ever closed: banner clutter and older duplicates of a
+  recurring chore. Real tasks, single-occurrence chores, and permanent dividers
+  are never touched.
+- **Borderline items are flagged, never closed** — ambiguity is routed to Mark
+  by hand, instead of a blanket confirm on every run.
+- Every close is a transition to Done, reversible in the Jira UI. Nothing is
+  deleted.
+- Each target is re-read immediately before it is closed (step 5), so a stale
+  plan can't mutate an issue that changed.
 
 ### Cleanup constants
 
@@ -281,14 +292,15 @@ block. The rules it applies (also documented here so Mark can audit them):
   includes automation-*created* items that lack a `(...automation)` suffix (e.g.
   a reminder ticket) — those are real tasks, not clutter.
 
-### 3. Present the plan and STOP
+### 3. Print the plan, then keep going
 
 Show the classifier's plan output verbatim (or lightly reformatted — keep every
 key, summary, and action, and keep the keep-list last). Call out the Borderline
 section and any "may be the same chore" heads-up explicitly; do not resolve them
-yourself. **Wait for "go".** See the gate above.
+yourself and do not close them. Then go straight to step 4 — **do not stop for
+approval.**
 
-### 4. Verify the Done transition (on approval, before the first mutation)
+### 4. Verify the Done transition (before the first mutation)
 
 Call `getTransitionsForJiraIssue` on the **first** target key. Find the
 transition whose destination is a Done status (statusCategory `done`, usually
@@ -298,8 +310,9 @@ you found. If no Done transition is available on that issue, **stop and report**
 
 ### 5. Transition the targets to Done
 
-The plan can be stale: an arbitrary approval wait sits between the step-1 fetch
-and this mutation, and in that window Jira automation regenerates/closes rows
+The plan can be stale: time passes between the step-1 fetch and this mutation
+(a full sprint fetch paginates, and in planning mode an entire triage interview
+can sit in between), and in that window Jira automation regenerates/closes rows
 and Mark may have closed some by hand. So for every key in the classifier's
 `CLOSE_ALL` list, **pull the issue's current state with `getJiraIssue`
 immediately before mutating it** and confirm the decision still holds against
@@ -314,7 +327,18 @@ tasks, single-occurrence chores, and the permanent dividers alone.
 ### 6. Report
 
 State the final tally: **N closed, M kept** (and how many were flagged
-Borderline for Mark to handle). Then note the two things this does **not** fix:
+Borderline for Mark to handle).
+
+Because nothing was confirmed up front, the report is where Mark gets his
+chance to object — make the reversible decisions visible:
+
+- Name every chore group where day-name variants were collapsed into one
+  (e.g. a Wednesday row closed against a Saturday row), plus any "may be the
+  same chore" heads-up. One line: if a variant should stay separate, he
+  reopens it in the Jira UI and the classifier's grouping needs a fix.
+- Anything skipped in step 5 because the fresh read contradicted the plan.
+
+Then note the two things this does **not** fix:
 
 1. **Already-Done items still sit in the sprint.** Closing issues doesn't remove
    them — Done items only leave when the sprint itself is closed. (Report the
@@ -327,10 +351,13 @@ Borderline for Mark to handle). Then note the two things this does **not** fix:
 ### Hard rules (learned the hard way)
 
 - Transition to Done, **never delete**.
-- **Plan first, mutate only after "go".** No exceptions.
+- **Never ask for approval.** Print the plan, then close — one uninterrupted
+  pass.
 - **Surface ambiguity, never guess.** Borderline items are flagged, not closed.
-- **Verify state before writing.** The plan is built before an arbitrary
-  approval wait; re-read each target with `getJiraIssue` immediately before
+  With no human gate in the loop, this rule is the only thing standing between
+  an ambiguous row and a wrong close — widen Borderline before widening CLOSE.
+- **Verify state before writing.** The plan is built before the mutations, and
+  the gap can be long; re-read each target with `getJiraIssue` immediately before
   closing it and skip anything whose current state no longer matches the plan
   (already Done, summary changed). Never mutate against the stale snapshot.
 - Never touch the backlog, real tasks, or the permanent dividers (children of
