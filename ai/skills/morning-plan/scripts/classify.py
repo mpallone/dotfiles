@@ -257,7 +257,7 @@ def render(plan: dict) -> None:
     print("=" * 70)
 
     # Machine block: the skill reads CLOSE_ALL to drive transitions.
-    print("\n### MACHINE (for the skill, not the plan the user approves) ###")
+    print("\n### MACHINE (for the skill, not part of the printed plan) ###")
     print(f"CLOSE_BANNER={','.join(k for k, _ in banners)}")
     print(f"CLOSE_CHORE={','.join(c['key'] for c in chore_close)}")
     print(f"CLOSE_ALL={','.join(close_all)}")
