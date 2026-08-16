@@ -5,7 +5,7 @@ description: >
   (project MCP), or clean up the sprint's automation clutter. Planning mode reads
   the current sprint, interviews him item-by-item with tappable options to sort
   tasks into effort buckets (stored as Jira labels), closes anything he reports
-  done, and ends with a short ordered plan for the day. Sprint cleanup mode
+  done, and ends with a short numbered plan for the day. Sprint cleanup mode
   closes automation banner rows and older duplicates of recurring chores — it
   runs unattended with no approval prompt: it prints the plan, closes the
   targets immediately, then reports what changed. It transitions to Done (never
@@ -159,17 +159,27 @@ report. Formatted for a phone screen, in this order:
 - **Closed this session** — print this summary *first*, before the day's plan.
   Cover everything closed this run, from both sources: duplicates and banners
   closed by the auto-run sprint cleanup (step 1), and items Mark marked done
-  during the interview. One line each (key + summary). If nothing was closed,
+  during the interview. One line each (key + summary), as plain bullets —
+  closed items are not part of the day's numbered plan and must not consume
+  numbers in that sequence. If nothing was closed,
   say so in a single line or omit the section — don't manufacture one.
 
-Then the day's plan:
+Then the day's plan. **Every task in the plan is a numbered list item, never a
+bullet** — Mark refers to items by number ("1 and 2 are done") instead of
+retyping issue keys. Numbering runs as **one continuous sequence** across
+Daily target, Aspirational, and Not daily goals, so no number appears twice
+and a bare number is unambiguous. Restart the sequence at 1 only on the next
+run. Keep the issue key on each line after the number
+(`1. MCP-1234 — summary`) so keys stay available when he wants them.
 
 - **Daily target** — ordered quick-wins-first (lowest effort at top).
 - **Aspirational**, then **Not daily goals** — one line each.
-- Anything skipped during the session.
+- Anything skipped during the session — numbered in the same sequence, since
+  a skipped item is still a live task he may act on.
 - Any disposable automation banners present (separator-style rows **not** under
-  `MCP-2213`) — listed once as clutter, closed only if Mark asks. Permanent
-  structure (children of `MCP-2213`) never appears here.
+  `MCP-2213`) — listed once as clutter in plain bullets (not tasks, so no
+  numbers), closed only if Mark asks. Permanent structure (children of
+  `MCP-2213`) never appears here.
 - If `daily-target` exceeds ~5 items, say so once, plainly: "the less
   ambitious, the more achievable" — and name the best demotion candidates.
   Don't nag beyond that.
@@ -191,6 +201,13 @@ Then the day's plan:
   modify permanent structure (any child of `MCP-2213`); close disposable
   automation banners only on explicit request; never edit Automation rules
   yourself (Mark does that in the Jira UI).
+- **Any list of Mark's tasks you print is numbered, never bulleted** — the
+  step-1 snapshot and the step-4 plan alike — so he can answer with numbers
+  ("1 and 2 are done") instead of issue keys. The most recently printed
+  numbered list defines what a bare number means; if he references a number
+  and the last list is ambiguous, echo back the key and summary you matched
+  before acting on it. Non-task lines (closed items, banner clutter) stay
+  bullets.
 - Fine-grained order *within* a bucket is session-only. If Mark wants an
   artifact of the day's exact ordering, offer to write it as a comment on the
   `week planning ritual` ticket (or the topmost daily-target item) — don't do
