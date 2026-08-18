@@ -20,6 +20,10 @@ ai/
 │   ├── mmm-deploy/              # local-machine tool (needs the mmm CLI)
 │   ├── update-repos/            # local-machine tool (operates on local git repos)
 │   └── daily-ai-tools-digest.md # loose note, NOT a skill (no <name>/SKILL.md dir)
+├── commands/                    # slash commands — NOT skills, `mmm` does not deploy these
+│   ├── copy-name.md             #   /copy-name — session name to clipboard
+│   └── copy-session-name.sh     #   the script it shells out to
+├── install-local.sh             # symlinks commands/ into ~/.claude/commands/ (new laptop)
 ├── cloud-setup.sh               # Cloud Code setup script: copies AGENTS.md + skills into ~/.claude
 ├── statusline/                  # Claude Code CLI status line — NOT a skill
 │   ├── statusline.py            #   the script itself
@@ -31,6 +35,13 @@ ai/
 under `skills/` is auto-zipped by `package_skills.sh` and copied into cloud
 sessions by `cloud-setup.sh`, and a macOS-only status line has no business on
 those surfaces.
+
+`commands/` is a sibling for the same reason. Claude Code merged custom commands
+into skills — `commands/copy-name.md` and `skills/copy-name/SKILL.md` both produce
+`/copy-name` and behave identically — so the only thing separating them is
+distribution. Anything under `skills/` gets auto-zipped for the claude.ai app and
+copied into cloud sessions, and a command that drives the macOS clipboard cannot
+work on either surface. Keeping it out of `skills/` keeps it off them.
 
 ## How each surface gets its skills
 
@@ -116,6 +127,16 @@ Consequences accepted:
   instructions for app chats (no upload API for that surface).
 - **`morning-plan`** (planning ritual + sprint cleanup mode) needs the Atlassian connector enabled in whatever chat runs it.
 - **`daily-ai-tools-digest.md`** is a loose note, not a skill; nothing packages or ships it.
+- **`commands/`** holds slash commands, which `mmm` does not distribute (it handles
+  context, skills, and subagents only) — the same gap `statusline/` falls into. On a
+  new Mac, clone this repo and run `bash ai/install-local.sh`; it symlinks every file
+  in `commands/` into `~/.claude/commands/`, so edits here are live with no redeploy.
+  Because they are symlinks, the clone must stay put. **One step the script cannot do
+  for you:** `/copy-name` shells out to `pbcopy`, and Claude Code's sandbox blocks the
+  macOS pasteboard service, so `pbcopy` fails silently with exit 1. Add
+  `~/.claude/commands/copy-session-name.sh` to `sandbox.excludedCommands` in
+  `~/.claude/settings.json` — that file rides along in the Riot repo's
+  `settings.json` backup. Without it the command prints the name but does not copy it.
 - **`statusline/`** targets one surface only: the Claude Code CLI on macOS. `mmm`
   does not distribute it (it handles context, skills, and subagents). To install
   on a new Mac, paste the prompt in `statusline/INSTALL_PROMPT.md` into Claude
