@@ -5,8 +5,9 @@ description: >
   (project MCP), or clean up the sprint's automation clutter. Planning mode reads
   the current sprint, interviews him item-by-item with tappable options to sort
   tasks into effort buckets (stored as Jira labels), closes anything he reports
-  done, and ends with a short ordered plan for the day. Sprint cleanup mode
-  closes automation banner rows and older duplicates of recurring chores — it
+  done, and ends every single answer — not just the last one — with the full
+  ordered plan for the day. Sprint cleanup mode closes automation banner rows
+  and older duplicates of recurring chores — it
   runs unattended with no approval prompt: it prints the plan, closes the
   targets immediately, then reports what changed. It transitions to Done (never
   deletes), and never touches the backlog or the permanent divider rows.
@@ -34,6 +35,44 @@ share the constants below:
 
 Requires the **Atlassian Rovo connector** enabled in the chat — if its tools
 are unavailable, say so and stop.
+
+## Always end every answer with the full day plan
+
+**Every** message sent while this skill is running ends with the full day plan —
+no exceptions, in both modes. Not just the final brief: the opening snapshot,
+each interview prompt, the cleanup plan, the cleanup report, the final brief,
+and any follow-up answer afterward all carry it as their last block. If a reply
+has room for nothing else, it still has room for this.
+
+The plan block is the current state of all four buckets, as of that moment:
+
+```
+**Today's plan**
+Daily target (quick wins first)
+  1. MCP-1234 — <summary>
+  2. MCP-1240 — <summary>
+Prioritize — MCP-1250 <summary>
+Aspirational — MCP-1261 <summary>
+Not daily goals — MCP-1272 <summary>
+Undecided (N) — not yet triaged this session
+Closing this session — MCP-1201 <summary>
+```
+
+Rules for the block:
+
+- **Every bucket, every time** — one line per item, key + summary, daily target
+  ordered quick-wins-first. Omit a bucket only when it is empty.
+- **Mid-session it reflects decisions so far**, which are not yet written to
+  Jira: items Mark has already bucketed sit in their new bucket, items he
+  answered "done" on sit under *Closing this session*, and everything still
+  queued is counted under *Undecided*. Say the count, don't list every
+  undecided item — the queue can be long.
+- **Reading it costs no tool calls.** It is rendered from the step-1 snapshot
+  plus the answers recorded so far. It never triggers a Jira read and never
+  interrupts the write-free interview (see step 2).
+- Permanent structure (children of `MCP-2213`) never appears in it.
+- In the final brief the plan block *is* the day's plan section — print it once
+  there, after **Closed this session**, not twice.
 
 ## Constants
 
@@ -109,7 +148,10 @@ interview behind a "want to revisit yesterday's items?" yes/no prompt. Rules:
 - **The interview is write-free.** Between prompts the only tool call is the
   next `AskUserQuestion` — never pause the interview to read or write Jira.
   Every answer (bucket or done) is just recorded; all Jira calls wait for
-  step 3.
+  step 3. The message that carries each prompt still ends with the full
+  day plan (see **Always end every answer with the full day plan**) — it is
+  rendered from state already in hand, so it costs no tool call and does not
+  break the write-free rule.
 - **"Mark as done" is a recorded decision, not an immediate action**: note the
   issue as pending-done and move straight to the next prompt. The actual Done
   transition happens in step 3 with the other writes; no bucket label is
@@ -162,10 +204,11 @@ report. Formatted for a phone screen, in this order:
   during the interview. One line each (key + summary). If nothing was closed,
   say so in a single line or omit the section — don't manufacture one.
 
-Then the day's plan:
+Then the day's plan — the same block every other answer ends with, now
+reflecting the writes that just landed:
 
 - **Daily target** — ordered quick-wins-first (lowest effort at top).
-- **Aspirational**, then **Not daily goals** — one line each.
+- **Prioritize**, **Aspirational**, then **Not daily goals** — one line each.
 - Anything skipped during the session.
 - Any disposable automation banners present (separator-style rows **not** under
   `MCP-2213`) — listed once as clutter, closed only if Mark asks. Permanent
@@ -176,6 +219,9 @@ Then the day's plan:
 
 ## Planning guardrails
 
+- **Every answer ends with the full day plan** — snapshot, every interview
+  prompt, cleanup output, final brief, and every follow-up. Never send a
+  message in this skill without it.
 - Reads before writes; **all** writes — label edits and Done transitions —
   happen in step 3, after the interview finishes. Never pause the interview
   to call Jira; done-answers are recorded and closed in step 3.
@@ -252,7 +298,9 @@ Call `searchJiraIssuesUsingJql` with:
 - `jql`: `project = MCP AND sprint in openSprints() AND statusCategory != Done`
   (the base scope + the To-Do filter — we only act on non-Done items)
 - `maxResults`: `100` (the tool caps here)
-- `fields`: `["summary", "status", "created", "parent"]`
+- `fields`: `["summary", "status", "created", "parent", "labels"]` — `labels`
+  is not used by the classifier; it is what lets a cleanup-only run render the
+  day plan block every answer ends with, without a second query
 
 The sprint can hold 200+ issues. **Loop on `nextPageToken`:** re-call with the
 same `jql` and the returned `nextPageToken` until no token comes back. Do not set
@@ -261,7 +309,8 @@ produces a wrong plan.
 
 For each issue collect: `key`, `summary`, `status.statusCategory` (the `key`:
 `new` / `indeterminate` / `done`), `created`, and `parent` (the parent issue
-key from `fields.parent.key`, or null when there is no parent). Write them as
+key from `fields.parent.key`, or null when there is no parent). Keep `labels`
+in hand for the day plan block; the classifier ignores it. Write them as
 a JSON list to a scratch file, e.g.:
 
 ```json
@@ -299,6 +348,10 @@ key, summary, and action, and keep the keep-list last). Call out the Borderline
 section and any "may be the same chore" heads-up explicitly; do not resolve them
 yourself and do not close them. Then go straight to step 4 — **do not stop for
 approval.**
+
+End that message, like every other, with the full day plan block — the cleanup
+plan (what gets closed) and the day plan (what Mark works on) are different
+things and both belong here.
 
 ### 4. Verify the Done transition (before the first mutation)
 
@@ -350,6 +403,7 @@ Then note the two things this does **not** fix:
 
 ### Hard rules (learned the hard way)
 
+- **End every answer with the full day plan**, cleanup-only runs included.
 - Transition to Done, **never delete**.
 - **Never ask for approval.** Print the plan, then close — one uninterrupted
   pass.
