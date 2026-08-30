@@ -44,29 +44,53 @@ each interview prompt, the cleanup plan, the cleanup report, the final brief,
 and any follow-up answer afterward all carry it as their last block. If a reply
 has room for nothing else, it still has room for this.
 
-The plan block is the current state of all four buckets, as of that moment:
+Three subsections, in this order — **Today**, **Aspirational**, **Not today** —
+each a bold header on its own line, followed by bullets, one item per bullet:
 
 ```
 **Today's plan**
-Daily target (quick wins first)
-  1. MCP-1234 — <summary>
-  2. MCP-1240 — <summary>
-Prioritize — MCP-1250 <summary>
-Aspirational — MCP-1261 <summary>
-Not daily goals — MCP-1272 <summary>
-Undecided (N) — not yet triaged this session
-Closing this session — MCP-1201 <summary>
+
+**Today**
+- MCP-14061 — pull trash to curb
+- MCP-14063 — order wipes/diapers/TP
+
+**Aspirational**
+- MCP-14057 — laundry progress
+- MCP-14060 — cardio or strength training
+
+**Not today**
+- MCP-14058 — YNAB reconcile
+- MCP-14046 — meal plan
+
+**Still to triage:** 3 · **Closing today:** MCP-14012, MCP-14030
 ```
 
-Rules for the block:
+Formatting rules — the layout is the point, a wall of text is not readable on
+a phone:
 
-- **Every bucket, every time** — one line per item, key + summary, daily target
-  ordered quick-wins-first. Omit a bucket only when it is empty.
+- **Bullets only. Never a numbered list.** A numbered item swallows every
+  indented line under it, which collapses the whole block into one paragraph.
+- **One item per bullet**, `KEY — summary`. Never join items on one line with
+  `·` or commas.
+- **Blank line before and after every subsection header.** Headers are bold
+  text on their own line, never a bullet and never inline with the first item.
+- **Never indent** a bullet or a header — everything sits at the left margin.
+- Bucket → subsection: `daily-target` → **Today**, `aspirational` →
+  **Aspirational**, `not-daily-goals` → **Not today**. **Today** is ordered
+  quick-wins-first (lowest effort at top); the order carries that, so no
+  numbering is needed. An item labeled `prioritize` goes in **Today** with a
+  trailing `(prioritize)`.
+- Omit a subsection entirely when it is empty — no empty headers.
+- **The trailing counts line** is one line, not a subsection: untriaged count
+  and the keys closing this session. Drop either half when it is zero.
+
+Content rules:
+
 - **Mid-session it reflects decisions so far**, which are not yet written to
-  Jira: items Mark has already bucketed sit in their new bucket, items he
-  answered "done" on sit under *Closing this session*, and everything still
-  queued is counted under *Undecided*. Say the count, don't list every
-  undecided item — the queue can be long.
+  Jira: items Mark has already bucketed sit in their new subsection, items he
+  answered "done" on go to *Closing today*, and everything still queued is
+  counted in *Still to triage*. Count the untriaged items, don't list them —
+  the queue can be long.
 - **Reading it costs no tool calls.** It is rendered from the step-1 snapshot
   plus the answers recorded so far. It never triggers a Jira read and never
   interrupts the write-free interview (see step 2).
@@ -204,16 +228,15 @@ report. Formatted for a phone screen, in this order:
   during the interview. One line each (key + summary). If nothing was closed,
   say so in a single line or omit the section — don't manufacture one.
 
-Then the day's plan — the same block every other answer ends with, now
-reflecting the writes that just landed:
+Then the day's plan — the same **Today / Aspirational / Not today** block every
+other answer ends with, now reflecting the writes that just landed. Same
+formatting rules; no numbered lists, one item per bullet.
 
-- **Daily target** — ordered quick-wins-first (lowest effort at top).
-- **Prioritize**, **Aspirational**, then **Not daily goals** — one line each.
 - Anything skipped during the session.
 - Any disposable automation banners present (separator-style rows **not** under
   `MCP-2213`) — listed once as clutter, closed only if Mark asks. Permanent
   structure (children of `MCP-2213`) never appears here.
-- If `daily-target` exceeds ~5 items, say so once, plainly: "the less
+- If **Today** exceeds ~5 items, say so once, plainly: "the less
   ambitious, the more achievable" — and name the best demotion candidates.
   Don't nag beyond that.
 
