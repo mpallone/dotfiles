@@ -5,8 +5,9 @@ description: >
   (project MCP), or clean up the sprint's automation clutter. Planning mode reads
   the current sprint, interviews him item-by-item with tappable options to sort
   tasks into effort buckets (stored as Jira labels), closes anything he reports
-  done, and ends with a short numbered plan for the day. Sprint cleanup mode
-  closes automation banner rows and older duplicates of recurring chores — it
+  done, and ends every single answer — not just the last one — with the full
+  numbered plan for the day. Sprint cleanup mode closes automation banner rows
+  and older duplicates of recurring chores — it
   runs unattended with no approval prompt: it prints the plan, closes the
   targets immediately, then reports what changed. It transitions to Done (never
   deletes), and never touches the backlog or the permanent divider rows.
@@ -34,6 +35,81 @@ share the constants below:
 
 Requires the **Atlassian Rovo connector** enabled in the chat — if its tools
 are unavailable, say so and stop.
+
+## Always end every answer with the full day plan
+
+**Every** message sent while this skill is running ends with the full day plan —
+no exceptions, in both modes. Not just the final brief: the opening snapshot,
+each interview prompt, the cleanup plan, the cleanup report, the final brief,
+and any follow-up answer afterward all carry it as their last block. If a reply
+has room for nothing else, it still has room for this.
+
+Three subsections, in this order — **Today**, **Aspirational**, **Not today** —
+each a bold header on its own line, followed by bullets, one numbered item per
+bullet:
+
+```
+**Today's plan**
+
+**Today**
+- **1.** MCP-14061 — pull trash to curb
+- **2.** MCP-14063 — order wipes/diapers/TP
+
+**Aspirational**
+- **3.** MCP-14057 — laundry progress
+- **4.** MCP-14060 — cardio or strength training
+
+**Not today**
+- **5.** MCP-14058 — YNAB reconcile
+- **6.** MCP-14046 — meal plan
+
+**Still to triage:** 3 · **Closing today:** MCP-14012, MCP-14030
+```
+
+Formatting rules — the layout is the point, a wall of text is not readable on
+a phone:
+
+- **Bullets only. Never a markdown numbered list.** A `1.` list marker swallows
+  every indented line under it, which collapses the whole block into one
+  paragraph. The reference number goes *inside* the bullet as bold text
+  (`- **1.** MCP-…`), which is plain inline text and renders as written.
+- **One item per bullet**, `**N.** KEY — summary`. Never join items on one line
+  with `·` or commas.
+- **Every item carries a reference number** so Mark can answer "1 and 2 are
+  done" instead of retyping issue keys. The sequence runs **unbroken across all
+  three subsections** — it does not restart per subsection — so no number
+  appears twice and a bare number is unambiguous. The key stays on the line
+  after the number, so keys are still there when he wants them.
+- **Blank line before and after every subsection header.** Headers are bold
+  text on their own line, never a bullet and never inline with the first item.
+- **Never indent** a bullet or a header — everything sits at the left margin.
+- Bucket → subsection: `daily-target` → **Today**, `aspirational` →
+  **Aspirational**, `not-daily-goals` → **Not today**. **Today** is ordered
+  quick-wins-first (lowest effort at top). An item labeled `prioritize` goes in
+  **Today** with a trailing `(prioritize)`.
+- Omit a subsection entirely when it is empty — no empty headers.
+- **The trailing counts line** is one line, not a subsection: untriaged count
+  and the keys closing this session. Drop either half when it is zero. Neither
+  half is numbered — untriaged items aren't listed, and closing items are no
+  longer tasks, so they never consume numbers in the sequence.
+- **Numbers are re-assigned every time the block prints.** Because the block
+  ends every message, the most recent one defines what a bare number means. If
+  Mark answers with a number and the last block is ambiguous, echo back the key
+  and summary you matched before acting on it.
+
+Content rules:
+
+- **Mid-session it reflects decisions so far**, which are not yet written to
+  Jira: items Mark has already bucketed sit in their new subsection, items he
+  answered "done" on go to *Closing today*, and everything still queued is
+  counted in *Still to triage*. Count the untriaged items, don't list them —
+  the queue can be long.
+- **Reading it costs no tool calls.** It is rendered from the step-1 snapshot
+  plus the answers recorded so far. It never triggers a Jira read and never
+  interrupts the write-free interview (see step 2).
+- Permanent structure (children of `MCP-2213`) never appears in it.
+- In the final brief the plan block *is* the day's plan section — print it once
+  there, after **Closed this session**, not twice.
 
 ## Constants
 
@@ -109,7 +185,10 @@ interview behind a "want to revisit yesterday's items?" yes/no prompt. Rules:
 - **The interview is write-free.** Between prompts the only tool call is the
   next `AskUserQuestion` — never pause the interview to read or write Jira.
   Every answer (bucket or done) is just recorded; all Jira calls wait for
-  step 3.
+  step 3. The message that carries each prompt still ends with the full
+  day plan (see **Always end every answer with the full day plan**) — it is
+  rendered from state already in hand, so it costs no tool call and does not
+  break the write-free rule.
 - **"Mark as done" is a recorded decision, not an immediate action**: note the
   issue as pending-done and move straight to the next prompt. The actual Done
   transition happens in step 3 with the other writes; no bucket label is
@@ -159,33 +238,29 @@ report. Formatted for a phone screen, in this order:
 - **Closed this session** — print this summary *first*, before the day's plan.
   Cover everything closed this run, from both sources: duplicates and banners
   closed by the auto-run sprint cleanup (step 1), and items Mark marked done
-  during the interview. One line each (key + summary), as plain bullets —
-  closed items are not part of the day's numbered plan and must not consume
-  numbers in that sequence. If nothing was closed,
-  say so in a single line or omit the section — don't manufacture one.
+  during the interview. One line each (key + summary), as plain unnumbered
+  bullets — closed items are not part of the day's plan and must not consume
+  numbers in its sequence. If nothing was closed, say so in a single line or
+  omit the section — don't manufacture one.
 
-Then the day's plan. **Every task in the plan is a numbered list item, never a
-bullet** — Mark refers to items by number ("1 and 2 are done") instead of
-retyping issue keys. Numbering runs as **one continuous sequence** across
-Daily target, Aspirational, and Not daily goals, so no number appears twice
-and a bare number is unambiguous. Restart the sequence at 1 only on the next
-run. Keep the issue key on each line after the number
-(`1. MCP-1234 — summary`) so keys stay available when he wants them.
+Then the day's plan — the same **Today / Aspirational / Not today** block every
+other answer ends with, now reflecting the writes that just landed. Same
+formatting rules; one numbered item per bullet, no markdown numbered lists.
 
-- **Daily target** — ordered quick-wins-first (lowest effort at top).
-- **Aspirational**, then **Not daily goals** — one line each.
-- Anything skipped during the session — numbered in the same sequence, since
+- Anything skipped during the session — it keeps its number in the block, since
   a skipped item is still a live task he may act on.
 - Any disposable automation banners present (separator-style rows **not** under
-  `MCP-2213`) — listed once as clutter in plain bullets (not tasks, so no
-  numbers), closed only if Mark asks. Permanent structure (children of
-  `MCP-2213`) never appears here.
-- If `daily-target` exceeds ~5 items, say so once, plainly: "the less
+  `MCP-2213`) — listed once as clutter in plain unnumbered bullets, closed only
+  if Mark asks. Permanent structure (children of `MCP-2213`) never appears here.
+- If **Today** exceeds ~5 items, say so once, plainly: "the less
   ambitious, the more achievable" — and name the best demotion candidates.
   Don't nag beyond that.
 
 ## Planning guardrails
 
+- **Every answer ends with the full day plan** — snapshot, every interview
+  prompt, cleanup output, final brief, and every follow-up. Never send a
+  message in this skill without it.
 - Reads before writes; **all** writes — label edits and Done transitions —
   happen in step 3, after the interview finishes. Never pause the interview
   to call Jira; done-answers are recorded and closed in step 3.
@@ -201,13 +276,13 @@ run. Keep the issue key on each line after the number
   modify permanent structure (any child of `MCP-2213`); close disposable
   automation banners only on explicit request; never edit Automation rules
   yourself (Mark does that in the Jira UI).
-- **Any list of Mark's tasks you print is numbered, never bulleted** — the
-  step-1 snapshot and the step-4 plan alike — so he can answer with numbers
-  ("1 and 2 are done") instead of issue keys. The most recently printed
-  numbered list defines what a bare number means; if he references a number
-  and the last list is ambiguous, echo back the key and summary you matched
-  before acting on it. Non-task lines (closed items, banner clutter) stay
-  bullets.
+- **Every task you print carries a reference number** so Mark can answer with
+  numbers ("1 and 2 are done") instead of issue keys. Numbers live inside
+  bullets as bold text (`- **1.** MCP-…`), never as markdown `1.` list markers
+  — see the plan-block formatting rules. The most recently printed block
+  defines what a bare number means; if he references a number and that block is
+  ambiguous, echo back the key and summary you matched before acting on it.
+  Non-task lines (closed items, banner clutter) stay unnumbered.
 - Fine-grained order *within* a bucket is session-only. If Mark wants an
   artifact of the day's exact ordering, offer to write it as a comment on the
   `week planning ritual` ticket (or the topmost daily-target item) — don't do
@@ -269,7 +344,9 @@ Call `searchJiraIssuesUsingJql` with:
 - `jql`: `project = MCP AND sprint in openSprints() AND statusCategory != Done`
   (the base scope + the To-Do filter — we only act on non-Done items)
 - `maxResults`: `100` (the tool caps here)
-- `fields`: `["summary", "status", "created", "parent"]`
+- `fields`: `["summary", "status", "created", "parent", "labels"]` — `labels`
+  is not used by the classifier; it is what lets a cleanup-only run render the
+  day plan block every answer ends with, without a second query
 
 The sprint can hold 200+ issues. **Loop on `nextPageToken`:** re-call with the
 same `jql` and the returned `nextPageToken` until no token comes back. Do not set
@@ -278,7 +355,8 @@ produces a wrong plan.
 
 For each issue collect: `key`, `summary`, `status.statusCategory` (the `key`:
 `new` / `indeterminate` / `done`), `created`, and `parent` (the parent issue
-key from `fields.parent.key`, or null when there is no parent). Write them as
+key from `fields.parent.key`, or null when there is no parent). Keep `labels`
+in hand for the day plan block; the classifier ignores it. Write them as
 a JSON list to a scratch file, e.g.:
 
 ```json
@@ -316,6 +394,10 @@ key, summary, and action, and keep the keep-list last). Call out the Borderline
 section and any "may be the same chore" heads-up explicitly; do not resolve them
 yourself and do not close them. Then go straight to step 4 — **do not stop for
 approval.**
+
+End that message, like every other, with the full day plan block — the cleanup
+plan (what gets closed) and the day plan (what Mark works on) are different
+things and both belong here.
 
 ### 4. Verify the Done transition (before the first mutation)
 
@@ -367,6 +449,7 @@ Then note the two things this does **not** fix:
 
 ### Hard rules (learned the hard way)
 
+- **End every answer with the full day plan**, cleanup-only runs included.
 - Transition to Done, **never delete**.
 - **Never ask for approval.** Print the plan, then close — one uninterrupted
   pass.
