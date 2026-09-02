@@ -5,9 +5,11 @@ description: |
   audience — assume zero domain knowledge except concepts the user marks as
   already known up front, deliver ~4000-character chunks, end each chunk with
   an evidence trail the learner can check, and STOP after each chunk to take
-  questions. Never front-load the whole explanation. Use when the user says
-  "/teach-me [thing]", "walk me through this", "explain this section by
-  section", or "teach me how X works".
+  questions. Each chunk is written to a markdown file under /tmp that the
+  learner opens themselves, so the terminal never scrolls while they read.
+  Never front-load the whole explanation. Use when the user says "/teach-me
+  [thing]", "walk me through this", "explain this section by section", or
+  "teach me how X works".
 ---
 
 # teach-me
@@ -17,7 +19,8 @@ fresh out of college, or a busy engineering manager who hasn't written code in
 years. Go one section at a time, in digestible ~4000-character chunks, and pause
 after each so the learner can ask questions before you continue. Every chunk
 ends with an evidence trail so the learner can verify the claims without taking
-your word for them.
+your word for them. Chunks are delivered as markdown files written to `/tmp` for
+the learner to open — not printed into the terminal. See **Delivering a chunk**.
 
 ## Input
 
@@ -53,12 +56,14 @@ before teaching.
   exception: when reading the notation itself is the requested topic (e.g.
   `/teach-me "how to read a git diff"`), teach the notation — that's the lesson.
 - **Chunk it: ~4000 characters per turn, then STOP.** This is the core behavior.
-  Deliver one section, then pause and wait for the user. Do NOT front-load
-  everything into one long response.
-- **Head each chunk with its progress counter.** Start every chunk with a bold
-  `chunk N/M` label — the current section over the total from the roadmap — so
-  the learner can see how far along they are. Add the section title for context,
-  e.g. `**chunk 5/7 — Consumer group rebalancing**`.
+  Deliver one section — written to its own file per **Delivering a chunk** —
+  then pause and wait for the user. Do NOT front-load everything into one long
+  response, and do NOT write two chunks' files in one turn.
+- **Head each chunk with its progress counter.** The chunk file opens with a
+  `# chunk N/M — Section title` heading — the current section over the total
+  from the roadmap — so the learner can see how far along they are, e.g.
+  `# chunk 5/7 — Consumer group rebalancing`. The terminal pointer repeats the
+  same label in bold.
 - **Name what a chunk taught when you reference it.** Don't rely on the learner
   remembering "chunk 3" by its number. Pair the number with its topic, e.g. "in
   chunk 3, where we covered consumer-group rebalancing, …" — never a bare "as we
@@ -69,7 +74,7 @@ before teaching.
 - **A concrete example in every chunk.** A code snippet, sample input/output, or
   a "here's what this looks like in practice." No example = incomplete chunk.
 - **Label file-sourced code with its location.** When a snippet comes from a
-  file you read, put a clickable `path:start-end` caption on the line directly
+  file you read, put a `path:start-end` caption on the line directly
   above the fenced block, using the same path you were given (e.g.
   `src/foo.py:42-45`; a single line is `src/foo.py:42`). Quote the lines
   verbatim so the numbers match the real file. Illustrative or invented examples
@@ -83,6 +88,54 @@ before teaching.
   for them.
 - **Plain, neutral language.** Say exactly what you mean in the fewest plain
   words. No walls of text; no value-laden filler.
+
+## Delivering a chunk
+
+Chunk text goes to a file on disk, not into the terminal. Streaming ~4000
+characters into the chat scrolls the terminal out from under the learner while
+they are still reading it. The file is the lesson; the terminal is a pointer to
+it.
+
+**Once per lesson**, before chunk 1, create the lesson directory:
+
+```
+mkdir -p /tmp/teach-me/<topic-slug>-<YYYYMMDD-HHMM>
+```
+
+`<topic-slug>` is a short kebab-case slug of the material —
+`kafka-consumer-groups`, `ingest-consumer-py`. Get the timestamp from `date`
+rather than guessing it. Announce the directory once, in the roadmap message.
+
+**For each chunk**, in this order:
+
+1. **Write the file** with the Write tool to
+   `/tmp/teach-me/<lesson-dir>/chunk-NN-<section-slug>.md`, with `NN`
+   zero-padded (`chunk-03-rebalancing.md`). Use the Write tool, not a shell
+   heredoc — heredocs mangle backticks, quotes, and `$` in code snippets.
+2. **Print the pointer and wait — do not open the file.** Never run `open`, an
+   editor, or any other launcher on the chunk; the learner opens it themselves.
+   Print the chunk label, the path, and the invitation to ask questions.
+   Nothing else — no summary, no preview of the content:
+
+   > **chunk 3/7 — Consumer group rebalancing**
+   > `/tmp/teach-me/kafka-20260813-1421/chunk-03-rebalancing.md`
+   >
+   > Questions, or ready for chunk 4?
+
+   Then stop and wait. The learner reads on their own time; their next message
+   is the signal to continue.
+
+**The file is self-contained.** It carries everything the chunk would have said
+in the terminal: the `# chunk N/M — Section title` heading, the explanation, the
+concrete example, and the **Evidence** block. A learner who reads only the file
+misses nothing. Keep `path:start-end` captions in their usual form even though
+they render as plain text rather than clickable links — they stay copy-pasteable.
+
+**What still belongs in the terminal:** the roadmap and concept checkpoint (both
+short, and the checkpoint needs a reply), the pointer lines above, and answers to
+follow-up questions. If an answer runs long enough to scroll — roughly 1500
+characters or more — write it the same way, as `qa-NN-<question-slug>.md`, and
+reply with the path for the learner to open.
 
 ## Evidence trail
 
@@ -150,9 +203,11 @@ Ordered by strength — prefer the strongest available:
 ## Start
 
 1. Resolve the input (file / URL / topic) per the **Input** section.
-2. Give a one-paragraph roadmap: name the sections you'll cover and the order.
-   The number of sections is the total `M` — reuse it as the denominator in
-   every chunk header.
+2. Create the lesson directory (`mkdir -p /tmp/teach-me/<topic-slug>-<stamp>`,
+   see **Delivering a chunk**), then give a one-paragraph roadmap: name the
+   sections you'll cover and the order, and state the directory the chunk files
+   will land in. The number of sections is the total `M` — reuse it as the
+   denominator in every chunk header.
 3. **Concept checkpoint — in the same message as the roadmap.** While building
    the roadmap, collect every specialized concept the lesson would explain
    (the same set the audience bullet defines — Spark, Kafka, Delta, custom
@@ -180,7 +235,10 @@ Ordered by strength — prefer the strongest available:
    roadmap with the updated total `M` in the chunk-1 message. Otherwise keep
    the roadmap as announced.
 6. Teach section 1 (~4000 characters) with a concrete example, headed
-   `chunk 1/M`, and close it with the **Evidence** block.
+   `chunk 1/M` and closed with the **Evidence** block — written to
+   `chunk-01-<slug>.md` and announced with a pointer per **Delivering a
+   chunk**, for the learner to open.
 7. Stop and invite questions. Continue to the next section only when the user
-   is ready, incrementing `N` in the `chunk N/M` header for each subsequent
-   chunk. Every chunk gets its own Evidence block.
+   is ready, incrementing `N` in the `chunk N/M` header and the `NN` in the
+   filename for each subsequent chunk. Every chunk gets its own file and its
+   own Evidence block.
