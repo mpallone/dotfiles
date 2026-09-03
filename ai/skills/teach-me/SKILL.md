@@ -4,9 +4,10 @@ description: |
   Teach a topic, article, file, or URL for a non-expert audience — assume zero
   domain knowledge except concepts the user marks as already known up front,
   split the material into ~4000-character chunks, write every chunk to its own
-  markdown file under /tmp, concatenate them into one whole-lesson file, and
-  hand back a clickable list of all of them at once. Each chunk ends with an
-  evidence trail the learner can check. When the
+  markdown file under /tmp, concatenate them into one whole-lesson file,
+  publish that whole lesson as a private Notion page under "main / teach-me
+  outputs", and hand back a clickable list of all of them at once. Each chunk
+  ends with an evidence trail the learner can check. When the
   learner's questions change what the lesson should say, rewrite or insert
   chunks automatically and re-link the affected files. Use when the user says
   "/teach-me [thing]", "walk me through this", "explain this section by
@@ -18,8 +19,9 @@ description: |
 Teach the given material to someone with no background in it: a junior engineer
 fresh out of college, or a busy engineering manager who hasn't written code in
 years. Break it into digestible ~4000-character chunks, write each chunk to its
-own markdown file, concatenate the chunks into a single whole-lesson file, and
-hand the learner a clickable list of every file at once.
+own markdown file, concatenate the chunks into a single whole-lesson file,
+publish that whole lesson to a private Notion page, and hand the learner a
+clickable list of every file plus the Notion link at once.
 Every chunk ends with an evidence trail so the learner can verify the claims
 without taking your word for them. The learner paces themselves by reading; you
 wait for their questions. See **Delivering the lesson**.
@@ -119,12 +121,13 @@ rather than guessing it.
    heredoc — heredocs mangle backticks, quotes, and `$` in code snippets.
 2. **Build the whole-lesson file** — see **The whole-lesson file** below. One
    shell command, run after every chunk exists.
-3. **Print the index and wait — do not open the files.** Never run `open`, an
+3. **Publish the whole lesson to Notion** — see **Publishing to Notion** below.
+4. **Print the index and wait — do not open the files.** Never run `open`, an
    editor, or any other launcher on a chunk or on the whole-lesson file; the
    learner opens them themselves. Print one line per chunk: the number, the
    section title, and the absolute path (paths render as clickable links in the
-   terminal), then the whole-lesson path on its own line. No summary, no
-   preview of the content:
+   terminal), then the Notion URL and the whole-lesson path on their own lines.
+   No summary, no preview of the content:
 
    > 7 chunks, in reading order:
    >
@@ -133,7 +136,8 @@ rather than guessing it.
    > 3. **Consumer group rebalancing** — /tmp/teach-me/kafka-20260813-1421/chunk-03-rebalancing.md
    > …
    >
-   > Whole lesson in one file: /tmp/teach-me/kafka-20260813-1421/full-lesson.md
+   > Whole lesson in Notion: https://www.notion.so/Kafka-consumer-groups-2026-08-13-abc123…
+   > Whole lesson on disk: /tmp/teach-me/kafka-20260813-1421/full-lesson.md
    >
    > Read them in order. Ask me anything as you go.
 
@@ -186,6 +190,71 @@ overwrites it, and until then the chunk and the whole-lesson copy disagree.
 renumbering, or deletion makes the existing `full-lesson.md` stale. Re-run the
 command as part of the same turn — see **Revising after questions**.
 
+## Publishing to Notion
+
+The whole lesson also goes to a private Notion page, so the learner can read it
+on any device, search it later, and share it if they choose. The Notion page is
+a copy of `full-lesson.md` — same content, nothing added, nothing summarized.
+The `/tmp` files stay where they are; Notion is an additional destination, not a
+replacement.
+
+**Parent page — always this one:**
+
+- "teach-me outputs", under "main":
+  https://app.notion.com/p/riotgames/teach-me-outputs-3d07f9530fb280db9a2cdbf99f68fdfa
+- `page_id`: `3d07f9530fb280db9a2cdbf99f68fdfa`
+
+Pass it as the parent so the new page inherits that page's private access. Do
+**not** use `creation_mode: "draft"` — draft mode ignores `parent` and files the
+page at the workspace root instead, outside "teach-me outputs".
+
+**Title:** `<Topic> — YYYY-MM-DD`, e.g. `Kafka consumer groups — 2026-08-13`.
+Same topic wording as the lesson slug, same date as the lesson directory stamp.
+
+**How to publish:**
+
+1. Read `full-lesson.md` back from disk after the `cat` build.
+2. Call `notion-create-pages` with that text as `content`:
+
+   ```
+   notion-create-pages(
+     parent: {type: "page_id", page_id: "3d07f9530fb280db9a2cdbf99f68fdfa"},
+     pages: [{
+       properties: {title: "Kafka consumer groups — 2026-08-13"},
+       content: "<contents of full-lesson.md, verbatim>"
+     }]
+   )
+   ```
+
+3. Keep the returned page URL. It goes in the index, and you need it again to
+   update the page after a revision.
+
+**Paste the file's text verbatim; do not re-compose it.** The chunk files are
+the source of truth and `full-lesson.md` is a mechanical `cat` of them. Retyping
+the prose from memory lets the Notion copy drift from the files the learner is
+reading — the same failure the `cat` build exists to prevent.
+
+**Two Notion-flavored Markdown differences matter for teach-me output:**
+
+- **Multi-line blockquotes break.** Each `>` line becomes its own quote block.
+  The revision banner (see **Revising after questions**) is the only multi-line
+  quote a lesson produces — join its lines with `<br>` in the Notion copy.
+- **Code blocks are literal, prose is not.** Fenced blocks carry over unchanged,
+  so snippets and their `path:start-end` captions are safe. Outside code blocks
+  Notion treats a backtick and `\ * ~ $ [ ] < > { } | ^` as markup;
+  backslash-escape any that a chunk uses literally in prose.
+
+Read `notion://docs/enhanced-markdown-spec` if anything else in a lesson looks
+like it may not survive the conversion.
+
+**If the content is too large for one call**, create the page with the first
+several chunks, then append the rest in chunk order with `notion-update-page`
+using `command: "insert_content"` and `position: {type: "end"}`.
+
+**If the publish fails**, say so in one line, give the local `full-lesson.md`
+path, and hand over the lesson anyway. A Notion outage does not block the
+lesson; silently dropping the page would.
+
 ## Revising after questions
 
 The lesson is written before the learner reads it, so their questions will
@@ -223,6 +292,22 @@ inserted chunk, or a renumbering leaves the old concatenation stale, and a
 learner reading the stale copy sees the wrong version with no sign that it is
 out of date.
 
+**Then update the Notion page from the rebuilt file**, in the same turn. Update
+the existing page — do not create a second one, so the link the learner already
+has keeps working:
+
+```
+notion-update-page(
+  page_id: "<page id from the original create>",
+  command: "replace_content",
+  new_str: "<contents of the rebuilt full-lesson.md, verbatim>"
+)
+```
+
+Same verbatim rule as the initial publish: read the rebuilt file and paste it,
+don't retype the lesson. A stale Notion page is worse than the stale `/tmp` copy
+— the learner is likelier to be reading it on a phone with no way to tell.
+
 **Then reprint the full index** in the same format as the
 initial handover, with changed and new entries marked:
 
@@ -234,7 +319,8 @@ initial handover, with changed and new entries marked:
 > 4. **What rebalancing blocks** — /tmp/teach-me/kafka-20260813-1421/chunk-04-what-blocks.md *(new)*
 > …
 >
-> Whole lesson in one file: /tmp/teach-me/kafka-20260813-1421/full-lesson.md *(rebuilt)*
+> Whole lesson in Notion: https://www.notion.so/Kafka-consumer-groups-2026-08-13-abc123… *(updated)*
+> Whole lesson on disk: /tmp/teach-me/kafka-20260813-1421/full-lesson.md *(rebuilt)*
 
 Reprint the whole list, not only the changed lines — the learner's earlier index
 is now stale, and a partial list leaves them guessing which paths still hold.
@@ -344,9 +430,11 @@ Ordered by strength — prefer the strongest available:
    ~4000 characters, with a concrete example, headed `chunk N/M`, and closed
    with its own **Evidence** block.
 7. Concatenate the chunks into `full-lesson.md` per **The whole-lesson file**.
-8. Print the index of all `M` files plus the `full-lesson.md` path per
-   **Delivering the lesson**, say the roadmap changed if it did, invite
-   questions, and stop.
-9. Answer questions as they come. When a question means a chunk is wrong or a
-   section is missing, fix the files, rebuild `full-lesson.md`, and reprint the
-   index per **Revising after questions**.
+8. Publish `full-lesson.md` as a private Notion page under "teach-me outputs"
+   per **Publishing to Notion**, and keep the returned page URL.
+9. Print the index of all `M` files plus the Notion URL and the
+   `full-lesson.md` path per **Delivering the lesson**, say the roadmap changed
+   if it did, invite questions, and stop.
+10. Answer questions as they come. When a question means a chunk is wrong or a
+    section is missing, fix the files, rebuild `full-lesson.md`, update the
+    Notion page, and reprint the index per **Revising after questions**.
