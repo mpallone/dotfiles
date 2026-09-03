@@ -4,8 +4,9 @@ description: |
   Teach a topic, article, file, or URL for a non-expert audience — assume zero
   domain knowledge except concepts the user marks as already known up front,
   split the material into ~4000-character chunks, write every chunk to its own
-  markdown file under /tmp, and hand back a clickable list of all of them at
-  once. Each chunk ends with an evidence trail the learner can check. When the
+  markdown file under /tmp, concatenate them into one whole-lesson file, and
+  hand back a clickable list of all of them at once. Each chunk ends with an
+  evidence trail the learner can check. When the
   learner's questions change what the lesson should say, rewrite or insert
   chunks automatically and re-link the affected files. Use when the user says
   "/teach-me [thing]", "walk me through this", "explain this section by
@@ -17,7 +18,8 @@ description: |
 Teach the given material to someone with no background in it: a junior engineer
 fresh out of college, or a busy engineering manager who hasn't written code in
 years. Break it into digestible ~4000-character chunks, write each chunk to its
-own markdown file, and hand the learner a clickable list of every file at once.
+own markdown file, concatenate the chunks into a single whole-lesson file, and
+hand the learner a clickable list of every file at once.
 Every chunk ends with an evidence trail so the learner can verify the claims
 without taking your word for them. The learner paces themselves by reading; you
 wait for their questions. See **Delivering the lesson**.
@@ -115,11 +117,14 @@ rather than guessing it.
    `/tmp/teach-me/<lesson-dir>/chunk-NN-<section-slug>.md`, with `NN`
    zero-padded (`chunk-03-rebalancing.md`). Use the Write tool, not a shell
    heredoc — heredocs mangle backticks, quotes, and `$` in code snippets.
-2. **Print the index and wait — do not open the files.** Never run `open`, an
-   editor, or any other launcher on a chunk; the learner opens them
-   themselves. Print one line per chunk: the number, the section title, and the
-   absolute path (paths render as clickable links in the terminal). No summary,
-   no preview of the content:
+2. **Build the whole-lesson file** — see **The whole-lesson file** below. One
+   shell command, run after every chunk exists.
+3. **Print the index and wait — do not open the files.** Never run `open`, an
+   editor, or any other launcher on a chunk or on the whole-lesson file; the
+   learner opens them themselves. Print one line per chunk: the number, the
+   section title, and the absolute path (paths render as clickable links in the
+   terminal), then the whole-lesson path on its own line. No summary, no
+   preview of the content:
 
    > 7 chunks, in reading order:
    >
@@ -127,6 +132,8 @@ rather than guessing it.
    > 2. **Partition assignment** — /tmp/teach-me/kafka-20260813-1421/chunk-02-assignment.md
    > 3. **Consumer group rebalancing** — /tmp/teach-me/kafka-20260813-1421/chunk-03-rebalancing.md
    > …
+   >
+   > Whole lesson in one file: /tmp/teach-me/kafka-20260813-1421/full-lesson.md
    >
    > Read them in order. Ask me anything as you go.
 
@@ -143,6 +150,41 @@ short, and the checkpoint needs a reply), the index above, revision notices, and
 answers to follow-up questions. If an answer runs long enough to scroll —
 roughly 1500 characters or more — write it the same way, as
 `qa-NN-<question-slug>.md`, and reply with the path for the learner to open.
+
+## The whole-lesson file
+
+Every lesson also gets `full-lesson.md` in the lesson directory: the chunk files
+concatenated in reading order, so the learner can read, search, or share the
+whole lesson as one document instead of opening M files. It is for the learner
+who wants the long read; the numbered chunks remain the paced path through the
+material.
+
+**It is a literal concatenation — nothing added, nothing summarized.** No new
+intro, no table of contents, no editorial connective tissue between sections.
+Each chunk already opens with its `# chunk N/M — Section title` heading and
+closes with its **Evidence** block, so the joined file reads as a sequenced
+document on its own.
+
+**Build it with a shell command, not the Write tool.** Re-writing the prose by
+hand costs a full second pass and lets the copy drift from the chunks. `cat`
+cannot drift:
+
+```bash
+cd /tmp/teach-me/<lesson-dir> && for f in chunk-*.md; do cat "$f"; printf '\n\n'; done > full-lesson.md
+```
+
+The `chunk-*.md` glob sorts correctly because the numbers are zero-padded, and
+it excludes `qa-NN-*.md` answer files and `full-lesson.md` itself. The blank
+line between files keeps the last line of one chunk from running into the next
+chunk's heading.
+
+**It is derived, never edited.** To change what it says, edit the chunk file and
+re-run the command. Never patch `full-lesson.md` directly — the next rebuild
+overwrites it, and until then the chunk and the whole-lesson copy disagree.
+
+**Rebuild it after every file change.** Any revised chunk, inserted chunk,
+renumbering, or deletion makes the existing `full-lesson.md` stale. Re-run the
+command as part of the same turn — see **Revising after questions**.
 
 ## Revising after questions
 
@@ -175,7 +217,13 @@ Three cases:
   has no duplicates). If the new material has no prerequisites in the lesson,
   append it at the end instead — cheaper and no renumbering.
 
-**After any file change, reprint the full index** in the same format as the
+**After any file change, rebuild `full-lesson.md`** with the command in **The
+whole-lesson file**, in the same turn as the change. A revised chunk, an
+inserted chunk, or a renumbering leaves the old concatenation stale, and a
+learner reading the stale copy sees the wrong version with no sign that it is
+out of date.
+
+**Then reprint the full index** in the same format as the
 initial handover, with changed and new entries marked:
 
 > Updated — 8 chunks now:
@@ -185,6 +233,8 @@ initial handover, with changed and new entries marked:
 > 3. **Consumer group rebalancing** — /tmp/teach-me/kafka-20260813-1421/chunk-03-rebalancing.md *(revised)*
 > 4. **What rebalancing blocks** — /tmp/teach-me/kafka-20260813-1421/chunk-04-what-blocks.md *(new)*
 > …
+>
+> Whole lesson in one file: /tmp/teach-me/kafka-20260813-1421/full-lesson.md *(rebuilt)*
 
 Reprint the whole list, not only the changed lines — the learner's earlier index
 is now stale, and a partial list leaves them guessing which paths still hold.
@@ -293,8 +343,10 @@ Ordered by strength — prefer the strongest available:
    see **Delivering the lesson**), then write all `M` chunk files — each
    ~4000 characters, with a concrete example, headed `chunk N/M`, and closed
    with its own **Evidence** block.
-7. Print the index of all `M` files per **Delivering the lesson**, say the
-   roadmap changed if it did, invite questions, and stop.
-8. Answer questions as they come. When a question means a chunk is wrong or a
-   section is missing, fix the files and reprint the index per **Revising after
-   questions**.
+7. Concatenate the chunks into `full-lesson.md` per **The whole-lesson file**.
+8. Print the index of all `M` files plus the `full-lesson.md` path per
+   **Delivering the lesson**, say the roadmap changed if it did, invite
+   questions, and stop.
+9. Answer questions as they come. When a question means a chunk is wrong or a
+   section is missing, fix the files, rebuild `full-lesson.md`, and reprint the
+   index per **Revising after questions**.
