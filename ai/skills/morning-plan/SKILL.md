@@ -6,7 +6,7 @@ description: >
   the current sprint, interviews him item-by-item with tappable options to sort
   tasks into effort buckets (stored as Jira labels), closes anything he reports
   done, and ends every single answer — not just the last one — with the full
-  ordered plan for the day. Sprint cleanup mode closes automation banner rows
+  numbered plan for the day. Sprint cleanup mode closes automation banner rows
   and older duplicates of recurring chores — it
   runs unattended with no approval prompt: it prints the plan, closes the
   targets immediately, then reports what changed. It transitions to Done (never
@@ -45,22 +45,23 @@ and any follow-up answer afterward all carry it as their last block. If a reply
 has room for nothing else, it still has room for this.
 
 Three subsections, in this order — **Today**, **Aspirational**, **Not today** —
-each a bold header on its own line, followed by bullets, one item per bullet:
+each a bold header on its own line, followed by bullets, one numbered item per
+bullet:
 
 ```
 **Today's plan**
 
 **Today**
-- MCP-14061 — pull trash to curb
-- MCP-14063 — order wipes/diapers/TP
+- **1.** MCP-14061 — pull trash to curb
+- **2.** MCP-14063 — order wipes/diapers/TP
 
 **Aspirational**
-- MCP-14057 — laundry progress
-- MCP-14060 — cardio or strength training
+- **3.** MCP-14057 — laundry progress
+- **4.** MCP-14060 — cardio or strength training
 
 **Not today**
-- MCP-14058 — YNAB reconcile
-- MCP-14046 — meal plan
+- **5.** MCP-14058 — YNAB reconcile
+- **6.** MCP-14046 — meal plan
 
 **Still to triage:** 3 · **Closing today:** MCP-14012, MCP-14030
 ```
@@ -68,21 +69,33 @@ each a bold header on its own line, followed by bullets, one item per bullet:
 Formatting rules — the layout is the point, a wall of text is not readable on
 a phone:
 
-- **Bullets only. Never a numbered list.** A numbered item swallows every
-  indented line under it, which collapses the whole block into one paragraph.
-- **One item per bullet**, `KEY — summary`. Never join items on one line with
-  `·` or commas.
+- **Bullets only. Never a markdown numbered list.** A `1.` list marker swallows
+  every indented line under it, which collapses the whole block into one
+  paragraph. The reference number goes *inside* the bullet as bold text
+  (`- **1.** MCP-…`), which is plain inline text and renders as written.
+- **One item per bullet**, `**N.** KEY — summary`. Never join items on one line
+  with `·` or commas.
+- **Every item carries a reference number** so Mark can answer "1 and 2 are
+  done" instead of retyping issue keys. The sequence runs **unbroken across all
+  three subsections** — it does not restart per subsection — so no number
+  appears twice and a bare number is unambiguous. The key stays on the line
+  after the number, so keys are still there when he wants them.
 - **Blank line before and after every subsection header.** Headers are bold
   text on their own line, never a bullet and never inline with the first item.
 - **Never indent** a bullet or a header — everything sits at the left margin.
 - Bucket → subsection: `daily-target` → **Today**, `aspirational` →
   **Aspirational**, `not-daily-goals` → **Not today**. **Today** is ordered
-  quick-wins-first (lowest effort at top); the order carries that, so no
-  numbering is needed. An item labeled `prioritize` goes in **Today** with a
-  trailing `(prioritize)`.
+  quick-wins-first (lowest effort at top). An item labeled `prioritize` goes in
+  **Today** with a trailing `(prioritize)`.
 - Omit a subsection entirely when it is empty — no empty headers.
 - **The trailing counts line** is one line, not a subsection: untriaged count
-  and the keys closing this session. Drop either half when it is zero.
+  and the keys closing this session. Drop either half when it is zero. Neither
+  half is numbered — untriaged items aren't listed, and closing items are no
+  longer tasks, so they never consume numbers in the sequence.
+- **Numbers are re-assigned every time the block prints.** Because the block
+  ends every message, the most recent one defines what a bare number means. If
+  Mark answers with a number and the last block is ambiguous, echo back the key
+  and summary you matched before acting on it.
 
 Content rules:
 
@@ -225,17 +238,20 @@ report. Formatted for a phone screen, in this order:
 - **Closed this session** — print this summary *first*, before the day's plan.
   Cover everything closed this run, from both sources: duplicates and banners
   closed by the auto-run sprint cleanup (step 1), and items Mark marked done
-  during the interview. One line each (key + summary). If nothing was closed,
-  say so in a single line or omit the section — don't manufacture one.
+  during the interview. One line each (key + summary), as plain unnumbered
+  bullets — closed items are not part of the day's plan and must not consume
+  numbers in its sequence. If nothing was closed, say so in a single line or
+  omit the section — don't manufacture one.
 
 Then the day's plan — the same **Today / Aspirational / Not today** block every
 other answer ends with, now reflecting the writes that just landed. Same
-formatting rules; no numbered lists, one item per bullet.
+formatting rules; one numbered item per bullet, no markdown numbered lists.
 
-- Anything skipped during the session.
+- Anything skipped during the session — it keeps its number in the block, since
+  a skipped item is still a live task he may act on.
 - Any disposable automation banners present (separator-style rows **not** under
-  `MCP-2213`) — listed once as clutter, closed only if Mark asks. Permanent
-  structure (children of `MCP-2213`) never appears here.
+  `MCP-2213`) — listed once as clutter in plain unnumbered bullets, closed only
+  if Mark asks. Permanent structure (children of `MCP-2213`) never appears here.
 - If **Today** exceeds ~5 items, say so once, plainly: "the less
   ambitious, the more achievable" — and name the best demotion candidates.
   Don't nag beyond that.
@@ -260,6 +276,13 @@ formatting rules; no numbered lists, one item per bullet.
   modify permanent structure (any child of `MCP-2213`); close disposable
   automation banners only on explicit request; never edit Automation rules
   yourself (Mark does that in the Jira UI).
+- **Every task you print carries a reference number** so Mark can answer with
+  numbers ("1 and 2 are done") instead of issue keys. Numbers live inside
+  bullets as bold text (`- **1.** MCP-…`), never as markdown `1.` list markers
+  — see the plan-block formatting rules. The most recently printed block
+  defines what a bare number means; if he references a number and that block is
+  ambiguous, echo back the key and summary you matched before acting on it.
+  Non-task lines (closed items, banner clutter) stay unnumbered.
 - Fine-grained order *within* a bucket is session-only. If Mark wants an
   artifact of the day's exact ordering, offer to write it as a comment on the
   `week planning ritual` ticket (or the topmost daily-target item) — don't do
