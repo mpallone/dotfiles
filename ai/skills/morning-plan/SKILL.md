@@ -95,6 +95,9 @@ Content rules:
   plus the answers recorded so far. It never triggers a Jira read and never
   interrupts the write-free interview (see step 2).
 - Permanent structure (children of `MCP-2213`) never appears in it.
+- **Held-back members of a sequenced pair never appear in it** — not in
+  **Today**, **Aspirational**, or **Not today**, whatever bucket label they
+  carry. They show up once, in the final brief's *Held back* line.
 - In the final brief the plan block *is* the day's plan section — print it once
   there, after **Closed this session**, not twice.
 
@@ -123,6 +126,28 @@ Content rules:
     list them once in the final brief and close them only if Mark says to — bulk
     cleanup belongs to Sprint cleanup mode below, not triage. Never a
     tap-prompt.
+- **Sequenced pairs** — two open tickets that are two steps of one job. Only the
+  earlier step is ever surfaced; the later one is **held back** until the
+  earlier is Done. Two match rules, both evaluated against open (non-Done)
+  issues in the current sprint:
+  - **`(N of M)` marker** — a group of issues whose summaries are identical
+    except for an `(N of M)` parenthetical (e.g. `pay rent (1 of 2)` /
+    `pay rent (2 of 2)`). Surface the lowest `N` that is not Done; hold back
+    every higher `N`. Generalizes to any `N`/`M`, not just 2.
+  - **Named pairs** — pairs carrying no marker, listed here explicitly. Order is
+    by issue key ascending (Jira keys are sequential, so this stays stable as
+    automation re-creates the rows):
+
+    | Pair | Matches | Order |
+    |---|---|---|
+    | Birchsong daycare payments | summary contains `birchsong` **and** a payee name (`Leo`, `Robin`) | lowest issue key first |
+
+  Held-back tickets are **suppressed, not resolved**: never prompt on one,
+  never label one, never close one, and never let cleanup mode treat one as an
+  older duplicate. Report each in the final brief on one line so nothing
+  disappears silently. If the earlier step is marked done during an interview,
+  its successor surfaces on the **next** run, not the current one — the queue
+  is fixed at step 1 and the interview stays write-free.
 
 ## Planning workflow
 
@@ -149,6 +174,11 @@ it needs no approval. Just tell Mark duplicates were found, then switch into
 it, close what it targets, and come back. Capture which issues cleanup closed
 so they can be reported in the final brief (step 4). Resume the morning plan
 with whatever survives cleanup.
+
+**Sequenced-pair check**: after cleanup, apply the **Sequenced pairs** rule
+(see Constants) to what remains open. Drop every held-back member from the
+triage queue and record it, with the key it is waiting on, for the final brief.
+A held-back item is not untriaged — leave it out of the *Still to triage* count.
 
 ### 2. Interview
 
@@ -195,6 +225,9 @@ interview behind a "want to revisit yesterday's items?" yes/no prompt. Rules:
   - "skip" → leave the item's current label untouched (an unlabeled item stays
     unlabeled; an already-labeled item keeps its existing bucket) and mention it
     in the final brief. Skipping never erases a bucket.
+- **Held-back members of a sequenced pair are never prompted on**, not even as
+  a bare mention in an option list. They left the queue in step 1 and their
+  existing label stays exactly as it is.
 
 ### 3. Take actions (after the whole interview)
 
@@ -232,6 +265,9 @@ Then the day's plan — the same **Today / Aspirational / Not today** block ever
 other answer ends with, now reflecting the writes that just landed. Same
 formatting rules; no numbered lists, one item per bullet.
 
+- **Held back** — one line per suppressed member of a sequenced pair:
+  `MCP-14080 — pay Robin birchsong (surfaces after MCP-14079)`. Omit the
+  section when nothing is held back.
 - Anything skipped during the session.
 - Any disposable automation banners present (separator-style rows **not** under
   `MCP-2213`) — listed once as clutter, closed only if Mark asks. Permanent
@@ -260,6 +296,10 @@ formatting rules; no numbered lists, one item per bullet.
   modify permanent structure (any child of `MCP-2213`); close disposable
   automation banners only on explicit request; never edit Automation rules
   yourself (Mark does that in the Jira UI).
+- **A held-back ticket is suppressed, never resolved.** It stays open and keeps
+  whatever label it has: no prompt, no label write, no Done transition, and
+  cleanup mode never counts it as a duplicate of the ticket it waits on.
+  Suppression is a display rule only.
 - Fine-grained order *within* a bucket is session-only. If Mark wants an
   artifact of the day's exact ordering, offer to write it as a comment on the
   `week planning ritual` ticket (or the topmost daily-target item) — don't do
