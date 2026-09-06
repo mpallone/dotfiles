@@ -76,12 +76,14 @@ a phone:
   **Aspirational**. **Today** is ordered quick-wins-first (lowest effort at
   top); the order carries that, so no numbering is needed. An item labeled
   `prioritize` goes in **Today** with a trailing `(prioritize)`.
-- **`not-daily-goals` items are never listed unless Mark asks.** The bucket
-  still exists — it stays a triage answer and its label is still written — but
-  the **Not today** subsection is omitted, and the items are counted on the
-  trailing line instead. Print the full **Not today** subsection only when Mark
-  asks for it in so many words ("show not today", "what's in not daily goals",
-  "show everything"); print it in that answer only, then go back to omitting it.
+- **`not-daily-goals` items are not listed by default.** The bucket still
+  exists — it stays a triage answer and its label is still written — but the
+  **Not today** subsection is omitted and the items are counted on the trailing
+  line instead. When Mark asks for them ("show not today", "what's in not daily
+  goals", "show everything"), list them with everything else: **Not today**
+  becomes an ordinary subsection right after **Aspirational**, same bullets,
+  same `KEY — summary`, no separate treatment. Print it in that answer, then go
+  back to the count.
 - Omit a subsection entirely when it is empty — no empty headers.
 - **The trailing counts line** is one line, not a subsection: untriaged count,
   the keys closing this session, and the **Not today** count. Drop any part
@@ -99,8 +101,8 @@ Content rules:
   interrupts the write-free interview (see step 2).
 - Permanent structure (children of `MCP-2213`) never appears in it.
 - **Held-back members of a one-per-day group never appear in it** — not in
-  **Today** or **Aspirational**, whatever bucket label they carry. They show up
-  once, in the final brief's *Held back* line.
+  **Today** or **Aspirational**, whatever bucket label they carry, and not in
+  the trailing counts line either.
 - In the final brief the plan block *is* the day's plan section — print it once
   there, after **Closed this session**, not twice.
 
@@ -145,10 +147,11 @@ Content rules:
 
   Held-back tickets are **suppressed, not resolved**: never prompt on one,
   never label one, never close one, and never let cleanup mode treat one as an
-  older duplicate. Report them in the final brief so nothing disappears
-  silently. If the surfaced member is marked done during an interview, the next
-  one surfaces on the **next** run, not the current one — that is the one-a-day
-  cap, and it also keeps the queue fixed at step 1 and the interview write-free.
+  older duplicate. They are also never displayed: no **Held back** section, no
+  mention in the final brief, no count. If the surfaced member is marked done
+  during an interview, the next one surfaces on the **next** run, not the
+  current one — that is the one-a-day cap, and it also keeps the queue fixed at
+  step 1 and the interview write-free.
 
 ## Planning workflow
 
@@ -178,8 +181,8 @@ with whatever survives cleanup.
 
 **One-per-day check**: after cleanup, apply the **One-per-day groups** rule
 (see Constants) to what remains open. Drop every held-back member from the
-triage queue and record it, with the key it is waiting on, for the final brief.
-A held-back item is not untriaged — leave it out of the *Still to triage* count.
+triage queue and from every output — it is not reported anywhere. A held-back
+item is not untriaged — leave it out of the *Still to triage* count.
 
 ### 2. Interview
 
@@ -267,9 +270,6 @@ answer ends with, now reflecting the writes that just landed. Same formatting
 rules: no numbered lists, one item per bullet, and no **Not today** subsection
 unless Mark asked for it.
 
-- **Held back** — one line per suppressed member of a one-per-day group:
-  `MCP-14080 — pay Robin birchsong (surfaces after MCP-14079)`. Omit the
-  section when nothing is held back.
 - Anything skipped during the session.
 - Any disposable automation banners present (separator-style rows **not** under
   `MCP-2213`) — listed once as clutter, closed only if Mark asks. Permanent
@@ -300,8 +300,8 @@ unless Mark asked for it.
   yourself (Mark does that in the Jira UI).
 - **A held-back ticket is suppressed, never resolved.** It stays open and keeps
   whatever label it has: no prompt, no label write, no Done transition, and
-  cleanup mode never counts it as a duplicate of the ticket it waits on.
-  Suppression is a display rule only.
+  cleanup mode never counts it as a duplicate of the ticket it waits on. It is
+  also never shown or reported — suppression is silent.
 - Fine-grained order *within* a bucket is session-only. If Mark wants an
   artifact of the day's exact ordering, offer to write it as a comment on the
   `week planning ritual` ticket (or the topmost daily-target item) — don't do
