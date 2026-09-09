@@ -4,9 +4,11 @@ description: |
   Teach a topic, article, file, or URL for a non-expert audience — assume zero
   domain knowledge except concepts the user marks as already known up front,
   split the material into ~4000-character chunks, write every chunk to its own
-  markdown file under /tmp, concatenate them into one whole-lesson file,
-  publish that whole lesson as a private Notion page under "main / teach-me
-  outputs", and hand back a clickable list of all of them at once. Each chunk
+  markdown file under /tmp, concatenate them behind a written introduction
+  (goal, one-paragraph bottom line, overview of the chunks) into one
+  whole-lesson file, publish that whole lesson as a private Notion page under
+  "main / teach-me outputs", and hand back a clickable list of all of them at
+  once. Each chunk
   ends with an evidence trail the learner can check. When the
   learner's questions change what the lesson should say, rewrite or insert
   chunks automatically and re-link the affected files. Use when the user says
@@ -19,9 +21,10 @@ description: |
 Teach the given material to someone with no background in it: a junior engineer
 fresh out of college, or a busy engineering manager who hasn't written code in
 years. Break it into digestible ~4000-character chunks, write each chunk to its
-own markdown file, concatenate the chunks into a single whole-lesson file,
-publish that whole lesson to a private Notion page, and hand the learner a
-clickable list of every file plus the Notion link at once.
+own markdown file, concatenate the chunks behind a written introduction into a
+single whole-lesson file, publish that whole lesson to a private Notion page,
+and hand the learner a clickable list of every file plus the Notion link at
+once.
 Every chunk ends with an evidence trail so the learner can verify the claims
 without taking your word for them. The learner paces themselves by reading; you
 wait for their questions. See **Delivering the lesson**.
@@ -119,10 +122,12 @@ rather than guessing it.
    `/tmp/teach-me/<lesson-dir>/chunk-NN-<section-slug>.md`, with `NN`
    zero-padded (`chunk-03-rebalancing.md`). Use the Write tool, not a shell
    heredoc — heredocs mangle backticks, quotes, and `$` in code snippets.
-2. **Build the whole-lesson file** — see **The whole-lesson file** below. One
-   shell command, run after every chunk exists.
-3. **Publish the whole lesson to Notion** — see **Publishing to Notion** below.
-4. **Print the index and wait — do not open the files.** Never run `open`, an
+2. **Write `intro.md`** with the Write tool, after the chunks exist — see
+   **The introduction** below.
+3. **Build the whole-lesson file** — see **The whole-lesson file** below. One
+   shell command, run after `intro.md` and every chunk exists.
+4. **Publish the whole lesson to Notion** — see **Publishing to Notion** below.
+5. **Print the index and wait — do not open the files.** Never run `open`, an
    editor, or any other launcher on a chunk or on the whole-lesson file; the
    learner opens them themselves. Print one line per chunk: the number, the
    section title, and the absolute path (paths render as clickable links in the
@@ -157,38 +162,94 @@ roughly 1500 characters or more — write it the same way, as
 
 ## The whole-lesson file
 
-Every lesson also gets `full-lesson.md` in the lesson directory: the chunk files
-concatenated in reading order, so the learner can read, search, or share the
-whole lesson as one document instead of opening M files. It is for the learner
-who wants the long read; the numbered chunks remain the paced path through the
-material.
+Every lesson also gets `full-lesson.md` in the lesson directory: the
+introduction followed by the chunk files in reading order, so the learner can
+read, search, or share the whole lesson as one document instead of opening M
+files. It is for the learner who wants the long read; the numbered chunks
+remain the paced path through the material.
 
-**It is a literal concatenation — nothing added, nothing summarized.** No new
-intro, no table of contents, no editorial connective tissue between sections.
-Each chunk already opens with its `# chunk N/M — Section title` heading and
-closes with its **Evidence** block, so the joined file reads as a sequenced
-document on its own.
+**Two source files, one build.** `intro.md` is written prose — see **The
+introduction** below. Everything after it is a literal concatenation of the
+chunks: nothing added, nothing summarized, no table of contents, no editorial
+connective tissue between sections. Each chunk already opens with its
+`# chunk N/M — Section title` heading and closes with its **Evidence** block,
+so the joined file reads as a sequenced document on its own.
 
 **Build it with a shell command, not the Write tool.** Re-writing the prose by
 hand costs a full second pass and lets the copy drift from the chunks. `cat`
 cannot drift:
 
 ```bash
-cd /tmp/teach-me/<lesson-dir> && for f in chunk-*.md; do cat "$f"; printf '\n\n'; done > full-lesson.md
+cd /tmp/teach-me/<lesson-dir> && { cat intro.md; printf '\n\n'; for f in chunk-*.md; do cat "$f"; printf '\n\n'; done; } > full-lesson.md
 ```
 
 The `chunk-*.md` glob sorts correctly because the numbers are zero-padded, and
-it excludes `qa-NN-*.md` answer files and `full-lesson.md` itself. The blank
-line between files keeps the last line of one chunk from running into the next
-chunk's heading.
+it excludes `intro.md`, `qa-NN-*.md` answer files, and `full-lesson.md` itself.
+The blank line between files keeps the last line of one chunk from running into
+the next chunk's heading.
 
-**It is derived, never edited.** To change what it says, edit the chunk file and
-re-run the command. Never patch `full-lesson.md` directly — the next rebuild
-overwrites it, and until then the chunk and the whole-lesson copy disagree.
+**It is derived, never edited.** To change what it says, edit `intro.md` or the
+chunk file and re-run the command. Never patch `full-lesson.md` directly — the
+next rebuild overwrites it, and until then the source file and the whole-lesson
+copy disagree.
 
 **Rebuild it after every file change.** Any revised chunk, inserted chunk,
 renumbering, or deletion makes the existing `full-lesson.md` stale. Re-run the
 command as part of the same turn — see **Revising after questions**.
+
+## The introduction
+
+`full-lesson.md` opens with `intro.md`: a short orientation, written last (the
+overview needs the final chunk list) and read first. It is the only authored
+prose in the whole-lesson file. Keep it to roughly one screen — it orients, it
+does not teach, and a learner who reads only the introduction should know
+whether this lesson answers their question.
+
+Three required parts, in this order:
+
+1. **Goal** — one or two sentences naming what the learner will be able to
+   understand or do after reading. Concrete and checkable ("trace a message
+   from producer to committed offset"), not aspirational ("gain familiarity
+   with Kafka").
+2. **The bottom line — exactly one paragraph.** The single most important thing
+   the lesson establishes, stated up front so someone who reads nothing else
+   still leaves with the main point. One paragraph means one: no bullets, no
+   second paragraph, no sub-points. Do **not** print a label like "BLUF",
+   "TL;DR", or "Bottom line up front" — the reader may not know the term; write
+   the paragraph as plain text under the heading shown below.
+3. **What the chunks cover** — a numbered list matching the chunk order, one
+   line per chunk: the section title in bold, then a single clause on what it
+   covers. Same count and same order as the chunk files, so the list doubles as
+   a map of the document below it.
+
+The introduction carries no **Evidence** block. It makes no new claims — every
+assertion in it is established and cited in the chunk that follows.
+
+Shape:
+
+```markdown
+# Kafka consumer groups
+
+**Goal:** After this lesson you can explain how Kafka splits a topic's
+partitions across the consumers in a group, and predict what happens to
+in-flight work when one of those consumers dies.
+
+A consumer group is Kafka's unit of parallelism and of failure recovery: the
+brokers hand each partition to exactly one member of the group, track how far
+that member has read, and reassign the partition to a surviving member when it
+stops responding. Nearly every operational surprise with Kafka consumers —
+duplicate processing, stalled lag, a consumer that silently stops getting
+messages — traces back to that reassignment step, called a rebalance.
+
+## What the chunks cover
+
+1. **What a consumer group is** — the group id, and why two consumers with the
+   same one behave as one reader.
+2. **Partition assignment** — how the group leader divides partitions among
+   members.
+3. **Consumer group rebalancing** — what triggers a reassignment and what stops
+   during one.
+```
 
 ## Publishing to Notion
 
@@ -229,8 +290,9 @@ Same topic wording as the lesson slug, same date as the lesson directory stamp.
 3. Keep the returned page URL. It goes in the index, and you need it again to
    update the page after a revision.
 
-**Paste the file's text verbatim; do not re-compose it.** The chunk files are
-the source of truth and `full-lesson.md` is a mechanical `cat` of them. Retyping
+**Paste the file's text verbatim; do not re-compose it.** `intro.md` and the
+chunk files are the source of truth and `full-lesson.md` is a mechanical `cat`
+of them. Retyping
 the prose from memory lets the Notion copy drift from the files the learner is
 reading — the same failure the `cat` build exists to prevent.
 
@@ -247,9 +309,10 @@ reading — the same failure the `cat` build exists to prevent.
 Read `notion://docs/enhanced-markdown-spec` if anything else in a lesson looks
 like it may not survive the conversion.
 
-**If the content is too large for one call**, create the page with the first
-several chunks, then append the rest in chunk order with `notion-update-page`
-using `command: "insert_content"` and `position: {type: "end"}`.
+**If the content is too large for one call**, create the page with the
+introduction and the first several chunks, then append the rest in chunk order
+with `notion-update-page` using `command: "insert_content"` and
+`position: {type: "end"}`.
 
 **If the publish fails**, say so in one line, give the local `full-lesson.md`
 path, and hand over the lesson anyway. A Notion outage does not block the
@@ -286,11 +349,19 @@ Three cases:
   has no duplicates). If the new material has no prerequisites in the lesson,
   append it at the end instead — cheaper and no renumbering.
 
+**Update `intro.md` when the chunk list or the bottom line moves.** Adding,
+deleting, or renumbering a chunk makes the "What the chunks cover" list wrong —
+rewrite that list to match. A revision that changes the lesson's main point also
+changes the bottom-line paragraph; a revision that only clarifies wording inside
+one chunk usually leaves the introduction alone. The introduction gets no
+revision banner: it is orientation, not material the learner needs a change log
+for.
+
 **After any file change, rebuild `full-lesson.md`** with the command in **The
 whole-lesson file**, in the same turn as the change. A revised chunk, an
-inserted chunk, or a renumbering leaves the old concatenation stale, and a
-learner reading the stale copy sees the wrong version with no sign that it is
-out of date.
+inserted chunk, a renumbering, or an edited introduction leaves the old
+concatenation stale, and a learner reading the stale copy sees the wrong version
+with no sign that it is out of date.
 
 **Then update the Notion page from the rebuilt file**, in the same turn. Update
 the existing page — do not create a second one, so the link the learner already
@@ -429,7 +500,9 @@ Ordered by strength — prefer the strongest available:
    see **Delivering the lesson**), then write all `M` chunk files — each
    ~4000 characters, with a concrete example, headed `chunk N/M`, and closed
    with its own **Evidence** block.
-7. Concatenate the chunks into `full-lesson.md` per **The whole-lesson file**.
+7. Write `intro.md` — goal, one-paragraph bottom line, and the overview of what
+   the chunks cover — per **The introduction**, then concatenate it and the
+   chunks into `full-lesson.md` per **The whole-lesson file**.
 8. Publish `full-lesson.md` as a private Notion page under "teach-me outputs"
    per **Publishing to Notion**, and keep the returned page URL.
 9. Print the index of all `M` files plus the Notion URL and the
