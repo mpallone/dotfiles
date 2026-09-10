@@ -1,31 +1,31 @@
 # karabiner
 
-Keyboardio Model 100 shortcuts for iTerm.
+Keyboardio Model 100 butterfly key → new iTerm tab running `claude`.
 
-- **Butterfly key:** F18 opens a new iTerm tab and starts `codex`.
-- **Any key:** F19 opens a new plain iTerm tab.
+Pressing the butterfly key opens a new tab in iTerm2 and starts a `claude`
+session in it. The keyboard sends **F18**; Karabiner-Elements catches F18 and
+runs a shell script that drives iTerm via AppleScript.
 
-Karabiner-Elements catches each function key and runs a shell script that
-drives iTerm via AppleScript.
+The Any key can send **F19**, which Karabiner maps to a new plain iTerm tab.
 
 ## How it works
 
 ```
-butterfly key  ──►  F18  ──►  Karabiner rule  ──►  codex-tab.sh     ──►  iTerm + `codex`
- (raw code 109)
+butterfly key  ──►  F18  ──►  Karabiner rule  ──►  claude-tab.sh  ──►  osascript  ──►  iTerm
+ (Chrysalis,        (HID      (complex_             (this repo)                        new tab
+  raw code 109)     0x6D)      modification)                                           + `claude`
 
 Any key        ──►  F19  ──►  Karabiner rule  ──►  terminal-tab.sh  ──►  plain iTerm tab
  (raw code 110)
 ```
 
-F18 and F19 are Human Interface Device (HID) function-key codes that macOS
-does not bind by default.
+F18 and F19 are used because macOS binds nothing to them by default.
 
 ## Files
 
 | File | Deployed to | How |
 |---|---|---|
-| `scripts/codex-tab.sh` | `~/.config/karabiner/scripts/` | symlink |
+| `scripts/claude-tab.sh` | `~/.config/karabiner/scripts/` | symlink |
 | `scripts/terminal-tab.sh` | `~/.config/karabiner/scripts/` | symlink |
 | `assets/complex_modifications/butterfly-claude.json` | `~/.config/karabiner/assets/complex_modifications/` | symlink |
 | `assets/complex_modifications/f19-terminal-tab.json` | `~/.config/karabiner/assets/complex_modifications/` | symlink |
@@ -33,8 +33,8 @@ does not bind by default.
 
 `karabiner.json` is copied rather than symlinked because Karabiner rewrites
 that file itself and replaces a symlink with a regular file. Verified on
-2026-09-07 with Karabiner 16.3.0. Karabiner only reads the other files, so their
-symlinks hold and repo edits are live immediately.
+2026-09-07 with Karabiner 16.3.0. Karabiner only reads the linked files, so
+their symlinks hold and repo edits are live immediately.
 
 **After changing Karabiner settings in the GUI, re-snapshot the config:**
 
@@ -104,49 +104,56 @@ in `/var/log/karabiner/core_service.log`.
 **This is the dependency that lives outside this repo — it is stored on the
 keyboard's own firmware, not on the Mac.**
 
-In [Chrysalis](https://github.com/keyboardio/Chrysalis), set these keys on
-**Layer 0**, then save the keymap to the keyboard:
-
-- Butterfly: **raw key code 109** (`0x6D` = F18)
-- Any: **raw key code 110** (`0x6E` = F19)
-
-Karabiner cannot apply these firmware settings.
+In [Chrysalis](https://github.com/keyboardio/Chrysalis), set the butterfly key
+on **Layer 0** to **raw key code 109** (HID `0x6D` = F18), then flash the
+keyboard. Set the Any key to **raw key code 110** (HID `0x6E` = F19).
+Karabiner cannot apply these firmware settings. If they are not set, Karabiner
+sees the keys' default keycodes and the rules never fire.
 
 ### 6. Accept the Automation prompt
 
-Press either mapped key. macOS prompts *"Karabiner-Console-User-Server wants
-to control iTerm."* Click **OK**. This grants
+Press the butterfly key. macOS prompts *"Karabiner-Console-User-Server wants to
+control iTerm."* Click **OK**. This grants
 **System Settings → Privacy & Security → Automation**. The first press only
 produces the prompt; press again afterward.
 
 ## Troubleshooting
 
-**A mapped key does nothing.** Open **Karabiner-EventViewer** and press it.
-Expect `key_code: f18` for Butterfly or `key_code: f19` for Any. A different
-code means Chrysalis did not save the expected mapping.
+**Butterfly does nothing.** Open **Karabiner-EventViewer** and press it. Expect
+`key_code: f18`. If you see `right_option` or anything else, Chrysalis did not
+save — redo step 5.
 
-**The expected function key arrives but no tab opens.** Run the corresponding
-script directly:
+**Any does nothing.** Open **Karabiner-EventViewer** and press it. Expect
+`key_code: f19`. A different code means Chrysalis did not save raw key code
+110.
+
+**F18 arrives but no tab opens.** Run the script directly:
 
 ```sh
-~/.config/karabiner/scripts/codex-tab.sh
-~/.config/karabiner/scripts/terminal-tab.sh
+~/.config/karabiner/scripts/claude-tab.sh
 ```
 
 If a tab opens this way but the key does not, the Automation permission
-(step 6) is missing. If `codex: command not found` appears in the F18 tab,
+(step 6) is missing. If `claude: command not found` appears in the new tab,
 iTerm's shell PATH lacks `~/.local/bin` — that is a shell-config problem, not a
 Karabiner one.
+
+**F19 arrives but no tab opens.** Run the script directly:
+
+```sh
+~/.config/karabiner/scripts/terminal-tab.sh
+```
 
 **Validate the rule** with Karabiner's own linter:
 
 ```sh
 "/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli" \
-  --lint-complex-modifications "$HOME/.config/karabiner/assets/complex_modifications/*.json"
+  --lint-complex-modifications ~/.config/karabiner/assets/complex_modifications/butterfly-claude.json \
+  ~/.config/karabiner/assets/complex_modifications/f19-terminal-tab.json
 # want: ok
 ```
 
 ## Changing what the key does
 
-Edit the corresponding file under `scripts/`. It is symlinked, so the change is
-live on the next press. No reload or reinstall is needed.
+Edit the corresponding file under `scripts/` — both are symlinked, so the
+change is live on the next press. No reload or reinstall is needed.

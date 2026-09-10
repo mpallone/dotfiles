@@ -2,15 +2,14 @@
 #
 # install.sh — restore the Karabiner-Elements setup into ~/.config/karabiner.
 #
-# Maps Keyboardio Model 100 shortcuts through Karabiner-Elements:
-#   F18 -> open a new iTerm tab and run codex
-#   F19 -> open a new plain iTerm tab
-# See README.md in this directory for the manual steps (Chrysalis, driver
-# approval, macOS permissions) that this script cannot do for you.
+# Maps the Keyboardio Model 100's butterfly key (sent as F18) to "open a new
+# iTerm tab and run claude", and F19 to a new plain iTerm tab. See README.md in
+# this directory for the manual steps (Chrysalis, driver approval, macOS
+# permissions) that this script cannot do for you.
 #
 #   assets/complex_modifications/butterfly-claude.json  ->  symlinked
 #   assets/complex_modifications/f19-terminal-tab.json  ->  symlinked
-#   scripts/codex-tab.sh                                ->  symlinked
+#   scripts/claude-tab.sh                               ->  symlinked
 #   scripts/terminal-tab.sh                             ->  symlinked
 #   karabiner.json                                      ->  COPIED (see below)
 #
@@ -64,11 +63,11 @@ link "$SCRIPT_DIR/assets/complex_modifications/butterfly-claude.json" \
      "$DEST/assets/complex_modifications/butterfly-claude.json"
 link "$SCRIPT_DIR/assets/complex_modifications/f19-terminal-tab.json" \
      "$DEST/assets/complex_modifications/f19-terminal-tab.json"
-link "$SCRIPT_DIR/scripts/codex-tab.sh" "$DEST/scripts/codex-tab.sh"
+link "$SCRIPT_DIR/scripts/claude-tab.sh" "$DEST/scripts/claude-tab.sh"
 link "$SCRIPT_DIR/scripts/terminal-tab.sh" "$DEST/scripts/terminal-tab.sh"
 
-chmod +x "$SCRIPT_DIR/scripts/codex-tab.sh" "$SCRIPT_DIR/scripts/terminal-tab.sh" 2>/dev/null && \
-  ok "tab scripts are executable"
+chmod +x "$SCRIPT_DIR/scripts/claude-tab.sh" 2>/dev/null && ok "claude-tab.sh is executable"
+chmod +x "$SCRIPT_DIR/scripts/terminal-tab.sh" 2>/dev/null && ok "terminal-tab.sh is executable"
 
 if [ -e "$DEST/karabiner.json" ] && [ "$FORCE" -eq 0 ]; then
   warn "$DEST/karabiner.json already exists; NOT overwriting."
@@ -85,5 +84,6 @@ echo "Manual steps this script cannot do -- see karabiner/README.md:"
 echo "  1. brew install --cask karabiner-elements  (needs a real TTY for sudo)"
 echo "  2. Approve the driver extension in System Settings"
 echo "  3. Grant Input Monitoring + Accessibility"
-echo "  4. Accept the Automation prompt on the first mapped-key press"
-echo "  5. Chrysalis: butterfly = raw key code 109 (F18); Any = 110 (F19)"
+echo "  4. Accept the Automation prompt on first butterfly press"
+echo "  5. Chrysalis: butterfly key on Layer 0 = raw key code 109 (F18)"
+echo "  6. Chrysalis: Any key on Layer 0 = raw key code 110 (F19)"

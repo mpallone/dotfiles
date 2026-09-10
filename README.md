@@ -53,10 +53,11 @@ To set up unix env on new computer, do:
     if I'm setting up a new laptop, then ensure that that `agent.md`
     file knows how to find my ai-rules directory. 
 
-19. Set up the Keyboardio Model 100 shortcuts: follow the instructions in the
-    README of the karabiner directory. The keyboard firmware must map the
-    butterfly key to raw key code 109 (F18) and the Any key to raw key code
-    110 (F19) in Chrysalis.
+19. Set up the Keyboardio Model 100 butterfly key (opens an iTerm tab
+    running `claude`): follow the instructions in the README of the
+    karabiner directory. Note this also depends on the keyboard's own
+    firmware -- the butterfly key must be set to raw key code 109 and the Any
+    key must be set to raw key code 110 in Chrysalis.
 
 ## AI config & skills distribution
 

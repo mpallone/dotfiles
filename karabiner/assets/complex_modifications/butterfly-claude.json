@@ -1,14 +1,14 @@
 {
-  "title": "Butterfly launches Codex in iTerm",
+  "title": "Butterfly launches Claude in iTerm",
   "rules": [
     {
-      "description": "F18 -> new iTerm tab running codex",
+      "description": "F18 -> new iTerm tab running claude",
       "manipulators": [
         {
           "type": "basic",
           "from": { "key_code": "f18" },
           "to": [
-            { "shell_command": "$HOME/.config/karabiner/scripts/codex-tab.sh" }
+            { "shell_command": "$HOME/.config/karabiner/scripts/claude-tab.sh" }
           ]
         }
       ]
