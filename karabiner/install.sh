@@ -2,13 +2,16 @@
 #
 # install.sh — restore the Karabiner-Elements setup into ~/.config/karabiner.
 #
-# Maps the Keyboardio Model 100's butterfly key (sent as F18) to "open a new
-# iTerm tab and run claude". See README.md in this directory for the manual
-# steps (Chrysalis, driver approval, macOS permissions) that this script
-# cannot do for you.
+# Maps Keyboardio Model 100 shortcuts through Karabiner-Elements:
+#   F18 -> open a new iTerm tab and run codex
+#   F19 -> open a new plain iTerm tab
+# See README.md in this directory for the manual steps (Chrysalis, driver
+# approval, macOS permissions) that this script cannot do for you.
 #
 #   assets/complex_modifications/butterfly-claude.json  ->  symlinked
-#   scripts/claude-tab.sh                               ->  symlinked
+#   assets/complex_modifications/f19-terminal-tab.json  ->  symlinked
+#   scripts/codex-tab.sh                                ->  symlinked
+#   scripts/terminal-tab.sh                             ->  symlinked
 #   karabiner.json                                      ->  COPIED (see below)
 #
 # Design notes:
@@ -24,8 +27,8 @@
 #
 #   * Because it is a copy, this script refuses to overwrite an existing
 #     karabiner.json unless you pass --force. On a machine that already has
-#     other Karabiner rules, blindly copying would destroy them; merge the
-#     "F18 -> new iTerm tab running claude" rule in by hand instead.
+#     other Karabiner rules, blindly copying would destroy them; merge the F18
+#     and F19 rules in by hand instead.
 #
 #   * After changing Karabiner settings via the GUI, re-snapshot with:
 #         cp ~/.config/karabiner/karabiner.json <this-repo>/karabiner/karabiner.json
@@ -59,13 +62,17 @@ link() {
 
 link "$SCRIPT_DIR/assets/complex_modifications/butterfly-claude.json" \
      "$DEST/assets/complex_modifications/butterfly-claude.json"
-link "$SCRIPT_DIR/scripts/claude-tab.sh" "$DEST/scripts/claude-tab.sh"
+link "$SCRIPT_DIR/assets/complex_modifications/f19-terminal-tab.json" \
+     "$DEST/assets/complex_modifications/f19-terminal-tab.json"
+link "$SCRIPT_DIR/scripts/codex-tab.sh" "$DEST/scripts/codex-tab.sh"
+link "$SCRIPT_DIR/scripts/terminal-tab.sh" "$DEST/scripts/terminal-tab.sh"
 
-chmod +x "$SCRIPT_DIR/scripts/claude-tab.sh" 2>/dev/null && ok "claude-tab.sh is executable"
+chmod +x "$SCRIPT_DIR/scripts/codex-tab.sh" "$SCRIPT_DIR/scripts/terminal-tab.sh" 2>/dev/null && \
+  ok "tab scripts are executable"
 
 if [ -e "$DEST/karabiner.json" ] && [ "$FORCE" -eq 0 ]; then
   warn "$DEST/karabiner.json already exists; NOT overwriting."
-  warn "Merge the 'F18 -> new iTerm tab running claude' rule into"
+  warn "Merge the F18 and F19 rules into"
   warn "profiles[0].complex_modifications.rules by hand, or re-run with --force"
   warn "to replace it wholesale (destroys any other rules on this machine)."
 else
@@ -78,5 +85,5 @@ echo "Manual steps this script cannot do -- see karabiner/README.md:"
 echo "  1. brew install --cask karabiner-elements  (needs a real TTY for sudo)"
 echo "  2. Approve the driver extension in System Settings"
 echo "  3. Grant Input Monitoring + Accessibility"
-echo "  4. Accept the Automation prompt on first butterfly press"
-echo "  5. Chrysalis: butterfly key on Layer 0 = raw key code 109 (F18)"
+echo "  4. Accept the Automation prompt on the first mapped-key press"
+echo "  5. Chrysalis: butterfly = raw key code 109 (F18); Any = 110 (F19)"

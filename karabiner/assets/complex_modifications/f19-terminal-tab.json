@@ -1,0 +1,17 @@
+{
+  "title": "F19 opens a plain iTerm tab",
+  "rules": [
+    {
+      "description": "F19 -> new iTerm tab",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": { "key_code": "f19" },
+          "to": [
+            { "shell_command": "$HOME/.config/karabiner/scripts/terminal-tab.sh" }
+          ]
+        }
+      ]
+    }
+  ]
+}
