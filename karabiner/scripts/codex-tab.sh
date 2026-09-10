@@ -7,6 +7,6 @@ tell application "iTerm"
   else
     tell current window to create tab with default profile
   end if
-  tell current session of current window to write text "claude"
+  tell current session of current window to write text "codex"
 end tell
 EOF
