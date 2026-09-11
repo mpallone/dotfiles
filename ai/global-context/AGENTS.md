@@ -96,7 +96,9 @@ Whenever you explain how code or a technology works — asked or not — use tea
 - Don't trust documentation. Verify assertions in docs against code or other primary sources when feasible; flag any you couldn't verify
 
 ### Check the clone is current before reading source
-- Before checking source for answers, check whether the local clone is out of date with the remote. If it is, stop and tell me.
+- Before checking source for answers, compare the local clone with the relevant remote branch. If it is current, use it. If it is behind and can be safely fast-forwarded without disturbing work in progress, fast-forward it and continue without asking.
+- If the local clone cannot be safely fast-forwarded (for example, it has uncommitted changes, diverged history, or requires switching an active work branch), leave it untouched, clone the repository into a unique directory under `/tmp`, and search/read from that temporary clone.
+- Preserve work in progress. Never reset, stash, discard changes, or switch an active work branch just to refresh source for research.
 
 ## Engineering writing standards
 
