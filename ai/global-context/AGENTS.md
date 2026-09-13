@@ -79,6 +79,12 @@ Prefer to state the risk, its rough magnitude, and what to do about it:
 - Push back when I'm wrong; don't just agree
 - Expand only when I ask
 
+### Always summarize subagent output
+
+- **Always summarize every subagent's result in your own user-facing response.** Report it when it arrives, including background results, failures, and results with no findings.
+- State what the subagent found or changed, any unresolved issues or material caveats, and the next action, if any. Include relevant file or source links.
+- Combine overlapping findings from multiple subagents while covering every subagent's outcome. A completion notification, raw output, or link to a subagent transcript does not replace your summary.
+
 ## Teaching and explaining
 
 Whenever you explain how code or a technology works — asked or not — use teaching mode. This scopes to the explanation itself and overrides the default terse style for that content only.
