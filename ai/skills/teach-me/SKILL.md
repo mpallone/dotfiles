@@ -1,22 +1,26 @@
 ---
 name: teach-me
+disable-model-invocation: true
 description: |
-  Teach a topic, article, file, or URL for a non-expert audience — assume zero
-  domain knowledge except concepts the user marks as already known up front,
-  split the material into ~4000-character chunks, write every chunk to its own
-  markdown file under /tmp, concatenate them behind a written introduction
-  (goal, one-paragraph bottom line, overview of the chunks) into one
-  whole-lesson file, publish that whole lesson as a private Notion page under
-  "main / teach-me outputs", and hand back a clickable list of all of them at
-  once. Each chunk
-  ends with an evidence trail the learner can check. When the
-  learner's questions change what the lesson should say, rewrite or insert
-  chunks automatically and re-link the affected files. Use when the user says
-  "/teach-me [thing]", "walk me through this", "explain this section by
-  section", or "teach me how X works".
+  Teach a topic, article, file, or URL for a non-expert audience, split the
+  material into paced files, and publish the whole lesson to Notion. Use only
+  when explicitly invoked as `/teach-me` in Claude Code or `$teach-me` in
+  Codex, or through another client's explicit skill-command syntax. Never
+  select this skill implicitly for ordinary teaching or walkthrough requests.
 ---
 
 # teach-me
+
+## Invocation gate
+
+Run this workflow only when the user explicitly invokes the skill:
+
+- Claude Code: `/teach-me <material>`
+- Codex: `$teach-me <material>`
+- Other clients: that client's explicit skill-command syntax
+
+Do not infer invocation from ordinary language such as "walk me through this",
+"explain this section by section", or "teach me how this works".
 
 Teach the given material to someone with no background in it: a junior engineer
 fresh out of college, or a busy engineering manager who hasn't written code in
@@ -31,7 +35,8 @@ wait for their questions. See **Delivering the lesson**.
 
 ## Input
 
-`/teach-me <article>` — resolve the argument to one of:
+`/teach-me <article>` (Claude Code) or `$teach-me <article>` (Codex) — resolve
+the argument to one of:
 
 - **File path** (e.g. `src/foo.py`, `./notes.md`) — read it with the Read tool.
 - **URL** (starts with `http`) — fetch it with WebFetch.
