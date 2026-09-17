@@ -1,0 +1,20 @@
+{
+  "title": "Shift-F19 opens a Chrome tab",
+  "rules": [
+    {
+      "description": "Shift-F19 -> new Chrome tab",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "f19",
+            "modifiers": { "mandatory": ["shift"] }
+          },
+          "to": [
+            { "shell_command": "$HOME/.config/karabiner/scripts/chrome-tab.sh" }
+          ]
+        }
+      ]
+    }
+  ]
+}

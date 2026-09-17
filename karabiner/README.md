@@ -1,22 +1,25 @@
 # karabiner
 
-Keyboardio Model 100 butterfly key → new iTerm tab running `claude`.
+Keyboardio Model 100 butterfly key → new iTerm tab running `codex`.
 
-Pressing the butterfly key opens a new tab in iTerm2 and starts a `claude`
+Pressing the butterfly key opens a new tab in iTerm2 and starts a `codex`
 session in it. The keyboard sends **F18**; Karabiner-Elements catches F18 and
 runs a shell script that drives iTerm via AppleScript.
 
 The Any key can send **F19**, which Karabiner maps to a new plain iTerm tab.
+Holding either Shift key with Any maps **Shift-F19** to a new Google Chrome tab.
 
 ## How it works
 
 ```
-butterfly key  ──►  F18  ──►  Karabiner rule  ──►  claude-tab.sh  ──►  osascript  ──►  iTerm
+butterfly key  ──►  F18  ──►  Karabiner rule  ──►  codex-tab.sh   ──►  osascript  ──►  iTerm
  (Chrysalis,        (HID      (complex_             (this repo)                        new tab
-  raw code 109)     0x6D)      modification)                                           + `claude`
+  raw code 109)     0x6D)      modification)                                           + `codex`
 
 Any key        ──►  F19  ──►  Karabiner rule  ──►  terminal-tab.sh  ──►  plain iTerm tab
  (raw code 110)
+
+Shift + Any    ──►  Shift-F19  ──►  Karabiner rule  ──►  chrome-tab.sh  ──►  new Chrome tab
 ```
 
 F18 and F19 are used because macOS binds nothing to them by default.
@@ -25,10 +28,12 @@ F18 and F19 are used because macOS binds nothing to them by default.
 
 | File | Deployed to | How |
 |---|---|---|
-| `scripts/claude-tab.sh` | `~/.config/karabiner/scripts/` | symlink |
+| `scripts/codex-tab.sh` | `~/.config/karabiner/scripts/` | symlink |
 | `scripts/terminal-tab.sh` | `~/.config/karabiner/scripts/` | symlink |
+| `scripts/chrome-tab.sh` | `~/.config/karabiner/scripts/` | symlink |
 | `assets/complex_modifications/butterfly-claude.json` | `~/.config/karabiner/assets/complex_modifications/` | symlink |
 | `assets/complex_modifications/f19-terminal-tab.json` | `~/.config/karabiner/assets/complex_modifications/` | symlink |
+| `assets/complex_modifications/shift-f19-chrome-tab.json` | `~/.config/karabiner/assets/complex_modifications/` | symlink |
 | `karabiner.json` | `~/.config/karabiner/` | **copy** |
 
 `karabiner.json` is copied rather than symlinked because Karabiner rewrites
@@ -110,6 +115,9 @@ keyboard. Set the Any key to **raw key code 110** (HID `0x6E` = F19).
 Karabiner cannot apply these firmware settings. If they are not set, Karabiner
 sees the keys' default keycodes and the rules never fire.
 
+No separate Chrysalis mapping is needed for Shift-Any. The keyboard sends the
+existing F19 code together with the Shift modifier.
+
 ### 6. Accept the Automation prompt
 
 Press the butterfly key. macOS prompts *"Karabiner-Console-User-Server wants to
@@ -130,11 +138,11 @@ save — redo step 5.
 **F18 arrives but no tab opens.** Run the script directly:
 
 ```sh
-~/.config/karabiner/scripts/claude-tab.sh
+~/.config/karabiner/scripts/codex-tab.sh
 ```
 
 If a tab opens this way but the key does not, the Automation permission
-(step 6) is missing. If `claude: command not found` appears in the new tab,
+(step 6) is missing. If `codex: command not found` appears in the new tab,
 iTerm's shell PATH lacks `~/.local/bin` — that is a shell-config problem, not a
 Karabiner one.
 
@@ -144,12 +152,22 @@ Karabiner one.
 ~/.config/karabiner/scripts/terminal-tab.sh
 ```
 
+**Shift-F19 arrives but no Chrome tab opens.** Run the script directly:
+
+```sh
+~/.config/karabiner/scripts/chrome-tab.sh
+```
+
+The first run can trigger a macOS Automation prompt allowing Karabiner to
+control Google Chrome. Approve it, then try Shift-Any again.
+
 **Validate the rule** with Karabiner's own linter:
 
 ```sh
 "/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli" \
   --lint-complex-modifications ~/.config/karabiner/assets/complex_modifications/butterfly-claude.json \
-  ~/.config/karabiner/assets/complex_modifications/f19-terminal-tab.json
+  ~/.config/karabiner/assets/complex_modifications/f19-terminal-tab.json \
+  ~/.config/karabiner/assets/complex_modifications/shift-f19-chrome-tab.json
 # want: ok
 ```
 

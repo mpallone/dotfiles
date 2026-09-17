@@ -4,11 +4,24 @@
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "F18 -> new iTerm tab running claude",
+                        "description": "F18 -> new iTerm tab running codex",
                         "manipulators": [
                             {
                                 "from": { "key_code": "f18" },
-                                "to": [{ "shell_command": "$HOME/.config/karabiner/scripts/claude-tab.sh" }],
+                                "to": [{ "shell_command": "$HOME/.config/karabiner/scripts/codex-tab.sh" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Shift-F19 -> new Chrome tab",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "f19",
+                                    "modifiers": { "mandatory": ["shift"] }
+                                },
+                                "to": [{ "shell_command": "$HOME/.config/karabiner/scripts/chrome-tab.sh" }],
                                 "type": "basic"
                             }
                         ]

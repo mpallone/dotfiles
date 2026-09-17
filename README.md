@@ -54,10 +54,11 @@ To set up unix env on new computer, do:
     file knows how to find my ai-rules directory. 
 
 19. Set up the Keyboardio Model 100 butterfly key (opens an iTerm tab
-    running `claude`): follow the instructions in the README of the
+    running `codex`): follow the instructions in the README of the
     karabiner directory. Note this also depends on the keyboard's own
     firmware -- the butterfly key must be set to raw key code 109 and the Any
-    key must be set to raw key code 110 in Chrysalis.
+    key must be set to raw key code 110 in Chrysalis. Shift-Any opens a new
+    Google Chrome tab without a separate Chrysalis mapping.
 
 ## AI config & skills distribution
 
