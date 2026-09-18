@@ -1,0 +1,6 @@
+# Credential-free fragment for ~/.codex/config.toml.
+# Merge this table into the user configuration; do not replace machine-local
+# provider, project-trust, or MCP server settings.
+
+[tui]
+vim_mode_default = true
