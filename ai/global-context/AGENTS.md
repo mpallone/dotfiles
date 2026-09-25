@@ -216,6 +216,18 @@ Remove anything that doesn't survive that scan.
 ### General
 - Don't fail silently. If you fail, describe why.
 
+### Personal dotfiles: commit and push to main
+
+When I request changes to my personal dotfiles (`~/src/mpallone/dotfiles`,
+`mpallone/dotfiles` on GitHub), implement them, commit directly to `main`, and
+push to `origin/main` without asking for another confirmation. This repository
+is an exception to the pull-request workflow below.
+
+Review the changes for secrets and sensitive information before committing or
+pushing. Commit only changes covered by the request and preserve other work.
+If the working checkout is dirty or on another branch, use an isolated checkout
+based on the current `origin/main`.
+
 ### Make PRs easy to review 
 - Make PRs yourself. Sometimes AI tools will "create a PR" by pushing a branch and providing a "create PR" link. Prefer to create the PR yourself. If you don't have the ability to create PRs, warn me before providing me a "create PR" link"
 - Make branches/PRs easy to review by splitting them into logical, separate pieces
