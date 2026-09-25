@@ -13,8 +13,35 @@ To set up unix env on new computer, do:
    `unzip unix-config.zip # ubuntu`
    `unzip scripts.zip #ubuntu`
 
-6. in the ~/.bashrc (or whatever),
-   add `source ~/unix-config/my-env.sh`
+6. Configure Bash so iTerm and command-line tools load the same environment:
+
+   ```bash
+   chsh -s /bin/bash
+   ```
+
+   In iTerm, select **Profiles → General → Command → Login shell**. Put shared
+   shell setup in `~/.bashrc`, including the personal dotfiles:
+
+   ```bash
+   shopt -s expand_aliases
+
+   source "$HOME/src/mpallone/dotfiles/my-env.sh"
+   ```
+
+   `expand_aliases` keeps files that define and invoke aliases working when
+   Codex starts non-interactive login shells. Guard interactive-only commands;
+   for example, use `[[ $- == *i* ]] && clear` instead of unconditional `clear`.
+
+   Make login shells load that shared setup from `~/.bash_profile`:
+
+   ```bash
+   [[ -f "$HOME/.bashrc" ]] && source "$HOME/.bashrc"
+   ```
+
+   Do not source `~/.bash_profile` from `~/.bashrc`; reversing the relationship
+   makes login and non-login shells behave differently and creates a source loop
+   once `~/.bash_profile` loads `~/.bashrc`. Keep credentials and machine-only
+   settings in the untracked home files, not this repository.
 
 7. Add everything in the dot_gitconfig file
    into the new machine's .gitconfig file.
@@ -53,12 +80,13 @@ To set up unix env on new computer, do:
     if I'm setting up a new laptop, then ensure that that `agent.md`
     file knows how to find my ai-rules directory. 
 
-19. Set up the Keyboardio Model 100 butterfly key (opens an iTerm tab
-    running `codex`): follow the instructions in the README of the
-    karabiner directory. Note this also depends on the keyboard's own
+19. Set up the Keyboardio Model 100 butterfly key (opens a fresh Codex tab
+    inside herdr, reusing one iTerm tab): install herdr and follow the
+    [Karabiner setup instructions](karabiner/README.md). This also depends on the keyboard's own
     firmware -- the butterfly key must be set to raw key code 109 and the Any
     key must be set to raw key code 110 in Chrysalis. Shift-Any opens a new
-    Google Chrome tab without a separate Chrysalis mapping.
+    Google Chrome tab, and Shift-butterfly opens a new Safari tab, without
+    separate Chrysalis mappings.
 
 ## AI config & skills distribution
 
