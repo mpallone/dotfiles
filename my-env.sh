@@ -18,6 +18,15 @@ PATH=/usr/local/bin:${PATH}
 
 alias emacs='emacs -nw'
 
+dev() {
+    if ! command -v devin-desktop >/dev/null 2>&1; then
+        printf '%s\n' "devin-desktop is not installed. In Devin, run 'Devin > Install devin-desktop Command'." >&2
+        return 127
+    fi
+
+    devin-desktop .
+}
+
 alias cdbudg='cd /Users/mpallone/Dropbox/Documents/money/budget-project'
 alias budg='cdbudg && python budget.py && python reports.py && git commit -a -m "budget.py update"'
 alias rep='cdbudg && python reports.py'
