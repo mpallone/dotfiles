@@ -4,7 +4,20 @@
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "F18 -> new iTerm tab running codex",
+                        "description": "Shift-F18 -> new Safari tab",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "f18",
+                                    "modifiers": { "mandatory": ["shift"] }
+                                },
+                                "to": [{ "shell_command": "$HOME/.config/karabiner/scripts/safari-tab.sh" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "F18 -> new herdr tab running codex",
                         "manipulators": [
                             {
                                 "from": { "key_code": "f18" },

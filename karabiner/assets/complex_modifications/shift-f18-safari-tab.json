@@ -1,0 +1,20 @@
+{
+  "title": "Shift-F18 opens a Safari tab",
+  "rules": [
+    {
+      "description": "Shift-F18 -> new Safari tab",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "f18",
+            "modifiers": { "mandatory": ["shift"] }
+          },
+          "to": [
+            { "shell_command": "$HOME/.config/karabiner/scripts/safari-tab.sh" }
+          ]
+        }
+      ]
+    }
+  ]
+}

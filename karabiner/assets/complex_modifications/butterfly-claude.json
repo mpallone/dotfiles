@@ -1,8 +1,8 @@
 {
-  "title": "Butterfly launches Codex in iTerm",
+  "title": "Butterfly launches Codex in herdr",
   "rules": [
     {
-      "description": "F18 -> new iTerm tab running codex",
+      "description": "F18 -> new herdr tab running codex",
       "manipulators": [
         {
           "type": "basic",

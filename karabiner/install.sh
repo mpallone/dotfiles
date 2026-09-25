@@ -3,15 +3,17 @@
 # install.sh — restore the Karabiner-Elements setup into ~/.config/karabiner.
 #
 # Maps the Keyboardio Model 100's butterfly key (sent as F18) to "open a new
-# iTerm tab and run codex", F19 to a new plain iTerm tab, and Shift-F19 to a
-# new Chrome tab. See README.md in this directory for the manual steps
-# (Chrysalis, driver approval, macOS permissions) that this script cannot do
-# for you.
+# herdr tab and run codex", Shift-F18 to a new Safari tab, F19 to a new
+# plain iTerm tab, and Shift-F19 to a new Chrome tab. See README.md in this
+# directory for the manual steps (Chrysalis, driver approval, macOS
+# permissions) that this script cannot do for you.
 #
 #   assets/complex_modifications/butterfly-claude.json  ->  symlinked
+#   assets/complex_modifications/shift-f18-safari-tab.json -> symlinked
 #   assets/complex_modifications/f19-terminal-tab.json  ->  symlinked
 #   assets/complex_modifications/shift-f19-chrome-tab.json -> symlinked
 #   scripts/codex-tab.sh                                ->  symlinked
+#   scripts/safari-tab.sh                               ->  symlinked
 #   scripts/terminal-tab.sh                             ->  symlinked
 #   scripts/chrome-tab.sh                               ->  symlinked
 #   karabiner.json                                      ->  COPIED (see below)
@@ -64,15 +66,19 @@ link() {
 
 link "$SCRIPT_DIR/assets/complex_modifications/butterfly-claude.json" \
      "$DEST/assets/complex_modifications/butterfly-claude.json"
+link "$SCRIPT_DIR/assets/complex_modifications/shift-f18-safari-tab.json" \
+     "$DEST/assets/complex_modifications/shift-f18-safari-tab.json"
 link "$SCRIPT_DIR/assets/complex_modifications/f19-terminal-tab.json" \
      "$DEST/assets/complex_modifications/f19-terminal-tab.json"
 link "$SCRIPT_DIR/assets/complex_modifications/shift-f19-chrome-tab.json" \
      "$DEST/assets/complex_modifications/shift-f19-chrome-tab.json"
 link "$SCRIPT_DIR/scripts/codex-tab.sh" "$DEST/scripts/codex-tab.sh"
+link "$SCRIPT_DIR/scripts/safari-tab.sh" "$DEST/scripts/safari-tab.sh"
 link "$SCRIPT_DIR/scripts/terminal-tab.sh" "$DEST/scripts/terminal-tab.sh"
 link "$SCRIPT_DIR/scripts/chrome-tab.sh" "$DEST/scripts/chrome-tab.sh"
 
 chmod +x "$SCRIPT_DIR/scripts/codex-tab.sh" 2>/dev/null && ok "codex-tab.sh is executable"
+chmod +x "$SCRIPT_DIR/scripts/safari-tab.sh" 2>/dev/null && ok "safari-tab.sh is executable"
 chmod +x "$SCRIPT_DIR/scripts/terminal-tab.sh" 2>/dev/null && ok "terminal-tab.sh is executable"
 chmod +x "$SCRIPT_DIR/scripts/chrome-tab.sh" 2>/dev/null && ok "chrome-tab.sh is executable"
 

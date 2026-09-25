@@ -1,10 +1,14 @@
 # karabiner
 
-Keyboardio Model 100 butterfly key → new iTerm tab running `codex`.
+Keyboardio Model 100 butterfly key → new Codex tab inside herdr.
 
-Pressing the butterfly key opens a new tab in iTerm2 and starts a `codex`
-session in it. The keyboard sends **F18**; Karabiner-Elements catches F18 and
-runs a shell script that drives iTerm via AppleScript.
+Pressing the butterfly key creates and selects a new tab inside herdr's default
+session, then starts a fresh `codex` session. The launcher brings herdr's existing
+iTerm tab forward. It opens an iTerm tab only when no default herdr client is
+running in iTerm. The keyboard sends **F18**; Karabiner-Elements catches F18 and
+runs a shell script that drives iTerm via AppleScript and herdr via its CLI.
+Holding either Shift key with the butterfly key maps **Shift-F18** to a new
+Safari tab.
 
 The Any key can send **F19**, which Karabiner maps to a new plain iTerm tab.
 Holding either Shift key with Any maps **Shift-F19** to a new Google Chrome tab.
@@ -12,9 +16,11 @@ Holding either Shift key with Any maps **Shift-F19** to a new Google Chrome tab.
 ## How it works
 
 ```
-butterfly key  ──►  F18  ──►  Karabiner rule  ──►  codex-tab.sh   ──►  osascript  ──►  iTerm
- (Chrysalis,        (HID      (complex_             (this repo)                        new tab
-  raw code 109)     0x6D)      modification)                                           + `codex`
+butterfly key  ──►  F18  ──►  Karabiner rule  ──►  codex-tab.sh
+ (Chrysalis,        (HID      (complex_                  ├──► select herdr's iTerm tab
+  raw code 109)     0x6D)      modification)             └──► new herdr tab + `codex`
+
+Shift + butterfly ──► Shift-F18 ──► Karabiner rule ──► safari-tab.sh ──► new Safari tab
 
 Any key        ──►  F19  ──►  Karabiner rule  ──►  terminal-tab.sh  ──►  plain iTerm tab
  (raw code 110)
@@ -24,14 +30,27 @@ Shift + Any    ──►  Shift-F19  ──►  Karabiner rule  ──►  chrom
 
 F18 and F19 are used because macOS binds nothing to them by default.
 
+The new herdr tab uses the active workspace and herdr's configured directory
+policy. If no workspace exists, the launcher creates one. It runs `codex` in the
+pane's interactive shell so shell aliases still apply. For example, two presses
+create two Codex tabs within the same herdr overview, without adding iTerm tabs.
+Named herdr sessions are left alone. Closing the iTerm tab detaches the client;
+the Codex terminals continue running in herdr's background server.
+
+The launcher requires `herdr` on `PATH` or in `~/.local/bin`. It uses macOS's
+built-in `jq` and `shlock`, serializes overlapping presses, and reports startup
+failures through stderr and a macOS notification.
+
 ## Files
 
 | File | Deployed to | How |
 |---|---|---|
 | `scripts/codex-tab.sh` | `~/.config/karabiner/scripts/` | symlink |
+| `scripts/safari-tab.sh` | `~/.config/karabiner/scripts/` | symlink |
 | `scripts/terminal-tab.sh` | `~/.config/karabiner/scripts/` | symlink |
 | `scripts/chrome-tab.sh` | `~/.config/karabiner/scripts/` | symlink |
 | `assets/complex_modifications/butterfly-claude.json` | `~/.config/karabiner/assets/complex_modifications/` | symlink |
+| `assets/complex_modifications/shift-f18-safari-tab.json` | `~/.config/karabiner/assets/complex_modifications/` | symlink |
 | `assets/complex_modifications/f19-terminal-tab.json` | `~/.config/karabiner/assets/complex_modifications/` | symlink |
 | `assets/complex_modifications/shift-f19-chrome-tab.json` | `~/.config/karabiner/assets/complex_modifications/` | symlink |
 | `karabiner.json` | `~/.config/karabiner/` | **copy** |
@@ -51,8 +70,22 @@ Otherwise this repo drifts from what is actually running.
 
 ## Restoring on a new machine
 
-Run `bash karabiner/install.sh` for the file placement, then do the manual
-steps — none of them are scriptable, all of them are required.
+Install iTerm2 and Codex first, then install herdr using its
+[installation guide](https://herdr.dev/docs/install/). Verify both commands
+are available in a fresh iTerm shell:
+
+```sh
+herdr --version
+codex --version
+```
+
+This launcher was verified with herdr 0.9.1. It uses the default herdr session
+and needs no custom herdr configuration. Do not copy this laptop's herdr
+runtime files or saved terminal state to the new laptop.
+
+Run `bash karabiner/install.sh` from this repo to link the launcher into
+`~/.config/karabiner/scripts/`, then complete the setup steps below. The installer
+uses its own location, so this repo can live at a different path on the new laptop.
 
 ### 1. Install Karabiner-Elements
 
@@ -115,8 +148,8 @@ keyboard. Set the Any key to **raw key code 110** (HID `0x6E` = F19).
 Karabiner cannot apply these firmware settings. If they are not set, Karabiner
 sees the keys' default keycodes and the rules never fire.
 
-No separate Chrysalis mapping is needed for Shift-Any. The keyboard sends the
-existing F19 code together with the Shift modifier.
+No separate Chrysalis mapping is needed for Shift-butterfly or Shift-Any. The
+keyboard sends the existing function-key code together with the Shift modifier.
 
 ### 6. Accept the Automation prompt
 
@@ -141,10 +174,20 @@ save — redo step 5.
 ~/.config/karabiner/scripts/codex-tab.sh
 ```
 
-If a tab opens this way but the key does not, the Automation permission
-(step 6) is missing. If `codex: command not found` appears in the new tab,
-iTerm's shell PATH lacks `~/.local/bin` — that is a shell-config problem, not a
-Karabiner one.
+If a herdr tab opens this way but the key does not, check the Automation
+permission (step 6). If `codex: command not found` appears in the new herdr tab,
+its shell PATH lacks `~/.local/bin` — that is a shell-config problem, not a
+Karabiner one. Run `herdr --session default status` to check the server and
+`herdr --session default agent list` to check whether it detected Codex.
+
+**Shift-F18 arrives but no Safari tab opens.** Run the script directly:
+
+```sh
+~/.config/karabiner/scripts/safari-tab.sh
+```
+
+The first run can trigger a macOS Automation prompt allowing Karabiner to
+control Safari. Approve it, then try Shift-butterfly again.
 
 **F19 arrives but no tab opens.** Run the script directly:
 
@@ -166,6 +209,7 @@ control Google Chrome. Approve it, then try Shift-Any again.
 ```sh
 "/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli" \
   --lint-complex-modifications ~/.config/karabiner/assets/complex_modifications/butterfly-claude.json \
+  ~/.config/karabiner/assets/complex_modifications/shift-f18-safari-tab.json \
   ~/.config/karabiner/assets/complex_modifications/f19-terminal-tab.json \
   ~/.config/karabiner/assets/complex_modifications/shift-f19-chrome-tab.json
 # want: ok
@@ -173,5 +217,5 @@ control Google Chrome. Approve it, then try Shift-Any again.
 
 ## Changing what the key does
 
-Edit the corresponding file under `scripts/` — both are symlinked, so the
+Edit the corresponding file under `scripts/` — each is symlinked, so the
 change is live on the next press. No reload or reinstall is needed.
