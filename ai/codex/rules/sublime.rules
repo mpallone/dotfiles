@@ -1,0 +1,8 @@
+# Sublime Text needs macOS application-launch services outside the Codex sandbox.
+prefix_rule(
+    pattern = ["/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl"],
+    decision = "allow",
+    justification = "Open requested files in Sublime Text through macOS application-launch services.",
+    match = ["'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl' /tmp/choices.md"],
+    not_match = ["open /tmp/choices.md", "sh -c 'echo unrelated'"],
+)

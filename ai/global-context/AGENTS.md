@@ -216,6 +216,20 @@ Remove anything that doesn't survive that scan.
 ### General
 - Don't fail silently. If you fail, describe why.
 
+### Open files in Sublime Text from Codex
+
+On this Mac, use `/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl`
+directly; the `subl` shell alias is unavailable in some non-interactive shells.
+Codex's macOS sandbox prevents this launcher from contacting application-launch
+services and reports `Unable to launch Sublime Text`. Run editor launches with
+`exec_command` using `sandbox_permissions="require_escalated"` and
+`prefix_rule=["/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl"]`.
+For example, run `'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl'
+/tmp/choices.md` as one command. The narrow allow rule lives in
+`ai/codex/rules/sublime.rules` and is installed at `~/.codex/rules/sublime.rules`.
+Check the exit status before saying a file is open; if a sandboxed launch fails,
+retry outside the sandbox before asking me to open the file manually.
+
 ### Personal dotfiles: commit and push to main
 
 When I request changes to my personal dotfiles (`~/src/mpallone/dotfiles`,
