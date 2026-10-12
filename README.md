@@ -88,6 +88,18 @@ To set up unix env on new computer, do:
     Google Chrome tab, and Shift-butterfly opens a new Safari tab, without
     separate Chrysalis mappings.
 
+20. Set Herdr's prefix to `ctrl+s` instead of `ctrl+b`. From this repo's root,
+    copy the saved config on a new laptop:
+
+    ```sh
+    mkdir -p ~/.config/herdr
+    cp -n herdr/config.toml ~/.config/herdr/config.toml
+    ```
+
+    `cp -n` preserves an existing config. If one already exists, set
+    `prefix = "ctrl+s"` in its `[keys]` section instead. The saved config is
+    [herdr/config.toml](herdr/config.toml).
+
 ## AI config & skills distribution
 
 The `ai/` tree is the single source of truth for my Claude context and skills, and

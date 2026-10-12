@@ -80,8 +80,9 @@ codex --version
 ```
 
 This launcher was verified with herdr 0.9.1. It uses the default herdr session
-and needs no custom herdr configuration. Do not copy this laptop's herdr
-runtime files or saved terminal state to the new laptop.
+and needs no custom herdr configuration. To restore the preferred `ctrl+s`
+prefix, follow step 20 in the [laptop setup checklist](../README.md). Do not copy
+this laptop's herdr runtime files or saved terminal state to the new laptop.
 
 Run `bash karabiner/install.sh` from this repo to link the launcher into
 `~/.config/karabiner/scripts/`, then complete the setup steps below. The installer
