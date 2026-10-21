@@ -5,22 +5,25 @@ description: |
   Teach a topic, article, file, or URL for a non-expert audience, split the
   material into paced files, and publish the whole lesson to Notion. Use only
   when explicitly invoked as `/teach-me` in Claude Code or `$teach-me` in
-  Codex, or through another client's explicit skill-command syntax. Never
-  select this skill implicitly for ordinary teaching or walkthrough requests.
+  Codex. Never select this skill implicitly for ordinary teaching or
+  walkthrough requests, or when the user only mentions or asks to edit it.
 ---
 
 # teach-me
 
 ## Invocation gate
 
-Run this workflow only when the user explicitly invokes the skill:
+Start this workflow only when the user types one of these commands as an
+invocation:
 
 - Claude Code: `/teach-me <material>`
 - Codex: `$teach-me <material>`
-- Other clients: that client's explicit skill-command syntax
 
 Do not infer invocation from ordinary language such as "walk me through this",
-"explain this section by section", or "teach me how this works".
+"explain this section by section", or "teach me how this works". Merely naming
+`teach-me`, quoting either command, attaching the skill for inspection, or
+asking to edit the skill does not invoke it. Without a command invocation,
+handle the request normally without starting this workflow.
 
 Teach the given material to someone with no background in it: a junior engineer
 fresh out of college, or a busy engineering manager who hasn't written code in
