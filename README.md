@@ -64,13 +64,15 @@ To set up unix env on new computer, do:
     From the dotfiles repo root:
     `ln -s "$(pwd)/dot_vimrc" ~/.vimrc`
 
-12. Set up Sublime Text keybinds.
+12. Symlink the Sublime Text preferences, keymap, and mousemap into
+    `Packages/User` using the [Sublime Text setup instructions](sublime-text/README.md).
 
 13. Set up git diff highlighting: https://stackoverflow.com/questions/5326008/highlight-changed-lines-and-changed-bytes-in-each-changed-line/15149253#15149253  / https://stackoverflow.com/a/55891251 
 
 14. Set up the 'subl' command.
 
-15. Follow the instructions in the README of the sublime-text directory
+15. Keep Sublime Text config files symlinked to this checkout; edit the files in
+    `sublime-text/`, then commit and push changes.
 
 16. Set up intellij idea CLI: https://www.jetbrains.com/help/idea/working-with-the-ide-features-from-command-line.html 
 
