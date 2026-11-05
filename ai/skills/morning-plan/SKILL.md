@@ -5,14 +5,14 @@ description: >
   (project MCP), or clean up the sprint's automation clutter. Planning mode reads
   the current sprint, interviews him item-by-item with tappable options to sort
   tasks into effort buckets (stored as Jira labels), closes anything he reports
-  done, and ends every single answer — not just the last one — with the full
-  ordered plan for the day. Sprint cleanup mode closes automation banner rows
+  done, and ends every answer with the full ordered day plan. Sprint cleanup mode
+  closes automation banner rows
   and older duplicates of recurring chores — it
-  runs unattended with no approval prompt: it prints the plan, closes the
+  runs unattended without approval: it prints the plan, closes the
   targets immediately, then reports what changed. It transitions to Done (never
   deletes), and never touches the backlog or the permanent divider rows.
   Use whenever Mark says "morning plan", "plan my day", "run my daily planning",
-  "triage my sprint/jira", "what should I do today", or otherwise wants to
+  "triage my sprint/jira", "what should I do today", or wants to
   review, sort, or prioritize his personal Jira tasks — and for cleanup alone,
   "clean up my jira sprint", "dedupe my to-do list", "clear the automation
   clutter", or "tidy up my active sprint".
