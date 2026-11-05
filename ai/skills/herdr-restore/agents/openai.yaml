@@ -1,0 +1,4 @@
+interface:
+  display_name: "Herdr Restore"
+  short_description: "Recover saved Herdr layouts and Codex sessions"
+  default_prompt: "Use $herdr-restore to recover my layout from before the latest reboot."
