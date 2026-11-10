@@ -161,6 +161,43 @@ produces the prompt; press again afterward.
 
 ## Troubleshooting
 
+**Butterfly and Fun+3 both stop working.** On 2026-11-10, the butterfly key
+stopped opening Codex and Fun+3 stopped showing all windows. Karabiner's log
+showed its virtual keyboard driver stopping at 17:26 PST on 2026-11-09, after
+which it stopped intercepting the Model 100's keyboard events. The driver was
+absent from macOS's extension list; Karabiner's services, permissions, and key
+mapping were still intact. We did not identify what removed the driver.
+
+Check the driver before changing the key mapping:
+
+```sh
+systemextensionsctl list
+"/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli" \
+  --show-settings-window-guidance
+```
+
+The extension list should include `org.pqrs.Karabiner-DriverKit-VirtualHIDDevice`
+with `[activated enabled]`. Karabiner should report `driver_activated`,
+`driver_connected`, and `virtual_hid_keyboard_ready` as `true`. During this
+failure, all three were `false` and `current_setup` was `driver_extension`.
+
+To recover when the driver is missing:
+
+1. Request activation of the installed driver:
+
+   ```sh
+   /Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager activate
+   ```
+
+2. In **System Settings → General → Login Items & Extensions → Driver
+   Extensions**, enable **Karabiner-DriverKit-VirtualHIDDevice** and approve
+   any macOS prompt. `[activated waiting for user]` means this step is pending.
+3. Rerun the checks above, then test butterfly and Fun+3.
+
+On 2026-11-10, approving the driver restored all three readiness flags and
+Karabiner resumed intercepting the Model 100. Mark verified that both shortcuts
+worked again immediately.
+
 **Butterfly does nothing.** Open **Karabiner-EventViewer** and press it. Expect
 `key_code: f18`. If you see `right_option` or anything else, Chrysalis did not
 save — redo step 5.
