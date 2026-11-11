@@ -9,7 +9,7 @@
 			<string>is.workflow.actions.runshellscript</string>
 			<key>WFWorkflowActionParameters</key>
 			<dict>
-				<key>WFScript</key>
+				<key>Script</key>
 				<string>"$HOME/.local/bin/new-codex-session"</string>
 				<key>WFShell</key>
 				<string>/bin/zsh</string>
