@@ -83,12 +83,15 @@ Run `bash herdr/test-codex-key.sh` on each new machine to close these gaps.
 
 ## This key and the butterfly key are separate routes
 
-| | This key | [Butterfly key](../quick-actions/README.md) |
+| | This key | [Butterfly key](../hotkeys/README.md) |
 |---|---|---|
-| Works from | inside herdr | most macOS apps |
+| Works from | inside herdr | any macOS app |
 | Platforms | macOS, Linux | macOS with iTerm |
-| Needs | herdr config only | Quick Action, F18 firmware mapping, Automation permission |
+| Needs | herdr config only | compiled helper app, login agent, F18 firmware mapping, Automation permission |
 | Launcher | `herdr/codex-tab.sh` | `shortcuts/new-codex-session.sh` |
+
+Use both: the butterfly key from another app, this key when herdr already
+has focus or on a machine where the helper app cannot be installed.
 
 The two launchers repeat about 15 lines of "create tab, run codex, wait for
 detection". They were kept apart so this change does not edit the macOS

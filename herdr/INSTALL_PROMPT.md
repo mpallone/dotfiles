@@ -29,8 +29,14 @@ step 7 is the proof on a Mac.
   `~/.codex/config.toml`. Do not commit to or push the dotfiles repository.
 - Never ask for, print, or store credentials. Signing in to Codex is the
   user's step.
-- This may be a managed work laptop. If an install is blocked by policy, a
-  proxy, or missing admin rights, stop and report it; do not work around it.
+- This may be a managed work laptop. Where a step lists several routes,
+  moving to the next listed route is allowed. If every listed route is blocked
+  by policy, a proxy, or missing admin rights, stop and report it; do not
+  bypass the block.
+- Commands assume one shell that keeps its directory and variables. If yours
+  resets between commands, start each one with `cd "$repo"` and repeat any
+  `export` this file asked for.
+- Drop `sudo` from a command when you are already root.
 
 ## 1. Record the machine
 
@@ -54,12 +60,14 @@ fi
 ```
 
 If the checkout exists, is on `main`, and has no uncommitted changes, run
-`git -C "$repo" pull --ff-only`. If it has uncommitted changes or is on
-another branch, leave it untouched, clone a second copy to a new directory
-under `/tmp`, and use that copy as `$repo` for the remaining steps.
+`git -C "$repo" pull --ff-only`. If it has uncommitted changes (untracked
+files do not count), is on another branch, or the pull fails, leave it
+untouched, clone a second copy to a new directory under `/tmp`, and use that
+copy as `$repo` for the remaining steps.
 
-Confirm `ls "$repo/herdr/install.sh"` succeeds. Run the remaining commands
-from `$repo`.
+Confirm `ls "$repo/herdr/install.sh"` succeeds. If it does not, the change
+that added this file is not on `main` yet; stop and report that. Run the
+remaining commands from `$repo`.
 
 ## 3. Install jq if it is missing
 
@@ -77,43 +85,50 @@ step 4's fallback route all parse herdr's JSON output with jq.
 herdr --version
 ```
 
-If that prints a version, skip to step 5. Otherwise use the first route that
-works:
+If that prints a version, skip to step 5. Otherwise try these routes in order
+and move to the next when one is unavailable, fails, or is refused by your own
+tooling:
 
-1. Homebrew is installed (`command -v brew`):
+1. Homebrew, when `command -v brew` succeeds:
 
    ```sh
    brew install herdr
    ```
 
 2. The official installer, which verifies a SHA-256 checksum and installs to
-   `~/.local/bin`:
+   `~/.local/bin`. Check that the host is reachable first; a failed download
+   piped into `sh` still exits 0.
 
    ```sh
-   curl -fsSL https://herdr.dev/install.sh | sh
+   curl -fsSI https://herdr.dev/install.sh >/dev/null && curl -fsSL https://herdr.dev/install.sh | sh
    ```
 
-3. If `herdr.dev` is unreachable, download the release binary from GitHub and
-   check it against herdr's published manifest. This route was verified on
-   2026-11-11:
+3. The release binary from GitHub, checked against herdr's published
+   manifest. This route was verified on 2026-11-11:
 
    ```sh
    case "$(uname -s)" in Darwin) os=macos ;; *) os=linux ;; esac
    case "$(uname -m)" in arm64 | aarch64) arch=aarch64 ;; *) arch=x86_64 ;; esac
-   manifest="$(curl -fsSL https://raw.githubusercontent.com/herdrdev/herdr/master/distribution/latest.json)"
-   url="$(printf '%s' "$manifest" | jq -er --arg t "$os-$arch" '.assets[$t]')"
-   want="$(printf '%s' "$manifest" | jq -er --arg t "$os-$arch" '.sha256[$t]')"
    tmp="$(mktemp -d)"
-   curl -fsSL -o "$tmp/herdr" "$url"
-   got="$( (sha256sum "$tmp/herdr" 2>/dev/null || shasum -a 256 "$tmp/herdr") | awk '{print $1}')"
-   if [ "$got" = "$want" ]; then
-     mkdir -p "$HOME/.local/bin" && install -m 755 "$tmp/herdr" "$HOME/.local/bin/herdr"
+   if curl -fsSL -o "$tmp/latest.json" https://raw.githubusercontent.com/herdrdev/herdr/master/distribution/latest.json &&
+     url="$(jq -er --arg t "$os-$arch" '.assets[$t]' "$tmp/latest.json")" &&
+     want="$(jq -er --arg t "$os-$arch" '.sha256[$t]' "$tmp/latest.json")" &&
+     curl -fsSL -o "$tmp/herdr" "$url"; then
+     got="$( (sha256sum "$tmp/herdr" 2>/dev/null || shasum -a 256 "$tmp/herdr") | awk '{print $1}')"
+     if [ "$got" = "$want" ]; then
+       mkdir -p "$HOME/.local/bin" && install -m 755 "$tmp/herdr" "$HOME/.local/bin/herdr" &&
+         echo "INSTALLED herdr for $os-$arch, sha256 $got"
+     else
+       echo "CHECKSUM MISMATCH: got $got, want $want. Not installed."
+     fi
    else
-     echo "CHECKSUM MISMATCH: got $got, want $want. Not installed."
+     echo "DOWNLOAD FAILED for $os-$arch. Not installed."
    fi
+   rm -rf "$tmp"
    ```
 
-   On a checksum mismatch, stop and report it.
+   Expected: one `INSTALLED herdr ...` line. On `CHECKSUM MISMATCH` or
+   `DOWNLOAD FAILED`, stop and report it.
 
 Check: `herdr --version` prints `herdr 0.9.5` or later. If the command is not
 found but `~/.local/bin/herdr --version` works, `~/.local/bin` is missing from
@@ -126,12 +141,14 @@ found but `~/.local/bin/herdr --version` works, `~/.local/bin` is missing from
 codex --version
 ```
 
-The launcher types `codex` into an interactive shell, so a `codex` alias or
-function also counts. Check that case with `"$SHELL" -ic 'type codex'`.
+If that prints a version, skip to step 6. If it fails, Codex may still exist
+as a shell alias or function, which also works because the launcher types
+`codex` into an interactive shell. Check with `"$SHELL" -ic 'type codex'`;
+ignore `no job control` warnings in its output.
 
-If Codex is missing on a work laptop, ask the user before installing; the
-company may require a specific distribution or provider configuration.
-Otherwise run `npm install -g @openai/codex` (verified on 2026-11-11). Without
+If Codex is missing, ask the user whether this is a work laptop before
+installing; a company may require a specific distribution or provider
+configuration. Otherwise run `npm install -g @openai/codex` (verified on 2026-11-11). Without
 Node.js, OpenAI documents `brew install --cask codex`; this repository has not
 exercised that route.
 
@@ -143,8 +160,9 @@ bash herdr/install.sh
 
 Expected: one `[ok]   linked ...herdr-codex-tab...` line, then either
 `[ok]   copied config ...`, `[ok]   appended the Codex tab key ...`, or
-`[skip] ... already has the Codex tab key`. A `[warn]` line names a tool from
-steps 3 to 5 that is still missing; fix it and rerun.
+`[skip] ... already has the Codex tab key`, then two closing lines that name
+the key and the test. A `[warn]` line names a tool from steps 3 to 5 that is
+still missing; fix it and rerun.
 
 If the installer printed `[note] the existing [keys] table was left alone`,
 read `~/.config/herdr/config.toml`. If its `[keys]` table has no `prefix`,
@@ -160,7 +178,8 @@ it with `brew install tmux` or `sudo apt-get install -y tmux`.
 bash herdr/test-codex-key.sh
 ```
 
-Expected, within about 15 seconds:
+Expected, within about 15 seconds. `PASS` shows that the key starts Codex; it
+does not show that Codex is signed in:
 
 ```text
 PASS: C-s then C opened tab w1:t2 "Codex"; herdr detected codex in w1:p2
@@ -172,24 +191,36 @@ for example `PREFIX_KEY=C-b bash herdr/test-codex-key.sh` for `ctrl+b`.
 The test types the key chord into a real herdr client attached to a throwaway
 session, then removes that session. It does not touch the user's default herdr
 session. On `FAIL`, the output includes the herdr screen; also read
-`~/.config/herdr/codex-tab.log` and the "When the key does nothing" section
-of [README.md](README.md). If tmux cannot be installed, say so in the report
+`~/.config/herdr/codex-tab.log`, which exists only once the launcher has
+failed, and the "When the key does nothing" section of
+[README.md](README.md). If tmux cannot be installed, say so in the report
 and ask the user to press the key by hand; do not report the key as verified.
 
-## 8. macOS with the Keyboardio butterfly key only: the global key
+## 8. macOS with the Keyboardio butterfly key only: the systemwide key
 
-Skip this step unless the user asks for it. It adds a second route, a macOS
-Quick Action bound to F18, that works while another app has focus. It needs
-iTerm, and it was not tested by the change that added this file.
+This adds a second route: a helper app that registers F18, the key the
+Keyboardio Model 100 butterfly key sends, so one press opens a Codex tab while
+any app has focus. Do it when the machine is a Mac with iTerm and the user
+uses that keyboard; ask if you do not know. It was not tested by the change
+that added this file, which ran on Linux.
+
+It compiles a Swift program and installs a login agent, so it needs Apple's
+Command Line Tools (`xcode-select -p` prints a path). On a managed laptop,
+confirm with the user before installing a login agent.
 
 ```sh
-bash quick-actions/install.sh
+bash hotkeys/install.sh
+tail -n 30 ~/Library/Logs/CodexHotkey.log
 ```
 
-Then report these user-only steps from
-[quick-actions/README.md](../quick-actions/README.md): set the butterfly key to
-raw key code 109 (F18) in Chrysalis, choose **Finder → Services → Launch Codex
-Session** once, and approve the macOS prompt that lets it control iTerm.
+Expected: the installer prints `Installed Codex Hotkey and enabled it at
+login`, and the log contains `registered systemwide F18`. If the log reports a
+registration failure, another app holds F18; report it.
+
+You cannot press the key or approve macOS prompts. Report these user-only
+steps from [hotkeys/README.md](../hotkeys/README.md): set the butterfly key to
+raw key code 109 (F18) in Chrysalis, press it once, and allow **Codex Hotkey**
+to control iTerm when macOS asks.
 
 ## 9. Report to the user
 
