@@ -1,5 +1,9 @@
 # Butterfly opens a new Codex session
 
+For a key that works with Chrome, iTerm, or another app in front, use the
+[systemwide hotkey helper](../hotkeys/README.md). This Quick Action remains
+the Services-menu fallback; its keyboard route depends on the front app.
+
 The Keyboardio Model 100 butterfly key runs **Launch Codex Session**, a
 native macOS Quick Action: an Automator workflow available in the Services
 menu. It brings Herdr's iTerm tab forward and creates a fresh Codex tab.
