@@ -1,7 +1,8 @@
 # Butterfly opens a new Codex session
 
-Use the [native Quick Action setup](../quick-actions/README.md) for the
-butterfly key. The keyboard bindings saved inside Shortcuts and macOS App
+Use the [systemwide hotkey helper](../hotkeys/README.md) for the butterfly
+key. The [native Quick Action](../quick-actions/README.md) remains a menu
+fallback. The keyboard bindings saved inside Shortcuts and macOS App
 Shortcuts did not reliably invoke this Shortcut on this Mac. The Quick
 Action reuses `new-codex-session.sh` from this directory. The instructions
 below preserve the optional Shortcuts-app setup.

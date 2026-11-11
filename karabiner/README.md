@@ -1,6 +1,6 @@
 # karabiner
 
-Legacy setup. Use the [native Quick Action setup](../quick-actions/README.md) for the
+Legacy setup. Use the [systemwide hotkey setup](../hotkeys/README.md) for the
 butterfly key on current installs; it does not require Karabiner's driver.
 This directory preserves the older bindings. `scripts/codex-tab.sh` links to
 the shared launcher in `shortcuts/`.
