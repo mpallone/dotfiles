@@ -85,7 +85,8 @@ To set up unix env on new computer, do:
 19. Set up the Keyboardio Model 100 butterfly key (opens a fresh Codex tab
     inside herdr, reusing one iTerm tab): install herdr and follow the
     [systemwide hotkey setup instructions](hotkeys/README.md). The butterfly
-    key sends F18 (raw key code 109 in Chrysalis). This setup does not require
+    key sends F18 (raw key code 109 in Chrysalis). Fun+3 sends F3 and opens
+    Mission Control; Control+Up remains available. This setup does not require
     Karabiner or its driver. The old Shift-butterfly, Any, and Shift-Any
     bindings in [karabiner/](karabiner/README.md) require Karabiner and are not
     installed by the hotkey helper.
