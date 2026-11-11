@@ -1,5 +1,11 @@
 # Butterfly opens a new Codex session
 
+Use the [native Quick Action setup](../quick-actions/README.md) for the
+butterfly key. The keyboard bindings saved inside Shortcuts and macOS App
+Shortcuts did not reliably invoke this Shortcut on this Mac. The Quick
+Action reuses `new-codex-session.sh` from this directory. The instructions
+below preserve the optional Shortcuts-app setup.
+
 The Keyboardio Model 100 butterfly key runs a native macOS Shortcut that
 creates a fresh Codex tab in Herdr and brings its iTerm tab forward. Each
 press creates a new Codex session. Karabiner and its driver are not required.
@@ -42,24 +48,6 @@ that combination instead. The physical action remains one butterfly press.
 The keyboard binding and macOS permissions are configured on each Mac;
 they are not installed by the template. Follow Apple's [keyboard shortcut
 instructions](https://support.apple.com/guide/shortcuts-mac/run-a-shortcut-from-a-keyboard-shortcut-apd163eb9f95/mac).
-
-### Add the matching App Shortcut
-
-To also bind the menu command through macOS App Shortcuts, open **System
-Settings → Keyboard → Keyboard Shortcuts → App Shortcuts**. Add an entry
-for **All Applications**, with menu title **New Codex Session** and shortcut
-**Control+Option+Command+C**. Keep the menu title identical to the Shortcut's
-name. This is separate from recording the binding inside Shortcuts.
-
-To apply that same setting from the command line:
-
-```sh
-defaults write -g NSUserKeyEquivalents -dict-add '"New Codex Session"' '"@~^c"'
-```
-
-This changes only the entry for New Codex Session and preserves other App
-Shortcuts. Verify the combination in Finder before assigning it to the
-butterfly key in Chrysalis.
 
 ## Launcher behavior and troubleshooting
 
