@@ -43,6 +43,24 @@ The keyboard binding and macOS permissions are configured on each Mac;
 they are not installed by the template. Follow Apple's [keyboard shortcut
 instructions](https://support.apple.com/guide/shortcuts-mac/run-a-shortcut-from-a-keyboard-shortcut-apd163eb9f95/mac).
 
+### Add the matching App Shortcut
+
+To also bind the menu command through macOS App Shortcuts, open **System
+Settings → Keyboard → Keyboard Shortcuts → App Shortcuts**. Add an entry
+for **All Applications**, with menu title **New Codex Session** and shortcut
+**Control+Option+Command+C**. Keep the menu title identical to the Shortcut's
+name. This is separate from recording the binding inside Shortcuts.
+
+To apply that same setting from the command line:
+
+```sh
+defaults write -g NSUserKeyEquivalents -dict-add '"New Codex Session"' '"@~^c"'
+```
+
+This changes only the entry for New Codex Session and preserves other App
+Shortcuts. Verify the combination in Finder before assigning it to the
+butterfly key in Chrysalis.
+
 ## Launcher behavior and troubleshooting
 
 The Shortcut contains one **Run Shell Script** action:
