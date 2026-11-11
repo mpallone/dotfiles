@@ -90,17 +90,19 @@ To set up unix env on new computer, do:
     bindings in [karabiner/](karabiner/README.md) require Karabiner and are not
     installed by the Shortcuts setup.
 
-20. Set Herdr's prefix to `ctrl+s` instead of `ctrl+b`. From this repo's root,
-    copy the saved config on a new laptop:
+20. Set Herdr's prefix to `ctrl+s` instead of `ctrl+b`, and bind `ctrl+s`
+    then `Shift+C` to "new Codex tab". From this repo's root:
 
     ```sh
-    mkdir -p ~/.config/herdr
-    cp -n herdr/config.toml ~/.config/herdr/config.toml
+    bash herdr/install.sh
     ```
 
-    `cp -n` preserves an existing config. If one already exists, set
-    `prefix = "ctrl+s"` in its `[keys]` section instead. The saved config is
-    [herdr/config.toml](herdr/config.toml).
+    The installer copies [herdr/config.toml](herdr/config.toml) when no config
+    exists. It never replaces an existing config: it appends only the Codex
+    key, so set `prefix = "ctrl+s"` in that file's `[keys]` section by hand.
+    See [herdr/README.md](herdr/README.md). To set up herdr, Codex, and the
+    key on a machine that has none of them, give an agent
+    [herdr/INSTALL_PROMPT.md](herdr/INSTALL_PROMPT.md).
 
 ## AI config & skills distribution
 
