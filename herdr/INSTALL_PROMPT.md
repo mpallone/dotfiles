@@ -38,6 +38,21 @@ step 7 is the proof on a Mac.
   `export` this file asked for.
 - Drop `sudo` from a command when you are already root.
 
+## macOS shortcut for steps 3 to 8
+
+On macOS, after step 2, one script does the work of steps 3 to 8:
+
+```sh
+bash herdr/setup-mac.sh
+```
+
+Add `--skip-butterfly` unless step 8 applies. Each line it prints starts with
+`[ok]`, `[skip]`, `[warn]`, or `[fail]`, and it ends with the manual steps
+left for the user. If it exits 0, go to step 9 and include its full output. If
+it prints `[fail]`, use the matching numbered step below to diagnose. The
+script has been simulated on Linux but not yet run on macOS, so read its
+output with care. On Linux, follow the numbered steps.
+
 ## 1. Record the machine
 
 ```sh

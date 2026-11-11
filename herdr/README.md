@@ -9,6 +9,24 @@ macOS and Linux.
 To set this up on a new machine, give an agent
 [INSTALL_PROMPT.md](INSTALL_PROMPT.md). It covers installing herdr and Codex.
 
+## One command on a Mac
+
+```sh
+bash herdr/setup-mac.sh
+```
+
+The script installs herdr, Codex, jq, tmux, and iTerm2 with Homebrew when they
+are missing, installs this key, runs the key test below, and installs the
+[butterfly key](../hotkeys/README.md). It ends with the manual steps that are
+still open on that Mac, such as signing in to Codex or mapping the butterfly
+key in Chrysalis. Rerunning it is safe. `--skip-butterfly` installs only this
+key, for a Mac without the Keyboardio keyboard or one that disallows login
+agents.
+
+The script has not run on macOS yet. Its branches were exercised on Linux with
+stand-in `uname`, `brew`, `xcode-select`, and `xcrun` commands; see the
+verification section.
+
 ## How the key reaches Codex
 
 ```text
@@ -50,11 +68,12 @@ bash herdr/test-codex-key.sh
 # PASS: C-s then C opened tab w1:t2 "Codex"; herdr detected codex in w1:p2
 ```
 
-The test starts a throwaway herdr session inside tmux, types the key chord
-into that real herdr client, and polls the herdr CLI until a tab labelled
-`Codex` hosts a detected Codex agent. It uses a temporary copy of the installed
-config with the first-run screen turned off, leaves the default session
-untouched, and removes the throwaway session on exit. An unbound chord fails:
+The test starts a throwaway herdr session inside a private tmux server, types
+the key chord into that real herdr client, and polls the herdr CLI until a tab
+labelled `Codex` hosts a detected Codex agent. It uses a temporary copy of the
+installed config with the first-run screen turned off, leaves the default
+session and any running tmux server untouched, and removes the throwaway
+session on exit. It runs from a shell inside herdr as well as outside it. An unbound chord fails:
 `CHORD_KEY=y bash herdr/test-codex-key.sh` exits 1 after 45 seconds.
 
 ## What was verified, and what was not
@@ -69,17 +88,27 @@ codex-cli 0.167.1, tmux 3.4, and `/bin/sh` as dash:
   installer's config reload, with no restart.
 - A fresh install, an append to an existing config, and a repeat install.
 - Failures print to stderr and append to `~/.config/herdr/codex-tab.log`.
+- The test passes when started from a shell inside a herdr pane. An earlier
+  version failed there, because herdr refuses to start a nested client.
+- `setup-mac.sh`, simulated with stand-in macOS commands: refusal on Linux, a
+  run with every tool present, a missing tool with and without Homebrew,
+  missing Command Line Tools, a failing `hotkeys/install.sh`, a config with
+  no prefix, and a prefix it cannot translate for the test.
 
 Not verified, because the test machine was a Linux container with no Codex
 sign-in:
 
-- macOS, iTerm, and `/bin/sh` as bash. The launcher uses only POSIX `sh`.
+- macOS, iTerm, `/bin/sh` as bash, and macOS's bash 3.2. The launcher uses
+  only POSIX `sh`; the other scripts avoid bash 4 features.
+- `setup-mac.sh` on a real Mac: real Homebrew installs, the Command Line Tools
+  check, and a successful `hotkeys/install.sh`.
 - The macOS failure notification, which calls `osascript`.
 - Pressing the key while a signed-in Codex prompt has focus. Codex ran only as
   far as its sign-in screen. Herdr handles the prefix before the pane sees it.
 - herdr versions other than 0.9.5.
 
-Run `bash herdr/test-codex-key.sh` on each new machine to close these gaps.
+Run `bash herdr/setup-mac.sh` on a Mac, or `bash herdr/test-codex-key.sh` on
+any machine, to close these gaps.
 
 ## This key and the butterfly key are separate routes
 

@@ -100,8 +100,9 @@ To set up unix env on new computer, do:
     The installer copies [herdr/config.toml](herdr/config.toml) when no config
     exists. It never replaces an existing config: it appends only the Codex
     key, so set `prefix = "ctrl+s"` in that file's `[keys]` section by hand.
-    See [herdr/README.md](herdr/README.md). To set up herdr, Codex, and the
-    key on a machine that has none of them, give an agent
+    See [herdr/README.md](herdr/README.md). On a Mac that has none of herdr,
+    Codex, or the keys, `bash herdr/setup-mac.sh` installs all of it, including
+    step 19's butterfly key; or give an agent
     [herdr/INSTALL_PROMPT.md](herdr/INSTALL_PROMPT.md).
 
 ## AI config & skills distribution
