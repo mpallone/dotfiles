@@ -72,6 +72,13 @@ Prefer to state the risk, its rough magnitude, and what to do about it:
 - Skip definition only for acronyms that are universally obvious (e.g., FYI, JSON, HTML, URL, CPU)
 - When in doubt, define it — err on the side of defining
 
+### Make every link clickable
+
+- Every link you provide must be clickable and open its intended destination in the current app. Use descriptive Markdown links; don't put link destinations in inline code.
+- Use complete web URLs with the correct scheme and host (normally `https://`), preserving query strings and fragments.
+- For local files, confirm the file exists and use an absolute path in the current app's supported local-file link format. Never use `Desktop/file.md`, `~/...`, or another relative path as a URL: browsers can treat it as a hostname.
+- If a local-file link fails or the app cannot open it, use a supported attachment/download link or open the file directly and report its location. Do not repeat the broken link format or invent a web URL for a local file.
+
 ### General style
 - Terse, direct, high-signal; no sycophancy, no hedging, no fluff
 - Short bullets and compact paragraphs over walls of text
