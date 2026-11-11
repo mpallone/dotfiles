@@ -84,11 +84,11 @@ To set up unix env on new computer, do:
 
 19. Set up the Keyboardio Model 100 butterfly key (opens a fresh Codex tab
     inside herdr, reusing one iTerm tab): install herdr and follow the
-    [Karabiner setup instructions](karabiner/README.md). This also depends on the keyboard's own
-    firmware -- the butterfly key must be set to raw key code 109 and the Any
-    key must be set to raw key code 110 in Chrysalis. Shift-Any opens a new
-    Google Chrome tab, and Shift-butterfly opens a new Safari tab, without
-    separate Chrysalis mappings.
+    [macOS Shortcuts setup instructions](shortcuts/README.md). The butterfly
+    key sends F18 (raw key code 109 in Chrysalis). This setup does not require
+    Karabiner or its driver. The old Shift-butterfly, Any, and Shift-Any
+    bindings in [karabiner/](karabiner/README.md) require Karabiner and are not
+    installed by the Shortcuts setup.
 
 20. Set Herdr's prefix to `ctrl+s` instead of `ctrl+b`. From this repo's root,
     copy the saved config on a new laptop:

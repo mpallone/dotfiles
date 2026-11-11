@@ -1,5 +1,10 @@
 # karabiner
 
+Legacy setup. Use the [macOS Shortcuts setup](../shortcuts/README.md) for the
+butterfly key on current installs; it does not require Karabiner's driver.
+This directory preserves the older bindings. `scripts/codex-tab.sh` links to
+the shared launcher in `shortcuts/`.
+
 Keyboardio Model 100 butterfly key → new Codex tab inside herdr.
 
 Pressing the butterfly key creates and selects a new tab inside herdr's default
