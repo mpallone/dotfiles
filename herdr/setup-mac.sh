@@ -6,7 +6,9 @@
 #   1. Homebrew packages, only when missing: herdr, Codex, jq, tmux, iTerm2
 #   2. herdr/install.sh          ctrl+s then Shift+C, inside herdr
 #   3. herdr/test-codex-key.sh   presses that key under tmux and checks the tab
-#   4. hotkeys/install.sh        butterfly key (F18), from any app
+#   4. hotkeys/install.sh        butterfly key (F18), from any app. The same
+#                                helper also reserves F3 (Mission Control) and
+#                                F4 (Spotlight) systemwide.
 #
 # Steps only a person can do are listed at the end, and only the ones still
 # open: installing Homebrew or Apple's Command Line Tools, signing in to Codex,
@@ -18,8 +20,8 @@
 #
 # Usage:  bash herdr/setup-mac.sh [--skip-butterfly]
 #   --skip-butterfly  Install only the in-herdr key. Use it on a Mac without
-#                     the Keyboardio keyboard, or where a login agent is not
-#                     allowed.
+#                     the Keyboardio keyboard, where a login agent is not
+#                     allowed, or where F3 and F4 must keep their usual jobs.
 # Exit:   0 when every attempted step succeeded, 1 otherwise.
 #
 # Example:
@@ -194,6 +196,7 @@ else
       ok "butterfly helper is running: registered systemwide F18"
       add_todo "In Chrysalis, set the butterfly key on Layer 0 to raw key code 109 (F18), if it is not already."
       add_todo "Press the butterfly key once and allow \"Codex Hotkey\" to control iTerm when macOS asks."
+      add_todo "The same helper maps F3 to Mission Control and F4 to Spotlight. F4 needs \"Codex Hotkey\" enabled under Privacy & Security > Accessibility; see hotkeys/README.md."
     else
       fail "The butterfly helper did not report 'registered systemwide F18' within 10 seconds. New lines in $log_file:"
       tail -n "+$((lines_before + 1))" "$log_file" >&2 2>/dev/null || true

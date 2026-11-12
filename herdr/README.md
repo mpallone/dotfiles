@@ -17,11 +17,12 @@ bash herdr/setup-mac.sh
 
 The script installs herdr, Codex, jq, tmux, and iTerm2 with Homebrew when they
 are missing, installs this key, runs the key test below, and installs the
-[butterfly key](../hotkeys/README.md). It ends with the manual steps that are
+[butterfly key helper](../hotkeys/README.md), which also reserves F3 for
+Mission Control and F4 for Spotlight. It ends with the manual steps that are
 still open on that Mac, such as signing in to Codex or mapping the butterfly
 key in Chrysalis. Rerunning it is safe. `--skip-butterfly` installs only this
-key, for a Mac without the Keyboardio keyboard or one that disallows login
-agents.
+key, for a Mac without the Keyboardio keyboard, one that disallows login
+agents, or one where F3 and F4 must keep their usual jobs.
 
 The script has not run on macOS yet. Its branches were exercised on Linux with
 stand-in `uname`, `brew`, `xcode-select`, and `xcrun` commands; see the

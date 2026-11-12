@@ -215,9 +215,10 @@ and ask the user to press the key by hand; do not report the key as verified.
 
 This adds a second route: a helper app that registers F18, the key the
 Keyboardio Model 100 butterfly key sends, so one press opens a Codex tab while
-any app has focus. Do it when the machine is a Mac with iTerm and the user
-uses that keyboard; ask if you do not know. It was not tested by the change
-that added this file, which ran on Linux.
+any app has focus. The same helper reserves F3 for Mission Control and F4 for
+Spotlight on every keyboard attached to the Mac. Do it when the machine is a
+Mac with iTerm and the user uses that keyboard; ask if you do not know. It was
+not tested by the change that added this file, which ran on Linux.
 
 It compiles a Swift program and installs a login agent, so it needs Apple's
 Command Line Tools (`xcode-select -p` prints a path). On a managed laptop,
@@ -229,13 +230,14 @@ tail -n 30 ~/Library/Logs/CodexHotkey.log
 ```
 
 Expected: the installer prints `Installed Codex Hotkey and enabled it at
-login`, and the log contains `registered systemwide F18`. If the log reports a
-registration failure, another app holds F18; report it.
+login`, and the log contains `registered systemwide F18 (Codex)`. If the log
+reports `could not register`, another app holds that key; report it.
 
 You cannot press the key or approve macOS prompts. Report these user-only
 steps from [hotkeys/README.md](../hotkeys/README.md): set the butterfly key to
 raw key code 109 (F18) in Chrysalis, press it once, and allow **Codex Hotkey**
-to control iTerm when macOS asks.
+to control iTerm when macOS asks. For F4 to open Spotlight, enable **Codex
+Hotkey** under Privacy & Security → Accessibility.
 
 ## 9. Report to the user
 
