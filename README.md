@@ -91,6 +91,11 @@ To set up unix env on new computer, do:
     bindings in [karabiner/](karabiner/README.md) require Karabiner and are not
     installed by the hotkey helper.
 
+    Restore the Fun-layer brightness, media, dictation, and Do Not Disturb
+    actions with the [Keyboardio setup](keyboardio/README.md). Fun+8 sends
+    play/pause directly from the keyboard; Fun+4 opens Spotlight through
+    the helper.
+
 20. Set Herdr's prefix to `ctrl+s` instead of `ctrl+b`. From this repo's root,
     copy the saved config on a new laptop:
 

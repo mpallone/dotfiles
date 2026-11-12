@@ -5,6 +5,7 @@ private let hotkeySignature: OSType = 0x43445848
 private enum HotkeyAction: UInt32 {
     case codex = 1
     case missionControl = 2
+    case spotlight = 3
 }
 private var heldKeys = Set<UInt32>()
 
@@ -45,6 +46,37 @@ private func openMissionControl() {
     }
 }
 
+/// Invoke macOS's configured Spotlight shortcut; launching its app alone shows no UI.
+private func openSpotlight() {
+    guard CGPreflightPostEventAccess() else {
+        CGRequestPostEventAccess()
+        log("Spotlight needs Codex Hotkey enabled in Privacy & Security > Accessibility")
+        return
+    }
+    let settings = UserDefaults(suiteName: "com.apple.symbolichotkeys")?
+        .dictionary(forKey: "AppleSymbolicHotKeys")
+    let shortcut = settings?["64"] as? [String: Any]
+    if shortcut?["enabled"] as? Bool == false {
+        log("Spotlight's keyboard shortcut is disabled in macOS Keyboard Shortcuts")
+        return
+    }
+    let value = shortcut?["value"] as? [String: Any]
+    let parameters = value?["parameters"] as? [NSNumber]
+    let keyCode = parameters.flatMap { $0.count >= 3 ? $0[1].uint16Value : nil }
+        ?? UInt16(kVK_Space)
+    let modifiers = parameters.flatMap { $0.count >= 3 ? $0[2].uint64Value : nil }
+        ?? CGEventFlags.maskCommand.rawValue
+    for pressed in [true, false] {
+        guard let event = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: pressed) else {
+            log("could not create Spotlight shortcut event")
+            return
+        }
+        event.flags = CGEventFlags(rawValue: modifiers)
+        event.post(tap: .cghidEventTap)
+    }
+    log("invoked Spotlight shortcut")
+}
+
 /// Dispatch registered keys once per press; each key tracks its own release.
 private func handleHotkey(
     _: EventHandlerCallRef?, event: EventRef?, _: UnsafeMutableRawPointer?
@@ -68,6 +100,8 @@ private func handleHotkey(
                 launchCodex()
             case .missionControl:
                 openMissionControl()
+            case .spotlight:
+                openSpotlight()
             }
         }
     case UInt32(kEventHotKeyReleased):
@@ -94,7 +128,8 @@ guard handlerStatus == noErr else {
 }
 private let bindings: [(code: UInt32, action: HotkeyAction, name: String)] = [
     (UInt32(kVK_F18), .codex, "F18 (Codex)"),
-    (UInt32(kVK_F3), .missionControl, "F3 (Mission Control)")
+    (UInt32(kVK_F3), .missionControl, "F3 (Mission Control)"),
+    (UInt32(kVK_F4), .spotlight, "F4 (Spotlight)")
 ]
 var hotkeys = [EventHotKeyRef]()
 for binding in bindings {
@@ -105,7 +140,7 @@ for binding in bindings {
     )
     guard status == noErr, let hotkey = hotkey else {
         log("could not register \(binding.name) (status \(status)); another app may own it")
-        // A conflicting Mission Control binding must not disable the Codex key.
+        // A conflicting system action must not disable the Codex key.
         if binding.action == .codex { exit(1) }
         continue
     }
