@@ -72,7 +72,9 @@ preserves the custom Home key instead of replacing it with F12.
 Check Fun+3 for Mission Control, Fun+4 for Spotlight, and butterfly for a
 fresh Codex session. For Spotlight, enable **Codex Hotkey** in **System
 Settings → Privacy & Security → Accessibility** when requested; the helper
-sends the Spotlight keyboard shortcut configured in macOS.
+sends the Spotlight keyboard shortcut configured in macOS. Restart the
+helper after granting that permission, following the
+[permission and restart steps](../hotkeys/README.md#install-and-verify-the-helper).
 
 ## Encoding and configuration protocol
 

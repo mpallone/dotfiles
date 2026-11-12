@@ -47,7 +47,14 @@ runs its action only once until released; the two keys track releases
 independently.
 
 Press Fun+4 to open Spotlight. If the helper requests permission to send
-keyboard events, enable it in Accessibility and press Fun+4 again. F4
+keyboard events, enable it in Accessibility, restart the loaded helper,
+and press Fun+4 again:
+
+```sh
+launchctl kickstart -k "gui/$(id -u)/com.mpallone.codex-hotkey"
+```
+
+The running helper did not recognize the new grant until restarted. F4
 uses macOS's configured Spotlight shortcut (Command+Space by default);
 it logs an error if that shortcut is disabled.
 
