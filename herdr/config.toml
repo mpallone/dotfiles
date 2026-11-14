@@ -1,2 +1,12 @@
 [keys]
 prefix = "ctrl+s"
+
+# BEGIN codex-tab keybinding (managed by herdr/install.sh)
+# prefix+shift+c (ctrl+s, then C) opens a new tab running Codex.
+# prefix+c is herdr's plain new tab; Shift makes it a Codex tab.
+[[keys.command]]
+key = "prefix+shift+c"
+type = "shell"
+command = "\"$HOME/.local/bin/herdr-codex-tab\""
+description = "new Codex tab"
+# END codex-tab keybinding

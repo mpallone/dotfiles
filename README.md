@@ -96,17 +96,20 @@ To set up unix env on new computer, do:
     play/pause directly from the keyboard; Fun+4 opens Spotlight through
     the helper.
 
-20. Set Herdr's prefix to `ctrl+s` instead of `ctrl+b`. From this repo's root,
-    copy the saved config on a new laptop:
+20. Set Herdr's prefix to `ctrl+s` instead of `ctrl+b`, and bind `ctrl+s`
+    then `Shift+C` to "new Codex tab". From this repo's root:
 
     ```sh
-    mkdir -p ~/.config/herdr
-    cp -n herdr/config.toml ~/.config/herdr/config.toml
+    bash herdr/install.sh
     ```
 
-    `cp -n` preserves an existing config. If one already exists, set
-    `prefix = "ctrl+s"` in its `[keys]` section instead. The saved config is
-    [herdr/config.toml](herdr/config.toml).
+    The installer copies [herdr/config.toml](herdr/config.toml) when no config
+    exists. It never replaces an existing config: it appends only the Codex
+    key, so set `prefix = "ctrl+s"` in that file's `[keys]` section by hand.
+    See [herdr/README.md](herdr/README.md). On a Mac that has none of herdr,
+    Codex, or the keys, `bash herdr/setup-mac.sh` installs all of it, including
+    step 19's butterfly key; or give an agent
+    [herdr/INSTALL_PROMPT.md](herdr/INSTALL_PROMPT.md).
 
 ## AI config & skills distribution
 
