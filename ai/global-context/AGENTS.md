@@ -152,7 +152,7 @@ Readers scan before they read. Structure for that.
 | Context | Rules |
 |---|---|
 | Commit messages | Imperative verb, what changed, optionally why. One line. Body only if non-obvious. |
-| CL / PR descriptions | One punchy lead sentence. Bullets for multi-part changes. Bold key concepts. |
+| CL / PR descriptions | Short opener; AI-created PRs put detailed notes in a collapsed `<details>` block (see format below). |
 | READMEs | Structured for skimming. Headers are descriptive ("Running tests locally"), not generic ("Usage"). |
 | Incident reports / postmortems | Lead with impact and timeline. Findings before analysis. State what you don't know. |
 | Design docs | State the decision at the top. Alternatives section is mandatory. Tradeoffs over sales pitch. |
@@ -190,11 +190,27 @@ Not:
 
 ### CL / PR description format
 
-```
-<one sentence: what changed and why>
+Every pull request an AI agent creates must follow [Simon Willison's details-summary pattern](https://simonwillison.net/2026/Nov/9/details-summary/): a short visible introduction, with the full agent-written description collapsed below it.
 
-- **Key change**: detail
-- **Key change**: detail
+- Open with 1–3 plain sentences explaining what changed and why it matters. Keep a useful screenshot or short demo visible when it helps explain the result.
+- Put detailed changes, implementation rationale, validation commands and results, tradeoffs, and limitations inside `<details>`. Keep it collapsed by default; do not add `open`.
+- Use the actual model name in `<summary>`, plus its effort level when known. Never guess either; if the model is unavailable, label it `AI-generated details`.
+- Keep blank lines around Markdown inside the block so GitHub renders it correctly. Retain required repository template fields and preserve human-written text when updating an existing PR.
+- Draft the short opener for me to keep or edit. Do not claim human authorship, review, or approval unless it actually happened.
+
+Use this structure, replacing the placeholders with the actual details:
+
+```markdown
+<short explanation of what changed and why>
+
+<details>
+<summary>Model name — effort level, if known</summary>
+
+- **Changes**: implementation details and rationale.
+- **Validation**: checks actually run and their results; anything not run.
+- **Tradeoffs / limitations**: material costs, risks, or gaps, when relevant.
+
+</details>
 ```
 
 ### Honest framing patterns
