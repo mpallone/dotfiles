@@ -21,15 +21,15 @@ Tracking is not authorization to execute an item. Preserve the user's scope and 
 
 ## End every reply with the list
 
-Append `Remaining to-dos:` and a compact Markdown checklist as the last content in every user-facing response, including commentary progress updates, answers to unrelated questions, clarification requests, and final replies. Do not append the footer to tool inputs or generated deliverables such as code, commit messages, or pull-request descriptions.
+Append `Remaining to-dos:` and a compact numbered Markdown checklist as the last content in every user-facing response, including commentary progress updates, answers to unrelated questions, clarification requests, and final replies. Number items consecutively starting at 1, using `1. [ ]` for open items and `1. [x]` for retained completed items. Renumber the list when items change. Do not append the footer to tool inputs or generated deliverables such as code, commit messages, or pull-request descriptions.
 
 For example, if a draft is ready but the user still needs to review it:
 
 ```markdown
 Remaining to-dos:
 
-- [ ] You review the draft.
-- [ ] AI applies any requested revisions.
+1. [ ] You review the draft.
+2. [ ] AI applies any requested revisions.
 ```
 
 If nothing remains, end with `Remaining to-dos: None.` Do not invent tasks to fill the list. When the user asks to stop tracking, stop adding the footer immediately; resume only if they ask again.
