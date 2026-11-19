@@ -29,6 +29,14 @@ dev() {
     fi
 }
 
+devin() {
+    if [[ $# -eq 1 && $1 == . ]]; then
+        /Applications/Devin.app/Contents/Resources/app/bin/devin-desktop .
+    else
+        command devin "$@"
+    fi
+}
+
 alias cdbudg='cd /Users/mpallone/Dropbox/Documents/money/budget-project'
 alias budg='cdbudg && python budget.py && python reports.py && git commit -a -m "budget.py update"'
 alias rep='cdbudg && python reports.py'
