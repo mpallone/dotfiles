@@ -52,8 +52,9 @@ To set up unix env on new computer, do:
    settings are appropriate for the new
    machine. 
 
-9. Edit one-time-config.sh as appropriate
-   for the new machine, and then run it
+9. Edit [one-time-config.sh](one-time-config.sh) for the new machine, then run it.
+   On macOS it installs `mddog` with Homebrew. Run `mdd path/to/file.md` to
+   preview rendered Markdown in the terminal.
 
 10. Add everything in the dot_emacs file
    into the new machine's .emacs file.

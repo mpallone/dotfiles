@@ -239,6 +239,13 @@ Remove anything that doesn't survive that scan.
 ### General
 - Don't fail silently. If you fail, describe why.
 
+### Preview Markdown in the terminal
+
+Use `mdd path/to/file.md` in an interactive terminal to preview rendered
+Markdown when headings, tables, or code blocks matter. Suggest the same command
+to Mark when he wants to read a Markdown file without leaving the terminal.
+Homebrew installs `mdd` via `brew install qu8n/tap/mddog`.
+
 ### Open files in Sublime Text from Codex
 
 On this Mac, use `/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl`

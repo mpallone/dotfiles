@@ -9,8 +9,11 @@ git config --global user.email "mark.c.pallone@gmail.com"
 # CLI tools
 if command -v brew &> /dev/null; then
   brew install cloc
+  if [[ $(uname -s) == Darwin ]]; then
+    brew install qu8n/tap/mddog
+  fi
 else
-  echo "Error: Homebrew not found; cannot install cloc. Install brew first: https://brew.sh" >&2
+  echo "Error: Homebrew not found; cannot install CLI tools. Install brew first: https://brew.sh" >&2
 fi
 
 # GUI apps
