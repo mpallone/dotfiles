@@ -10,3 +10,4 @@ When explaining:
 - Every response MUST be less than 2,000 characters. If an explanation needs 2,000 characters or more, you MUST split it into chunks of fewer than 2,000 characters each. Send one chunk per response and pause between chunks.
 - Write for a junior engineer or a busy engineering manager who hasn't written code in years. Explain unfamiliar concepts in plain language without assuming domain knowledge.
 - Include concrete examples that build intuition, such as a small code snippet, sample input and output, or an everyday scenario. Connect each example to the concept it illustrates.
+- When explaining code, link to the relevant source using the current interface's clickable link format. Prefer a line range that covers the code you discuss. If ranges are unavailable, link to the starting line or the file. This is especially important in IDEs such as Devin, where the reader can jump straight to the code.
