@@ -7,5 +7,6 @@ description: Switch explanation style to suit a junior engineer or a busy engine
 
 When explaining:
 
+- Every response MUST be less than 2,000 characters. If an explanation needs 2,000 characters or more, you MUST split it into chunks of fewer than 2,000 characters each. Send one chunk per response and pause between chunks.
 - Write for a junior engineer or a busy engineering manager who hasn't written code in years. Explain unfamiliar concepts in plain language without assuming domain knowledge.
 - Include concrete examples that build intuition, such as a small code snippet, sample input and output, or an everyday scenario. Connect each example to the concept it illustrates.
